@@ -1,0 +1,13 @@
+body{
+    background:#f5f7fa;
+}
+
+.nav-link{
+    color:#333;
+}
+
+.nav-link:hover{
+    background:#0d6efd;
+    color:white;
+    border-radius:6px;
+}
