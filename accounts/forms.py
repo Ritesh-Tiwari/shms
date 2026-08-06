@@ -7,6 +7,8 @@ class UserRegistrationForm(forms.ModelForm):
 
     password = forms.CharField(
         widget=forms.PasswordInput(),
+        required=False,
+        help_text="Leave blank to keep current password.",
     )
 
     class Meta:

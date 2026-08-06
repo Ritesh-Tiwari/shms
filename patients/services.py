@@ -28,3 +28,34 @@ class PatientService:
         )
 
         return patient
+
+
+    @staticmethod
+    @transaction.atomic
+    def update_patient(
+        *,
+        user,
+        patient,
+        user_data,
+        patient_data,
+    ):
+        """
+        Update existing User and Patient records.
+        """
+
+        user.first_name = user_data["first_name"]
+        user.last_name = user_data["last_name"]
+        user.email = user_data["email"]
+        user.phone_number = user_data["phone_number"]
+
+        if user_data.get("password"):
+            user.set_password(user_data["password"])
+
+        user.save()
+
+        for field, value in patient_data.items():
+            setattr(patient, field, value)
+
+        patient.save()
+
+        return patient

@@ -83,3 +83,67 @@ def patient_detail(request, pk):
             "patient": patient,
         },
     )
+
+
+def update_patient(request, pk):
+
+    patient = get_object_or_404(
+        Patient.objects.select_related("user"),
+        pk=pk,
+    )
+
+    if request.method == "POST":
+
+        user_form = UserRegistrationForm(
+            request.POST,
+            instance=patient.user,
+        )
+
+        patient_form = PatientForm(
+            request.POST,
+            instance=patient,
+        )
+
+        if user_form.is_valid() and patient_form.is_valid():
+
+            PatientService.update_patient(
+
+                user=patient.user,
+
+                patient=patient,
+
+                user_data=user_form.cleaned_data,
+
+                patient_data=patient_form.cleaned_data,
+
+            )
+
+            messages.success(
+                request,
+                "Patient updated successfully.",
+            )
+
+            return redirect(
+                "patients:detail",
+                pk=patient.pk,
+            )
+
+    else:
+
+        user_form = UserRegistrationForm(
+            instance=patient.user,
+        )
+
+        patient_form = PatientForm(
+            instance=patient,
+        )
+
+    return render(
+        request,
+        "patients/update.html",
+        {
+            "user_form": user_form,
+            "patient_form": patient_form,
+            "patient": patient,
+        },
+    )
