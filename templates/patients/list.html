@@ -17,6 +17,7 @@ Patients
             <th>Email</th>
             <th>Gender</th>
             <th>Blood Group</th>
+            <th>Actions</th>
         </tr>
     </thead>
 
@@ -38,6 +39,13 @@ Patients
             <td>{{ patient.gender }}</td>
 
             <td>{{ patient.blood_group }}</td>
+            <td>
+                <a
+                    href="{% url 'patients:detail' patient.id %}"
+                    class="btn btn-sm btn-primary">
+                    View
+                </a>
+            </td>
 
         </tr>
 

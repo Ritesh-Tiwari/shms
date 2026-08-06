@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 
 from .models import Patient
@@ -69,3 +69,17 @@ def patient_list(request):
         },
     )
 
+def patient_detail(request, pk):
+
+    patient = get_object_or_404(
+        Patient.objects.select_related("user"),
+        pk=pk,
+    )
+
+    return render(
+        request,
+        "patients/detail.html",
+        {
+            "patient": patient,
+        },
+    )
