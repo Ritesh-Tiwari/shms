@@ -147,3 +147,31 @@ def update_patient(request, pk):
             "patient": patient,
         },
     )
+
+def delete_patient(request, pk):
+
+    patient = get_object_or_404(
+        Patient.objects.select_related("user"),
+        pk=pk,
+    )
+
+    if request.method == "POST":
+
+        PatientService.delete_patient(
+            patient=patient,
+        )
+
+        messages.success(
+            request,
+            "Patient deleted successfully.",
+        )
+
+        return redirect("patients:list")
+
+    return render(
+        request,
+        "patients/delete.html",
+        {
+            "patient": patient,
+        },
+    )

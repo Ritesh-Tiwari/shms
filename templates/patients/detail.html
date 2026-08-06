@@ -90,6 +90,11 @@ Patient Details
     class="btn btn-warning">
     Edit Patient
 </a>
+<a
+    href="{% url 'patients:delete' patient.id %}"
+    class="btn btn-danger">
+    Delete Patient
+</a>
 
 <a
     href="{% url 'patients:list' %}"

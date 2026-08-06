@@ -59,3 +59,14 @@ class PatientService:
         patient.save()
 
         return patient
+
+    @staticmethod
+    @transaction.atomic
+    def delete_patient(*, patient):
+        """
+        Delete Patient and associated User.
+        """
+
+        user = patient.user
+
+        user.delete()
