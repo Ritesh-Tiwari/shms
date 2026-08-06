@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Dashboard</h2>
+        <p class="text-muted">
+            Welcome to Smart Health Management System
+        </p>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6>Total Patients</h6>
+                <h2>{{ total_patients }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6>Total Doctors</h6>
+                <h2>{{ total_doctors }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6>Appointments</h6>
+                <h2>{{ total_appointments }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h6>Revenue</h6>
+                <h2>₹ {{ total_revenue }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr class="my-5">
+
+<h4>Quick Actions</h4>
+
+<div class="row g-3 mt-2">
+
+    <div class="col-md-3">
+        <a href="#" class="btn btn-primary w-100">
+            Register Patient
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="/patients/" class="btn btn-success w-100">
+            Patient List
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="#" class="btn btn-warning w-100">
+            New Appointment
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <a href="#" class="btn btn-info w-100">
+            Reports
+        </a>
+    </div>
+
+</div>
+
+<hr class="my-5">
+
+<div class="card shadow-sm">
+
+    <div class="card-header">
+        Recent Activities
+    </div>
+
+    <div class="card-body">
+
+        <p class="text-muted">
+            No recent activity available.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
