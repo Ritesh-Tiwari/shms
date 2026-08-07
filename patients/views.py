@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 from .models import Patient
 from accounts.forms import UserRegistrationForm
@@ -80,11 +81,24 @@ def patient_list(request):
 
         )
 
+    paginator = Paginator(
+        patients,
+        10,
+    )
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(
+        page_number,
+    )
+
+
     return render(
         request,
         "patients/list.html",
         {
-            "patients": patients,
+            "patients": page_obj,
+            "page_obj": page_obj,
             "query": query,
         },
     )
