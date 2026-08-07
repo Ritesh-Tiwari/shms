@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
+from django.db.models import Q
 
 from .models import Patient
 from accounts.forms import UserRegistrationForm
@@ -59,15 +60,35 @@ def register_patient(request):
 
 def patient_list(request):
 
+    query = request.GET.get("q", "").strip()
+
     patients = Patient.objects.select_related("user")
+
+    if query:
+
+        patients = patients.filter(
+
+            Q(patient_id__icontains=query)
+
+            | Q(user__first_name__icontains=query)
+
+            | Q(user__last_name__icontains=query)
+
+            | Q(user__email__icontains=query)
+
+            | Q(user__phone_number__icontains=query)
+
+        )
 
     return render(
         request,
         "patients/list.html",
         {
             "patients": patients,
+            "query": query,
         },
     )
+
 
 def patient_detail(request, pk):
 

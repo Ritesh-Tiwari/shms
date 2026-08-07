@@ -8,6 +8,49 @@ Patients
 
 <h2 class="mb-4">Patients</h2>
 
+<form method="get" class="mb-4">
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <input
+                type="text"
+                name="q"
+                class="form-control"
+                placeholder="Search by Patient ID, Name, Email or Phone"
+                value="{{ query }}">
+
+        </div>
+
+        <div class="col-md-2">
+
+            <button
+                type="submit"
+                class="btn btn-primary w-100">
+
+                Search
+
+            </button>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <a
+                href="{% url 'patients:list' %}"
+                class="btn btn-secondary w-100">
+
+                Clear
+
+            </a>
+
+        </div>
+
+    </div>
+
+</form>
+
 <table class="table table-bordered table-striped">
 
     <thead>
