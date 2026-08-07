@@ -62,26 +62,26 @@ Dashboard
 <div class="row g-3 mt-2">
 
     <div class="col-md-3">
-        <a href="#" class="btn btn-primary w-100">
+        <a href="{% url 'patients:register' %}" class="btn btn-primary w-100">
             Register Patient
         </a>
     </div>
 
     <div class="col-md-3">
-        <a href="/patients/" class="btn btn-success w-100">
+        <a href="{% url 'patients:list' %}" class="btn btn-success w-100">
             Patient List
         </a>
     </div>
 
     <div class="col-md-3">
-        <a href="#" class="btn btn-warning w-100">
-            New Appointment
+        <a href="{% url 'doctors:register' %}" class="btn btn-warning w-100">
+            Register Doctor
         </a>
     </div>
 
     <div class="col-md-3">
-        <a href="#" class="btn btn-info w-100">
-            Reports
+        <a href="{% url 'doctors:list' %}" class="btn btn-info w-100">
+            Doctor List
         </a>
     </div>
 

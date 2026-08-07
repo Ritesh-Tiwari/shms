@@ -9,21 +9,15 @@
         <ul class="nav flex-column">
 
             <li class="nav-item mb-2">
-                <a href="#" class="nav-link">
-                    Dashboard
-                </a>
+               <a href="{% url 'dashboard:dashboard' %}" class="nav-link"> Dashboard </a>
             </li>
 
             <li class="nav-item mb-2">
-                <a href="/patients/" class="nav-link">
-                    Patients
-                </a>
+                <a href="{% url 'patients:list' %}" class="nav-link"> Patients</a>
             </li>
 
             <li class="nav-item mb-2">
-                <a href="#" class="nav-link">
-                    Doctors
-                </a>
+                <a href="{% url 'doctors:list' %}" class="nav-link"> Doctors </a>
             </li>
 
             <li class="nav-item mb-2">
