@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "core",
     'accounts',
     'patients',
     'dashboard',
@@ -117,6 +118,15 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+# Authentication Settings (custom code)
+
+LOGIN_URL = "accounts:login"
+
+LOGIN_REDIRECT_URL = "dashboard:dashboard"
+
+LOGOUT_REDIRECT_URL = "accounts:login"
+
 
 
 # Static files (CSS, JavaScript, Images)

@@ -3,17 +3,25 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+
 
 from .models import Patient
 from accounts.forms import UserRegistrationForm
 from .forms import PatientForm
 from .services import PatientService
+from core.decorators import role_required
+from accounts.choices import UserRole
 
 
 def home(request):
     return render(request, "patients/home.html")
 
-
+@login_required
+# @role_required(
+#     UserRole.ADMIN,
+#     UserRole.RECEPTIONIST,
+# )
 def register_patient(request):
 
     if request.method == "POST":
@@ -59,6 +67,12 @@ def register_patient(request):
         context,
     )
 
+@login_required
+# @role_required(
+#     UserRole.ADMIN,
+#     UserRole.RECEPTIONIST,
+#     UserRole.DOCTOR,
+# )
 def patient_list(request):
 
     query = request.GET.get("q", "").strip()
@@ -104,6 +118,12 @@ def patient_list(request):
     )
 
 
+# @role_required(
+#     UserRole.ADMIN,
+#     UserRole.RECEPTIONIST,
+#     UserRole.DOCTOR,
+# )
+@login_required
 def patient_detail(request, pk):
 
     patient = get_object_or_404(
@@ -120,6 +140,12 @@ def patient_detail(request, pk):
     )
 
 
+
+# @role_required(
+#     UserRole.ADMIN,
+#     UserRole.RECEPTIONIST,
+# )
+@login_required
 def update_patient(request, pk):
 
     patient = get_object_or_404(
@@ -183,6 +209,11 @@ def update_patient(request, pk):
         },
     )
 
+# @role_required(
+#     UserRole.ADMIN,
+#     UserRole.RECEPTIONIST,
+# )
+@login_required
 def delete_patient(request, pk):
 
     patient = get_object_or_404(

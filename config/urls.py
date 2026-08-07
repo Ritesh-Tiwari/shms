@@ -20,13 +20,18 @@ from patients import views as patient_views
 
 
 urlpatterns = [
-
+  
     path(
         "",
         include("dashboard.urls"),
     ),
 
     path("admin/", admin.site.urls),
+
+    path(
+        "accounts/",
+        include("accounts.urls"),
+    ),
 
     path(
         "patients/",
