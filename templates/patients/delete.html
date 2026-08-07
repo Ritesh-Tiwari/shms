@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+Delete Patient
+{% endblock %}
+
+{% block content %}
+
+<h2>Delete Patient</h2>
+
+<div class="alert alert-danger">
+
+    <p>
+
+        Are you sure you want to delete
+
+        <strong>
+
+            {{ patient.user.first_name }}
+            {{ patient.user.last_name }}
+
+        </strong>
+
+        ?
+
+    </p>
+
+</div>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <button
+        type="submit"
+        class="btn btn-danger">
+
+        Yes, Delete
+
+    </button>
+
+    <a
+        href="{% url 'patients:detail' patient.id %}"
+        class="btn btn-secondary">
+
+        Cancel
+
+    </a>
+
+</form>
+
+{% endblock %}

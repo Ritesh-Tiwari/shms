@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}
+Patients
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">Patients</h2>
+
+<form method="get" class="mb-4">
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <input
+                type="text"
+                name="q"
+                class="form-control"
+                placeholder="Search by Patient ID, Name, Email or Phone"
+                value="{{ query }}">
+
+        </div>
+
+        <div class="col-md-2">
+
+            <button
+                type="submit"
+                class="btn btn-primary w-100">
+
+                Search
+
+            </button>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <a
+                href="{% url 'patients:list' %}"
+                class="btn btn-secondary w-100">
+
+                Clear
+
+            </a>
+
+        </div>
+
+    </div>
+
+</form>
+
+<table class="table table-bordered table-striped">
+
+    <thead>
+        <tr>
+            <th>Patient ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Gender</th>
+            <th>Blood Group</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for patient in patients %}
+
+        <tr>
+
+            <td>{{ patient.patient_id }}</td>
+
+            <td>
+                {{ patient.user.first_name }}
+                {{ patient.user.last_name }}
+            </td>
+
+            <td>{{ patient.user.email }}</td>
+
+            <td>{{ patient.gender }}</td>
+
+            <td>{{ patient.blood_group }}</td>
+            <td>
+                <a
+                    href="{% url 'patients:detail' patient.id %}"
+                    class="btn btn-sm btn-primary">
+                    View
+                </a>
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="5">
+                No patients found.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+<nav class="mt-4">
+
+    <ul class="pagination justify-content-center">
+
+        {% if page_obj.has_previous %}
+
+        <li class="page-item">
+
+            <a
+                class="page-link"
+                href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+
+                Previous
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        {% for page in page_obj.paginator.page_range %}
+
+        <li class="page-item {% if page == page_obj.number %}active{% endif %}">
+
+            <a
+                class="page-link"
+                href="?page={{ page }}{% if query %}&q={{ query }}{% endif %}">
+
+                {{ page }}
+
+            </a>
+
+        </li>
+
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+
+        <li class="page-item">
+
+            <a
+                class="page-link"
+                href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+
+                Next
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+
+</nav>
+
+{% endblock %}

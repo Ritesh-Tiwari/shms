@@ -1,0 +1,46 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+
+        <a
+            class="navbar-brand fw-bold"
+            href="{% url 'dashboard:dashboard' %}">
+
+            🏥 SHMS
+
+        </a>
+
+        <div class="ms-auto">
+
+            {% if user.is_authenticated %}
+
+                <span class="text-white me-3">
+
+                    Welcome,
+                    <strong>{{ user.first_name|default:user.username }}</strong>
+
+                </span>
+
+                <a
+                    href="{% url 'accounts:logout' %}"
+                    class="btn btn-outline-light btn-sm">
+
+                    Logout
+
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{% url 'accounts:login' %}"
+                    class="btn btn-outline-light btn-sm">
+
+                    Login
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+</nav>
