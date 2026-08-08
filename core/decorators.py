@@ -1,9 +1,9 @@
 from functools import wraps
 
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
+
 
 def role_required(*allowed_roles):
 
@@ -19,6 +19,8 @@ def role_required(*allowed_roles):
                     request,
                     "You do not have permission to access this page.",
                 )
+
+                return redirect("dashboard:dashboard")
 
             return view_func(
                 request,

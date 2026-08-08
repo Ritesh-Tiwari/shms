@@ -8,8 +8,13 @@ from accounts.forms import UserRegistrationForm
 from .forms import DoctorForm
 from .services import DoctorService
 from .models import Doctor
+from core.decorators import role_required
+from accounts.choices import UserRole
 
 
+@role_required(
+    UserRole.ADMIN,
+)
 def register_doctor(request):
 
     if request.method == "POST":
@@ -50,7 +55,9 @@ def register_doctor(request):
         },
     )
 
-
+@role_required(
+    UserRole.ADMIN,
+)
 def doctor_list(request):
 
     search = request.GET.get(
@@ -99,6 +106,9 @@ def doctor_list(request):
         },
     )
 
+@role_required(
+    UserRole.ADMIN,
+)
 def doctor_detail(request, pk):
 
     doctor = get_object_or_404(
@@ -114,6 +124,9 @@ def doctor_detail(request, pk):
         },
     )
 
+@role_required(
+    UserRole.ADMIN,
+)
 def update_doctor(request, pk):
 
     doctor = get_object_or_404(
@@ -171,9 +184,9 @@ def update_doctor(request, pk):
         },
     )
 
-from django.shortcuts import get_object_or_404
-
-
+@role_required(
+    UserRole.ADMIN,
+)
 def delete_doctor(request, pk):
 
     doctor = get_object_or_404(
