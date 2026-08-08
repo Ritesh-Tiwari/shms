@@ -37,4 +37,8 @@ urlpatterns = [
         "patients/",
         include("patients.urls"),
     ),
+    path(
+        "doctors/",
+        include("doctors.urls"),
+    ),
 ]

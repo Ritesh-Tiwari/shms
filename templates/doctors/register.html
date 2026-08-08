@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+Register Doctor
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Register Doctor
+</h2>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <h4>Account Information</h4>
+
+    {{ user_form.as_p }}
+
+    <hr>
+
+    <h4>Professional Information</h4>
+
+    {{ doctor_form.as_p }}
+
+    {{ user_form.errors }}
+
+    {{ doctor_form.errors }}
+
+    <button
+        type="submit"
+        class="btn btn-primary">
+
+        Register Doctor
+
+    </button>
+
+</form>
+
+{% endblock %}

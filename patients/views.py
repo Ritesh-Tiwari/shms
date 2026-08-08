@@ -17,11 +17,9 @@ from accounts.choices import UserRole
 def home(request):
     return render(request, "patients/home.html")
 
-@login_required
-# @role_required(
-#     UserRole.ADMIN,
-#     UserRole.RECEPTIONIST,
-# )
+@role_required(
+    UserRole.ADMIN,
+)
 def register_patient(request):
 
     if request.method == "POST":
@@ -67,12 +65,9 @@ def register_patient(request):
         context,
     )
 
-@login_required
-# @role_required(
-#     UserRole.ADMIN,
-#     UserRole.RECEPTIONIST,
-#     UserRole.DOCTOR,
-# )
+@role_required(
+    UserRole.ADMIN,
+)
 def patient_list(request):
 
     query = request.GET.get("q", "").strip()
@@ -117,13 +112,9 @@ def patient_list(request):
         },
     )
 
-
-# @role_required(
-#     UserRole.ADMIN,
-#     UserRole.RECEPTIONIST,
-#     UserRole.DOCTOR,
-# )
-@login_required
+@role_required(
+    UserRole.ADMIN,
+)
 def patient_detail(request, pk):
 
     patient = get_object_or_404(
@@ -141,11 +132,9 @@ def patient_detail(request, pk):
 
 
 
-# @role_required(
-#     UserRole.ADMIN,
-#     UserRole.RECEPTIONIST,
-# )
-@login_required
+@role_required(
+    UserRole.ADMIN,
+)
 def update_patient(request, pk):
 
     patient = get_object_or_404(
@@ -209,11 +198,9 @@ def update_patient(request, pk):
         },
     )
 
-# @role_required(
-#     UserRole.ADMIN,
-#     UserRole.RECEPTIONIST,
-# )
-@login_required
+@role_required(
+    UserRole.ADMIN,
+)
 def delete_patient(request, pk):
 
     patient = get_object_or_404(
