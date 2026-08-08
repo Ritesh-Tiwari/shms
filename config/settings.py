@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'accounts',
     'patients',
     "doctors",
+    "appointments",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}
+Appointments
+{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4">
+    Appointments
+</h3>
+
+<a
+    href="{% url 'appointments:create' %}"
+    class="btn btn-primary mb-3">
+
+    Create Appointment
+
+</a>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Appointment ID</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for appointment in page_obj %}
+
+            <tr>
+
+                <td>
+                    {{ appointment.appointment_id }}
+                </td>
+
+                <td>
+                    {{ appointment.patient.patient_id }}
+                </td>
+
+                <td>
+                    {{ appointment.doctor.doctor_id }}
+                </td>
+
+                <td>
+                    {{ appointment.appointment_date }}
+                </td>
+
+                <td>
+                    {{ appointment.appointment_time }}
+                </td>
+
+                <td>
+                    {{ appointment.get_status_display }}
+                </td>
+
+            </tr>
+
+        {% empty %}
+
+            <tr>
+                <td colspan="6">
+                    No appointments found.
+                </td>
+            </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
