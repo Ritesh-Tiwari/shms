@@ -36,4 +36,10 @@ urlpatterns = [
         views.cancel_appointment,
         name="cancel",
     ),
+
+    path(
+    "<int:pk>/status/",
+    views.update_appointment_status,
+    name="update_status",
+),
 ]

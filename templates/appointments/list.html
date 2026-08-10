@@ -17,7 +17,96 @@ Appointments
     Create Appointment
 
 </a>
+<form method="get" class="row g-3 mb-4">
 
+    <div class="col-md-4">
+
+        <label class="form-label">
+            Search
+        </label>
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            class="form-control"
+            placeholder="Appointment ID, patient or doctor"
+        >
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Status
+        </label>
+
+        <select
+            name="status"
+            class="form-select">
+
+            <option value="">
+                All Statuses
+            </option>
+
+            {% for value, label in status_choices %}
+
+                <option
+                    value="{{ value }}"
+                    {% if status == value %}
+                        selected
+                    {% endif %}
+                >
+
+                    {{ label }}
+
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Appointment Date
+        </label>
+
+        <input
+            type="date"
+            name="date"
+            value="{{ date }}"
+            class="form-control"
+        >
+
+    </div>
+
+
+    <div class="col-md-2 d-flex align-items-end">
+
+        <button
+            type="submit"
+            class="btn btn-primary me-2">
+
+            Search
+
+        </button>
+
+        <a
+            href="{% url 'appointments:list' %}"
+            class="btn btn-secondary">
+
+            Reset
+
+        </a>
+
+    </div>
+
+</form>
 <table class="table table-bordered">
 
     <thead>
@@ -47,11 +136,11 @@ Appointments
                 </td>
 
                 <td>
-                    {{ appointment.patient.patient_id }}
+                    {{ appointment.patient.user.get_full_name }}
                 </td>
 
                 <td>
-                    {{ appointment.doctor.doctor_id }}
+                    {{ appointment.doctor.user.get_full_name }}
                 </td>
 
                 <td>
@@ -59,7 +148,7 @@ Appointments
                 </td>
 
                 <td>
-                    {{ appointment.appointment_time }}
+                    {{ appointment.appointment_time|time:"h:i A" }}
                 </td>
 
                 <td>
@@ -81,5 +170,36 @@ Appointments
     </tbody>
 
 </table>
+{% if page_obj.has_previous %}
 
+<a
+    href="?page={{ page_obj.previous_page_number }}&search={{ search }}&status={{ status }}&date={{ date }}"
+    class="btn btn-outline-primary">
+
+    Previous
+
+</a>
+
+{% endif %}
+
+
+<span class="mx-2">
+
+    Page {{ page_obj.number }}
+    of {{ page_obj.paginator.num_pages }}
+
+</span>
+
+
+{% if page_obj.has_next %}
+
+<a
+    href="?page={{ page_obj.next_page_number }}&search={{ search }}&status={{ status }}&date={{ date }}"
+    class="btn btn-outline-primary">
+
+    Next
+
+</a>
+
+{% endif %}
 {% endblock %}

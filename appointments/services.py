@@ -1,8 +1,9 @@
+from datetime import datetime
+
 from django.db import IntegrityError, transaction
+from django.utils import timezone
 
 from .models import Appointment, AppointmentStatus
-
-
 class AppointmentService:
 
     @staticmethod
@@ -78,6 +79,69 @@ class AppointmentService:
             )
 
         appointment.status = AppointmentStatus.CANCELLED
+
+        appointment.save(
+            update_fields=[
+                "status",
+                "updated_at",
+            ],
+        )
+
+        return appointment
+
+    @staticmethod
+    def update_status(
+        appointment,
+        new_status,
+    ):
+
+        allowed_transitions = {
+
+            AppointmentStatus.SCHEDULED: [
+                AppointmentStatus.CONFIRMED,
+                AppointmentStatus.CANCELLED,
+            ],
+
+            AppointmentStatus.CONFIRMED: [
+                AppointmentStatus.COMPLETED,
+                AppointmentStatus.CANCELLED,
+            ],
+
+            AppointmentStatus.COMPLETED: [],
+
+            AppointmentStatus.CANCELLED: [],
+        }
+
+        if new_status not in allowed_transitions.get(
+            appointment.status,
+            [],
+        ):
+
+            raise ValueError(
+                f"Cannot change appointment status "
+                f"from {appointment.get_status_display()} "
+                f"to {new_status}."
+            )
+
+        if new_status == AppointmentStatus.COMPLETED:
+
+            now = timezone.localtime()
+
+            appointment_datetime = timezone.make_aware(
+                datetime.combine(
+                    appointment.appointment_date,
+                    appointment.appointment_time,
+                )
+            )
+
+            if appointment_datetime > now:
+
+                raise ValueError(
+                    "Appointment cannot be marked as "
+                    "completed before its scheduled date and time."
+                )
+
+        appointment.status = new_status
 
         appointment.save(
             update_fields=[

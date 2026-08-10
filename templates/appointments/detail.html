@@ -88,6 +88,56 @@ Appointment Details
 
     {% endif %}
 
+    {% if appointment.status == "SCHEDULED" %}
+
+    <form
+        method="post"
+        action="{% url 'appointments:update_status' appointment.pk %}"
+        class="d-inline">
+
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="status"
+            value="CONFIRMED">
+
+        <button
+            type="submit"
+            class="btn btn-success">
+
+            Confirm Appointment
+
+        </button>
+
+    </form>
+
+    {% elif appointment.status == "CONFIRMED" %}
+
+        <form
+            method="post"
+            action="{% url 'appointments:update_status' appointment.pk %}"
+            class="d-inline">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="status"
+                value="COMPLETED">
+
+            <button
+                type="submit"
+                class="btn btn-success">
+
+                Mark Completed
+
+            </button>
+
+        </form>
+
+    {% endif %}
+
     </div>
 
 </div>

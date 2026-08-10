@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 from core.decorators import role_required
 from accounts.choices import UserRole
-from .models import Appointment
+from .models import Appointment, AppointmentStatus
 from .forms import AppointmentForm, AppointmentUpdateForm
 from .services import AppointmentService
 
@@ -54,16 +55,69 @@ def create_appointment(request):
         },
     )
 
-
 @role_required(
     UserRole.ADMIN,
 )
 def appointment_list(request):
 
+    search = request.GET.get(
+        "search",
+        "",
+    ).strip()
+
+    status = request.GET.get(
+        "status",
+        "",
+    ).strip()
+
+    date = request.GET.get(
+        "date",
+        "",
+    ).strip()
+
     appointments = Appointment.objects.select_related(
         "patient__user",
         "doctor__user",
     )
+
+    # Search
+    if search:
+
+        appointments = appointments.filter(
+
+            Q(appointment_id__icontains=search)
+
+            | Q(
+                patient__user__first_name__icontains=search
+            )
+
+            | Q(
+                patient__user__last_name__icontains=search
+            )
+
+            | Q(
+                doctor__user__first_name__icontains=search
+            )
+
+            | Q(
+                doctor__user__last_name__icontains=search
+            )
+
+        )
+
+    # Status filter
+    if status:
+
+        appointments = appointments.filter(
+            status=status,
+        )
+
+    # Date filter
+    if date:
+
+        appointments = appointments.filter(
+            appointment_date=date,
+        )
 
     paginator = Paginator(
         appointments,
@@ -83,9 +137,12 @@ def appointment_list(request):
         "appointments/list.html",
         {
             "page_obj": page_obj,
+            "search": search,
+            "status": status,
+            "date": date,
+            "status_choices": AppointmentStatus.choices,
         },
     )
-
 
 
 @role_required(
@@ -219,4 +276,46 @@ def cancel_appointment(request, pk):
         {
             "appointment": appointment,
         },
+    )
+
+
+@role_required(
+    UserRole.ADMIN,
+)
+def update_appointment_status(request, pk):
+
+    appointment = get_object_or_404(
+        Appointment.objects.select_related(
+            "patient__user",
+            "doctor__user",
+        ),
+        pk=pk,
+    )
+
+    if request.method == "POST":
+
+        new_status = request.POST.get("status")
+
+        try:
+
+            AppointmentService.update_status(
+                appointment=appointment,
+                new_status=new_status,
+            )
+
+            messages.success(
+                request,
+                "Appointment status updated successfully.",
+            )
+
+        except ValueError as error:
+
+            messages.error(
+                request,
+                str(error),
+            )
+
+    return redirect(
+        "appointments:detail",
+        pk=appointment.pk,
     )
