@@ -62,14 +62,22 @@ class Appointment(models.Model):
         ]
 
         constraints = [
+
             models.UniqueConstraint(
                 fields=[
                     "doctor",
                     "appointment_date",
                     "appointment_time",
                 ],
-                name="unique_doctor_appointment_slot",
+                condition=models.Q(
+                    status__in=[
+                        AppointmentStatus.SCHEDULED,
+                        AppointmentStatus.CONFIRMED,
+                    ]
+                ),
+                name="unique_active_doctor_appointment_slot",
             ),
+
         ]
 
     def __str__(self):

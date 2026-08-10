@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}
+Update Appointment
+{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4">
+    Reschedule Appointment
+</h3>
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <p>
+            <strong>Appointment:</strong>
+            {{ appointment.appointment_id }}
+        </p>
+
+        <p>
+            <strong>Patient:</strong>
+            {{ appointment.patient.patient_id }}
+            -
+            {{ appointment.patient.user.get_full_name }}
+        </p>
+
+        <p>
+            <strong>Doctor:</strong>
+            {{ appointment.doctor.doctor_id }}
+            -
+            {{ appointment.doctor.user.get_full_name }}
+        </p>
+
+    </div>
+
+</div>
+
+<form method="post">
+
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+        {{ form.appointment_date.label_tag }}
+        {{ form.appointment_date }}
+        {{ form.appointment_date.errors }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.appointment_time.label_tag }}
+        {{ form.appointment_time }}
+        {{ form.appointment_time.errors }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.reason_for_visit.label_tag }}
+        {{ form.reason_for_visit }}
+        {{ form.reason_for_visit.errors }}
+    </div>
+
+    <button
+        type="submit"
+        class="btn btn-primary">
+
+        Update Appointment
+
+    </button>
+
+    <a
+        href="{% url 'appointments:detail' appointment.pk %}"
+        class="btn btn-secondary">
+
+        Cancel
+
+    </a>
+
+</form>
+
+{% endblock %}

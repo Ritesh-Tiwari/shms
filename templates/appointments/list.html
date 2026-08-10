@@ -38,7 +38,12 @@ Appointments
             <tr>
 
                 <td>
-                    {{ appointment.appointment_id }}
+                    <a
+                        href="{% url 'appointments:detail' appointment.pk %}">
+
+                        {{ appointment.appointment_id }}
+
+                    </a>
                 </td>
 
                 <td>
