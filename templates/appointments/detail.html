@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}
+Appointment Details
+{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4">
+    Appointment Details
+</h3>
+
+<div class="card">
+
+    <div class="card-body">
+
+        <h5 class="card-title">
+            {{ appointment.appointment_id }}
+        </h5>
+
+        <hr>
+
+        <p>
+            <strong>Patient:</strong>
+            {{ appointment.patient.patient_id }}
+            -
+            {{ appointment.patient.user.get_full_name }}
+        </p>
+
+        <p>
+            <strong>Doctor:</strong>
+            {{ appointment.doctor.doctor_id }}
+            -
+            {{ appointment.doctor.user.get_full_name }}
+        </p>
+
+        <p>
+            <strong>Date:</strong>
+            {{ appointment.appointment_date }}
+        </p>
+
+        <p>
+            <strong>Time:</strong>
+            {{ appointment.appointment_time }}
+        </p>
+
+        <p>
+            <strong>Reason:</strong>
+            {{ appointment.reason_for_visit }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            {{ appointment.get_status_display }}
+        </p>
+
+        <p>
+            <strong>Created:</strong>
+            {{ appointment.created_at }}
+        </p>
+
+
+        <a
+            href="{% url 'appointments:list' %}"
+            class="btn btn-secondary">
+
+            Back to Appointments
+
+        </a>
+
+        {% if appointment.status != "CANCELLED" and appointment.status != "COMPLETED" %}
+
+        <a
+            href="{% url 'appointments:update' appointment.pk %}"
+            class="btn btn-primary">
+
+            Reschedule / Update
+
+        </a>
+
+        <a
+            href="{% url 'appointments:cancel' appointment.pk %}"
+            class="btn btn-danger">
+
+            Cancel Appointment
+
+        </a>
+
+    {% endif %}
+
+    {% if appointment.status == "SCHEDULED" %}
+
+    <form
+        method="post"
+        action="{% url 'appointments:update_status' appointment.pk %}"
+        class="d-inline">
+
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="status"
+            value="CONFIRMED">
+
+        <button
+            type="submit"
+            class="btn btn-success">
+
+            Confirm Appointment
+
+        </button>
+
+    </form>
+
+    {% elif appointment.status == "CONFIRMED" %}
+
+        <form
+            method="post"
+            action="{% url 'appointments:update_status' appointment.pk %}"
+            class="d-inline">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="status"
+                value="COMPLETED">
+
+            <button
+                type="submit"
+                class="btn btn-success">
+
+                Mark Completed
+
+            </button>
+
+        </form>
+
+    {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

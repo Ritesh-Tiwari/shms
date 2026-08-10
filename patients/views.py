@@ -122,14 +122,23 @@ def patient_detail(request, pk):
         pk=pk,
     )
 
+    appointments = (
+        patient.appointments
+        .select_related("doctor__user")
+        .order_by(
+            "-appointment_date",
+            "-appointment_time",
+        )
+    )
+
     return render(
         request,
         "patients/detail.html",
         {
             "patient": patient,
+            "appointments": appointments,
         },
     )
-
 
 
 @role_required(
