@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2>
+            Prescription Details
+        </h2>
+
+        <a
+            href="{% url 'appointments:detail' prescription.appointment.pk %}"
+            class="btn btn-secondary">
+
+            Back to Appointment
+
+        </a>
+
+    </div>
+
+
+    <!-- Prescription Information -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+            Prescription Information
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Prescription ID:</strong>
+
+                    {{ prescription.prescription_id }}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Appointment ID:</strong>
+
+                    {{ prescription.appointment.appointment_id }}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Patient:</strong>
+
+                    {{ prescription.appointment.patient.user.get_full_name }}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Doctor:</strong>
+
+                    {{ prescription.appointment.doctor.user.get_full_name }}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Appointment Date:</strong>
+
+                    {{ prescription.appointment.appointment_date }}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>Appointment Time:</strong>
+
+                    {{ prescription.appointment.appointment_time|time:"h:i A" }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Diagnosis -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+            Diagnosis
+        </div>
+
+        <div class="card-body">
+
+            {{ prescription.diagnosis|linebreaks }}
+
+        </div>
+
+    </div>
+
+
+    <!-- Medicines -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+                Medicines
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Medicine</th>
+                            <th>Dosage</th>
+                            <th>Frequency</th>
+                            <th>Duration</th>
+                            <th>Instructions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for medicine in prescription.medicines.all %}
+
+                            <tr>
+
+                                <td>
+                                    {{ medicine.medicine_name }}
+                                </td>
+
+                                <td>
+                                    {{ medicine.dosage }}
+                                </td>
+
+                                <td>
+                                    {{ medicine.frequency }}
+                                </td>
+
+                                <td>
+                                    {{ medicine.duration }}
+                                </td>
+
+                                <td>
+                                    {{ medicine.instructions|default:"-" }}
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td
+                                    colspan="5"
+                                    class="text-center">
+
+                                    No medicines found.
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Remarks -->
+
+    {% if prescription.remarks %}
+
+        <div class="card mb-4">
+
+            <div class="card-header">
+                Remarks
+            </div>
+
+            <div class="card-body">
+
+                {{ prescription.remarks|linebreaks }}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="text-muted">
+
+        Created:
+        {{ prescription.created_at|date:"d M Y, h:i A" }}
+
+    </div>
+
+</div>
+
+{% endblock %}

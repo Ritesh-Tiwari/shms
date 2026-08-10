@@ -57,6 +57,7 @@ def create_appointment(request):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.DOCTOR,
 )
 def appointment_list(request):
 
@@ -147,6 +148,7 @@ def appointment_list(request):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.DOCTOR,
 )
 def appointment_detail(request, pk):
 
@@ -229,6 +231,7 @@ def update_appointment(request, pk):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.DOCTOR,
 )
 def cancel_appointment(request, pk):
 
@@ -281,6 +284,7 @@ def cancel_appointment(request, pk):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.DOCTOR,
 )
 def update_appointment_status(request, pk):
 
