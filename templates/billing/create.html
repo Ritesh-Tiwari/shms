@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Create Bill</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <h5>Appointment Details</h5>
+
+            <p>
+                <strong>Appointment:</strong>
+                {{ appointment.appointment_id }}
+            </p>
+
+            <p>
+                <strong>Patient:</strong>
+                {{ appointment.patient.patient_id }}
+                -
+                {{ appointment.patient.user.get_full_name }}
+            </p>
+
+            <p>
+                <strong>Doctor:</strong>
+                {{ appointment.doctor.doctor_id }}
+                -
+                {{ appointment.doctor.user.get_full_name }}
+            </p>
+
+            <p>
+                <strong>Consultation Fee:</strong>
+                ₹{{ appointment.doctor.consultation_fee }}
+            </p>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <h5>Billing Details</h5>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Create Bill
+                </button>
+
+                <a
+                    href="{% url 'appointments:detail' appointment.pk %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

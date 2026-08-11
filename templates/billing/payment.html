@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Add Payment</h2>
+
+    <!-- Bill Summary -->
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <h5>Bill Summary</h5>
+
+            <p>
+                <strong>Bill ID:</strong>
+                {{ billing.bill_id }}
+            </p>
+
+            <p>
+                <strong>Patient:</strong>
+                {{ billing.patient.patient_id }}
+                -
+                {{ billing.patient.user.get_full_name }}
+            </p>
+
+            <p>
+                <strong>Total Bill:</strong>
+                ₹{{ billing.total_amount }}
+            </p>
+
+            <p>
+                <strong>Already Paid:</strong>
+                ₹{{ paid_amount }}
+            </p>
+
+            <p>
+                <strong>Remaining Amount:</strong>
+                ₹{{ remaining_amount }}
+            </p>
+
+        </div>
+    </div>
+
+
+    <!-- Payment Form -->
+    <div class="card">
+
+        <div class="card-body">
+
+            <h5>Payment Details</h5>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Record Payment
+                </button>
+
+                <a
+                    href="{% url 'billing:detail' billing.pk %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
