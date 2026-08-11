@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2>
+            Update Prescription
+        </h2>
+
+        <a
+            href="{% url 'prescriptions:detail' prescription.pk %}"
+            class="btn btn-secondary">
+
+            Back
+
+        </a>
+
+    </div>
+
+
+    <!-- Appointment Information -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+            Appointment Information
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-2">
+
+                    <strong>Appointment ID:</strong>
+
+                    {{ prescription.appointment.appointment_id }}
+
+                </div>
+
+
+                <div class="col-md-6 mb-2">
+
+                    <strong>Patient:</strong>
+
+                    {{ prescription.appointment.patient.user.get_full_name }}
+
+                </div>
+
+
+                <div class="col-md-6 mb-2">
+
+                    <strong>Doctor:</strong>
+
+                    {{ prescription.appointment.doctor.user.get_full_name }}
+
+                </div>
+
+
+                <div class="col-md-6 mb-2">
+
+                    <strong>Date:</strong>
+
+                    {{ prescription.appointment.appointment_date }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+
+        {% if formset.non_form_errors %}
+            <div class="alert alert-danger">
+                {% for error in formset.non_form_errors %}
+                    <div>
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Prescription Information -->
+
+        <div class="card mb-4">
+
+            <div class="card-header">
+                Prescription Information
+            </div>
+
+            <div class="card-body">
+
+                {{ form.as_p }}
+
+            </div>
+
+        </div>
+
+
+        <!-- Medicines -->
+
+        <div class="card mb-4">
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    Medicines
+                </h5>
+
+                <button
+                    type="button"
+                    id="add-medicine"
+                    class="btn btn-sm btn-primary">
+
+                    + Add Medicine
+
+                </button>
+
+            </div>
+
+
+            <div class="card-body">
+
+                {{ formset.management_form }}
+
+                <div id="medicine-forms">
+
+                    {% for medicine_form in formset %}
+
+                        <div class="medicine-form border rounded p-3 mb-3">
+
+                            {{ medicine_form.id }}
+
+                            <div class="row">
+
+                                <div class="col-md-3 mb-3">
+
+                                    <label class="form-label">
+                                        Medicine Name
+                                    </label>
+
+                                    {{ medicine_form.medicine_name }}
+
+                                </div>
+
+
+                                <div class="col-md-2 mb-3">
+
+                                    <label class="form-label">
+                                        Dosage
+                                    </label>
+
+                                    {{ medicine_form.dosage }}
+
+                                </div>
+
+
+                                <div class="col-md-2 mb-3">
+
+                                    <label class="form-label">
+                                        Frequency
+                                    </label>
+
+                                    {{ medicine_form.frequency }}
+
+                                </div>
+
+
+                                <div class="col-md-2 mb-3">
+
+                                    <label class="form-label">
+                                        Duration
+                                    </label>
+
+                                    {{ medicine_form.duration }}
+
+                                </div>
+
+
+                                <div class="col-md-2 mb-3">
+
+                                    <label class="form-label">
+                                        Instructions
+                                    </label>
+
+                                    {{ medicine_form.instructions }}
+
+                                </div>
+
+
+                                <div class="col-md-1 mb-3 d-flex align-items-end">
+
+                                    {{ medicine_form.DELETE.as_hidden }}
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-danger remove-medicine">
+
+                                        Remove
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- Empty Form -->
+
+                <template id="empty-form">
+
+                    <div class="medicine-form border rounded p-3 mb-3">
+
+                        {{ formset.empty_form.id }}
+
+                        <div class="row">
+
+                            <div class="col-md-3 mb-3">
+
+                                <label class="form-label">
+                                    Medicine Name
+                                </label>
+
+                                {{ formset.empty_form.medicine_name }}
+
+                            </div>
+
+
+                            <div class="col-md-2 mb-3">
+
+                                <label class="form-label">
+                                    Dosage
+                                </label>
+
+                                {{ formset.empty_form.dosage }}
+
+                            </div>
+
+
+                            <div class="col-md-2 mb-3">
+
+                                <label class="form-label">
+                                    Frequency
+                                </label>
+
+                                {{ formset.empty_form.frequency }}
+
+                            </div>
+
+
+                            <div class="col-md-2 mb-3">
+
+                                <label class="form-label">
+                                    Duration
+                                </label>
+
+                                {{ formset.empty_form.duration }}
+
+                            </div>
+
+
+                            <div class="col-md-2 mb-3">
+
+                                <label class="form-label">
+                                    Instructions
+                                </label>
+
+                                {{ formset.empty_form.instructions }}
+
+                            </div>
+
+
+                            <div class="col-md-1 mb-3 d-flex align-items-end">
+
+                                {{ formset.empty_form.DELETE.as_hidden }}
+
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-danger remove-medicine">
+
+                                    Remove
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </template>
+
+            </div>
+
+        </div>
+
+
+        <div class="mb-4">
+
+            <button
+                type="submit"
+                class="btn btn-success">
+
+                Save Changes
+
+            </button>
+
+            <a
+                href="{% url 'prescriptions:detail' prescription.pk %}"
+                class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const container =
+            document.getElementById(
+                "medicine-forms"
+            );
+
+        const addButton =
+            document.getElementById(
+                "add-medicine"
+            );
+
+        const totalForms =
+            document.getElementById(
+                "id_medicines-TOTAL_FORMS"
+            );
+
+        const emptyFormTemplate =
+            document.getElementById(
+                "empty-form"
+            );
+
+
+        addButton.addEventListener(
+            "click",
+            function () {
+
+                const formIndex =
+                    parseInt(
+                        totalForms.value
+                    );
+
+                let template =
+                    emptyFormTemplate.innerHTML;
+
+                template =
+                    template.replace(
+                        /__prefix__/g,
+                        formIndex
+                    );
+
+                container.insertAdjacentHTML(
+                    "beforeend",
+                    template
+                );
+
+                totalForms.value =
+                    formIndex + 1;
+
+            }
+        );
+
+
+        container.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !event.target.classList.contains(
+                        "remove-medicine"
+                    )
+                ) {
+                    return;
+                }
+
+
+                const medicineForm =
+                    event.target.closest(
+                        ".medicine-form"
+                    );
+
+
+                const deleteInput =
+                    medicineForm.querySelector(
+                        'input[name$="-DELETE"]'
+                    );
+
+
+                if (deleteInput) {
+
+                    deleteInput.value = "on";
+
+                }
+
+
+                medicineForm.style.display =
+                    "none";
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

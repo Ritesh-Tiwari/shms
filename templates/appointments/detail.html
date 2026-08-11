@@ -138,6 +138,36 @@ Appointment Details
 
     {% endif %}
 
+    {% if appointment.status == "COMPLETED" %}
+
+        {% if appointment.doctor.user == request.user %}
+
+            {% if not appointment.prescription %}
+
+                <a
+                    href="{% url 'prescriptions:create' appointment.pk %}"
+                    class="btn btn-primary">
+
+                    Create Prescription
+
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{% url 'prescriptions:detail' appointment.prescription.pk %}"
+                    class="btn btn-success">
+
+                    View Prescription
+
+                </a>
+
+            {% endif %}
+
+        {% endif %}
+
+    {% endif %}
+
     </div>
 
 </div>
