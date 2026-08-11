@@ -9,7 +9,13 @@
         <h2>
             Prescription Details
         </h2>
+        <a
+            href="{% url 'prescriptions:update' prescription.pk %}"
+            class="btn btn-danger">
 
+            Edit Prescription
+
+        </a>
         <a
             href="{% url 'appointments:detail' prescription.appointment.pk %}"
             class="btn btn-secondary">

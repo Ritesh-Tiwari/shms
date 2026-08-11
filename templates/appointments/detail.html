@@ -155,7 +155,7 @@ Appointment Details
             {% else %}
 
                 <a
-                    href="#"
+                    href="{% url 'prescriptions:detail' appointment.prescription.pk %}"
                     class="btn btn-success">
 
                     View Prescription

@@ -1,6 +1,5 @@
 from django import forms
-from django.forms import inlineformset_factory
-
+from django.forms import inlineformset_factory, BaseInlineFormSet
 
 from .models import Prescription, PrescriptionMedicine
 
@@ -89,10 +88,44 @@ class PrescriptionMedicineForm(forms.ModelForm):
             ),
         }
 
+
+class BasePrescriptionMedicineFormSet(
+    BaseInlineFormSet
+):
+
+    def clean(self):
+
+        super().clean()
+
+        medicine_count = 0
+
+        for form in self.forms:
+
+            if not form.cleaned_data:
+                continue
+
+            if form.cleaned_data.get(
+                "DELETE",
+                False,
+            ):
+                continue
+
+            if form.cleaned_data.get(
+                "medicine_name"
+            ):
+                medicine_count += 1
+
+        if medicine_count == 0:
+
+            raise forms.ValidationError(
+                "At least one medicine is required."
+            )
+
 PrescriptionMedicineFormSet = inlineformset_factory(
     Prescription,
     PrescriptionMedicine,
     form=PrescriptionMedicineForm,
+    formset=BasePrescriptionMedicineFormSet,
     extra=1,
     can_delete=True,
 )

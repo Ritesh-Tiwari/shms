@@ -148,3 +148,82 @@ def prescription_detail(request, pk):
             "prescription": prescription,
         },
     )
+
+
+@role_required(
+    UserRole.DOCTOR,
+)
+def update_prescription(request, pk):
+
+    prescription = get_object_or_404(
+        Prescription.objects.select_related(
+            "appointment__patient__user",
+            "appointment__doctor__user",
+        ).prefetch_related(
+            "medicines",
+        ),
+        pk=pk,
+    )
+
+    # Only the assigned doctor can update
+    # this prescription.
+    if prescription.appointment.doctor.user != request.user:
+
+        messages.error(
+            request,
+            "You do not have permission to update "
+            "this prescription.",
+        )
+
+        return redirect(
+            "prescriptions:detail",
+            pk=prescription.pk,
+        )
+
+    if request.method == "POST":
+
+        form = PrescriptionForm(
+            request.POST,
+            instance=prescription,
+        )
+
+        formset = PrescriptionMedicineFormSet(
+            request.POST,
+            instance=prescription,
+        )
+
+        if form.is_valid() and formset.is_valid():
+
+            form.save()
+
+            formset.save()
+
+            messages.success(
+                request,
+                "Prescription updated successfully.",
+            )
+
+            return redirect(
+                "prescriptions:detail",
+                pk=prescription.pk,
+            )
+
+    else:
+
+        form = PrescriptionForm(
+            instance=prescription,
+        )
+
+        formset = PrescriptionMedicineFormSet(
+            instance=prescription,
+        )
+
+    return render(
+        request,
+        "prescriptions/update.html",
+        {
+            "form": form,
+            "formset": formset,
+            "prescription": prescription,
+        },
+    )

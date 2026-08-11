@@ -18,4 +18,10 @@ urlpatterns = [
         views.prescription_detail,
         name="detail",
     ),
+
+    path(
+        "<int:pk>/update/",
+        views.update_prescription,
+        name="update",
+    ),
 ]
