@@ -172,4 +172,58 @@ Appointment Details
 
 </div>
 
+<div class="card mb-4 mt-4">
+    <div class="card-body">
+
+        <h5 class="card-title">Billing</h5>
+
+        {% if billing %}
+
+            <p>
+                <strong>Bill ID:</strong>
+                {{ billing.bill_id }}
+            </p>
+
+            <p>
+                <strong>Total Amount:</strong>
+                ₹{{ billing.total_amount }}
+            </p>
+
+            <p>
+                <strong>Payment Status:</strong>
+                {{ billing.get_payment_status_display }}
+            </p>
+
+            <a
+                href="{% url 'billing:detail' billing.pk %}"
+                class="btn btn-primary"
+            >
+                View Bill
+            </a>
+
+        {% elif appointment.status == "COMPLETED" %}
+
+            <p class="text-muted">
+                No bill has been created for this appointment.
+            </p>
+
+            <a
+                href="{% url 'billing:create' appointment.pk %}"
+                class="btn btn-primary"
+            >
+                Create Bill
+            </a>
+
+        {% else %}
+
+            <p class="text-muted">
+                Billing will be available after the appointment
+                is completed.
+            </p>
+
+        {% endif %}
+
+    </div>
+</div>
+
 {% endblock %}

@@ -156,8 +156,15 @@ def appointment_detail(request, pk):
         Appointment.objects.select_related(
             "patient__user",
             "doctor__user",
+            "billing",
         ),
         pk=pk,
+    )
+
+    billing = getattr(
+        appointment,
+        "billing",
+        None,
     )
 
     return render(
@@ -165,8 +172,11 @@ def appointment_detail(request, pk):
         "appointments/detail.html",
         {
             "appointment": appointment,
+            "billing": billing,
         },
     )
+
+
 
 @role_required(
     UserRole.ADMIN,
