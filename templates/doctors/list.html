@@ -6,145 +6,342 @@ doctors
 
 {% block content %}
 
-<h2 class="mb-4">Doctors</h2>
-<form method="get" class="mb-3">
 
-    <div class="input-group">
+<main class="relative min-h-screen bg-background">
+    <div class="flex flex-col w-full p-lg gap-lg">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md mb-md">
+            <div>
+                <h1 class="text-display-lg font-display-lg text-on-surface mb-xs">Doctors</h1>
+                <p class="text-body-lg font-body-lg text-on-surface-variant">View and manage clinical staff.</p>
+            </div>
+            <a
+                class="bg-primary hover:bg-primary/90 text-on-primary px-lg py-3 rounded-full text-label-md font-label-md flex items-center gap-sm transition-all shadow-md hover:shadow-lg whitespace-nowrap self-start sm:self-auto group relative overflow-hidden"
+                href="{% url 'doctors:register' %}">
+                <span
+                    class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+                <span class="material-symbols-outlined text-[20px] relative z-10">add</span>
+                <span class="relative z-10">Add New Doctor</span>
+            </a>
+        </div>
+        <form  method="get"class="bg-surface-container rounded-2xl p-md flex flex-col md:flex-row gap-md shadow-sm">
+            <div class="flex-1 relative group">
+                <span
+                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">search</span>
+                <input
+                    class="w-full bg-surface-container-lowest rounded-xl py-3 pl-12 pr-4 text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm group-focus-within:shadow-md"
+                    name ="search" value="{{ search }}" placeholder="Search by name, ID, or specialization..." type="text" />
+            </div>
+            <div class="flex flex-wrap gap-sm">
+                <div class="relative group min-w-[160px]">
+                    <select
+                        class="w-full appearance-none bg-surface-container-lowest rounded-xl py-3 pl-4 pr-10 text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm cursor-pointer group-hover:bg-surface-container-low">
+                        <option value="">All Specialties</option>
+                        <option value="cardiology">Cardiology</option>
+                        <option value="pediatrics">Pediatrics</option>
+                        <option value="orthopedics">Orthopedics</option>
+                        <option value="neurology">Neurology</option>
+                    </select>
+                    <span
+                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none group-hover:text-primary transition-colors">expand_more</span>
+                </div>
+                <div class="relative group min-w-[160px]">
+                    <select
+                        class="w-full appearance-none bg-surface-container-lowest rounded-xl py-3 pl-4 pr-10 text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm cursor-pointer group-hover:bg-surface-container-low">
+                        <option value="">All Statuses</option>
+                        <option value="available">Available Today</option>
+                        <option value="in_surgery">In Surgery</option>
+                        <option value="on_leave">On Leave</option>
+                    </select>
+                    <span
+                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none group-hover:text-primary transition-colors">expand_more</span>
+                </div>
+                <button aria-label="More filters"
+                    class="p-3 bg-surface-container-low hover:bg-surface-container-highest text-on-surface rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-center group">
+                    <span
+                        class="material-symbols-outlined group-hover:text-primary transition-colors">tune</span>
+                </button>
+            </div>
+        </form>
+        <div class="bg-surface-container-lowest rounded-3xl shadow-md overflow-hidden relative">
+            <div
+                class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-50 pointer-events-none">
+            </div>
+            <div class="overflow-x-auto relative z-10">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr
+                            class="bg-surface-container-low/50 text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+                            <th class="py-4 px-md whitespace-nowrap first:pl-lg last:pr-lg">Doctor</th>
+                            <th class="py-4 px-md whitespace-nowrap hidden sm:table-cell">ID</th>
+                            <th class="py-4 px-md whitespace-nowrap">Specialization</th>
+                            <th class="py-4 px-md whitespace-nowrap hidden md:table-cell">Exp.</th>
+                            <th class="py-4 px-md whitespace-nowrap hidden lg:table-cell">Fee</th>
+                            <th class="py-4 px-md whitespace-nowrap">Today's Status</th>
+                            <th class="py-4 px-md whitespace-nowrap text-right last:pr-lg">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-body-sm font-body-sm text-on-surface">
+                         {% for doctor in page_obj  %}
+                        <tr
+                            class="group hover:bg-surface-container-low/30 transition-colors border-b border-surface-container-high/50 last:border-0 relative">
+                            <td class="py-4 px-md first:pl-lg last:pr-lg relative">
+                                <div
+                                    class="absolute left-0 top-0 bottom-0 w-1 bg-secondary rounded-r opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div class="flex items-center gap-sm">
+                                    <img class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-300"
+                                        data-alt="A professional headshot of Dr. Sarah Wilson, a female cardiologist in her 40s. She has dark hair, a warm smile, and is wearing a white lab coat over a professional blue blouse. High quality, well-lit studio portrait against a soft grey background. Clean, medical aesthetic suitable for a high-end hospital directory."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqYucwdffoIDnC7xlOKTlPBnoNefCuBS95EgDt9IrIQ4ad4ux3YKzq3RNg76ooW5_042KTXqv2DV0CdevhcSCAiPxIg6fPVqXWV7KAM-TZVwtI6opVBP4OpHfzs5jJv3Y0tuYcbApHNbBDeb0okbm5K9h_yBPAPA7adQvk7aXFtNzwyqTVzCCH8vBjNzDF0z7SR6Cj4MsNNIjen_46XNa70kyTKE5LPEzNxxwCTp0Y4eH3aVLISeJC" />
+                                    <div>
+                                        <div
+                                            class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors">
+                                            {{ doctor.user.get_full_name }}</div>
+                                        <div
+                                            class="text-label-sm font-label-sm text-on-surface-variant/70 sm:hidden">
+                                            {{ doctor.doctor_id }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-md hidden sm:table-cell text-on-surface-variant font-mono">{{ doctor.doctor_id }}</td>
+                            <td class="py-4 px-md">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded-md bg-error-container/30 text-on-error-container text-label-sm font-label-sm whitespace-nowrap shadow-sm backdrop-blur-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-error mr-1.5 animate-pulse"></span>
+                                    {{ doctor.specialization }}
+                                </span>
+                            </td>
+                            <td class="py-4 px-md hidden md:table-cell text-on-surface-variant">{{ doctor.experience }} Yrs</td>
+                            <td class="py-4 px-md hidden lg:table-cell font-medium">₹{{ doctor.consultation_fee }}</td>
+                            <td class="py-4 px-md">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-on-secondary-container text-label-sm font-label-sm">
+                                    <span class="material-symbols-outlined text-[16px] mr-1">check_circle</span>
+                                    {{ doctor.get_availability_display }}
+                                </span>
+                            </td>
+                            <td class="py-4 px-md text-right last:pr-lg">
+                                <div
+                                    class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100">
+                                    <a href="{% url 'doctors:detail' doctor.pk %}"
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="View Profile">
+                                        <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                    </a>
+                                    <a href="{% url 'doctors:update' doctor.pk %}"
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="Edit Schedule">
+                                        <span
+                                            class="material-symbols-outlined text-[20px]">calendar_month</span>
+                                    </a>
+                                    <button
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="More Actions">
+                                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                    </button>
+                                </div>
+                                <button
+                                    class="p-2 text-on-surface-variant sm:hidden group-hover:hidden transition-opacity">
+                                    <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr
+                            class="group hover:bg-surface-container-low/30 transition-colors border-b border-surface-container-high/50 last:border-0 relative">
+                            <td class="py-4 px-md hidden sm:table-cell text-on-surface-variant font-mono"> No Doctors found.
+                            </td>
+                        </tr>
 
-        <input
-            type="text"
-            name="search"
-            value="{{ search }}"
-            class="form-control"
-            placeholder="Search by Doctor ID, Name, Email or Specialization">
 
-        <button
-            class="btn btn-primary"
-            type="submit">
 
-            Search
+                        {% endfor %}
+                        <tr
+                            class="group hover:bg-surface-container-low/30 transition-colors border-b border-surface-container-high/50 last:border-0 relative">
+                            <td class="py-4 px-md first:pl-lg last:pr-lg relative">
+                                <div
+                                    class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary rounded-r opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div class="flex items-center gap-sm">
+                                    <img class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-300"
+                                        data-alt="A professional headshot of Dr. James Chen, a male pediatrician in his 30s. He has short dark hair, glasses, and a friendly, approachable demeanor. He is wearing a white lab coat over a light blue patterned shirt. High quality, well-lit studio portrait against a soft grey background. Clean, medical aesthetic suitable for a high-end hospital directory."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoAd4_7byarb6oL9NS3GRLrCj8YUbEM5NvgyH12cdvqdsJxFD9xuoBU9UmQ4SfwQofkKubLt_HYXCr_CdajFRa-bwyyxveJ2OT9BaVBwjnMSTWAO4hqdJ7eVHplvo81K_zuXqXAiT96IF7bO5ERAwL0yTwuOPORBxM-n1Z12gleBImNNolKmtKczFGTMNgCg2wcP-Kyz6LcDa9pnHcmBhTn23F6TXlycAuyGij2rPNyMMql5s-2sf5" />
+                                    <div>
+                                        <div
+                                            class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors">
+                                            Dr. James Chen</div>
+                                        <div
+                                            class="text-label-sm font-label-sm text-on-surface-variant/70 sm:hidden">
+                                            DR-105</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-md hidden sm:table-cell text-on-surface-variant font-mono">DR-105
+                            </td>
+                            <td class="py-4 px-md">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded-md bg-tertiary-container/30 text-on-tertiary-container text-label-sm font-label-sm whitespace-nowrap shadow-sm backdrop-blur-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-tertiary mr-1.5"></span>
+                                    Pediatrics
+                                </span>
+                            </td>
+                            <td class="py-4 px-md hidden md:table-cell text-on-surface-variant">8 Yrs</td>
+                            <td class="py-4 px-md hidden lg:table-cell font-medium">₹1,200</td>
+                            <td class="py-4 px-md">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded-full bg-tertiary-container/20 text-on-tertiary-fixed-variant text-label-sm font-label-sm">
+                                    <span
+                                        class="material-symbols-outlined text-[16px] mr-1">flight_takeoff</span>
+                                    On Leave
+                                </span>
+                            </td>
+                            <td class="py-4 px-md text-right last:pr-lg">
+                                <div
+                                    class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100">
+                                    <button
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="View Profile">
+                                        <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                    </button>
+                                    <button
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="Edit Schedule">
+                                        <span
+                                            class="material-symbols-outlined text-[20px]">calendar_month</span>
+                                    </button>
+                                    <button
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="More Actions">
+                                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                    </button>
+                                </div>
+                                <button
+                                    class="p-2 text-on-surface-variant sm:hidden group-hover:hidden transition-opacity">
+                                    <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr
+                            class="group hover:bg-surface-container-low/30 transition-colors border-b border-surface-container-high/50 last:border-0 relative">
+                            <td class="py-4 px-md first:pl-lg last:pr-lg relative">
+                                <div
+                                    class="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div class="flex items-center gap-sm">
+                                    <img class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-300"
+                                        data-alt="A professional headshot of Dr. Emily Reyes, a female orthopedic surgeon in her 50s. She has silver-streaked hair pulled back neatly, conveying experience and authority, with a reassuring expression. She is wearing green scrubs under an unbuttoned white lab coat. High quality, well-lit studio portrait against a soft grey background. Clean, medical aesthetic suitable for a high-end hospital directory."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY4X80MscuVuoGNemf6bhw-4VRsSNNHiDmK--hgkfCMvvdSCglBUFjQ32EcixxJEv2g76mLxihrKHO4QMj_0OTIhKMwl-td8WHe0ksjX2SiZxFLZySX77V_U4ddv3L7KGdRBXSRf2x-QIQpg_Et3IZULeXR2MrB9BnLJBGbuph7sOJ5SlOYIXO8Jxi9YxSAk77953acwyNZFrvY8cdjAw9ujoqW13GdKCONsBvxv1k6nKQ5Cz-SDd1" />
+                                    <div>
+                                        <div
+                                            class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors">
+                                            Dr. Emily Reyes</div>
+                                        <div
+                                            class="text-label-sm font-label-sm text-on-surface-variant/70 sm:hidden">
+                                            DR-112</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-md hidden sm:table-cell text-on-surface-variant font-mono">DR-112
+                            </td>
+                            <td class="py-4 px-md">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded-md bg-primary-container/30 text-on-primary-fixed-variant text-label-sm font-label-sm whitespace-nowrap shadow-sm backdrop-blur-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-primary mr-1.5"></span>
+                                    Orthopedics
+                                </span>
+                            </td>
+                            <td class="py-4 px-md hidden md:table-cell text-on-surface-variant">15 Yrs</td>
+                            <td class="py-4 px-md hidden lg:table-cell font-medium">₹2,000</td>
+                            <td class="py-4 px-md">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant text-label-sm font-label-sm">
+                                    <span class="material-symbols-outlined text-[16px] mr-1">healing</span>
+                                    In Surgery
+                                </span>
+                            </td>
+                            <td class="py-4 px-md text-right last:pr-lg">
+                                <div
+                                    class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100">
+                                    <button
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="View Profile">
+                                        <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                    </button>
+                                    <button
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="Edit Schedule">
+                                        <span
+                                            class="material-symbols-outlined text-[20px]">calendar_month</span>
+                                    </button>
+                                    <button
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="More Actions">
+                                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                    </button>
+                                </div>
+                                <button
+                                    class="p-2 text-on-surface-variant sm:hidden group-hover:hidden transition-opacity">
+                                    <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div
+                class="bg-surface-container-low px-lg py-sm flex items-center justify-between border-t border-surface-container-high/50 relative z-10">
+                <div class="text-body-sm text-on-surface-variant">Showing <span
+                        class="font-medium text-on-surface">{{ page_obj.start_index }}</span> to <span
+                        class="font-medium text-on-surface">{{ page_obj.end_index }}</span> of <span
+                        class="font-medium text-on-surface">{{ page_obj.paginator.count }}</span> Doctors</div>
+                <div class="flex items-center gap-xs">
+                     {% if page_obj.has_previous %}
+                     <a
+                        class="p-1 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                        disabled="">
+                        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+                </a>
+                    {% else %}
+                    <button
+                        class="p-1 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        disabled="">
+                        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+                    </button>
+                    {% endif %}
+                    <!-- Page Numbers -->
+                    {% for num in page_obj.paginator.page_range %}
 
-        </button>
+                        {% if page_obj.number == num %}
 
-        <a
-            href="{% url 'doctors:list' %}"
-            class="btn btn-secondary">
+                            <!-- Active page -->
+                            <button
+                                class="w-8 h-8 rounded-md bg-primary text-on-primary text-label-sm font-label-sm flex items-center justify-center shadow-sm"> {{ num }}</button>
+                   
+                        {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %} 
+                            <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                            class="w-8 h-8 rounded-md text-on-surface-variant hover:bg-surface-container text-label-sm font-label-sm flex items-center justify-center transition-colors">{{ num }}</a>
+                    
+                        {% endif %}
 
-            Reset
+                    {% endfor %}
 
-        </a>
-
+                    <!-- Next -->
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                        class="p-1 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                        </a>
+                    
+                    {% else %}
+                        <button
+                        class="p-1 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                    </button>
+                     {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
+</main>
 
-</form>
-<table class="table table-bordered table-striped">
-
-    <thead>
-        <tr>
-            <th>Doctor ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Specialization</th>
-            <th>Experience</th>
-            <th>Consultation Fee</th>
-            <th>Availability</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        {% for doctor in page_obj  %}
-
-        <tr>
-
-            <td>{{ doctor.doctor_id }}</td>
-
-            <td>
-               <a href="{% url 'doctors:detail' doctor.pk %}">
-                    {{ doctor.user.get_full_name }}
-                </a>
-            </td>
-
-            <td>{{ doctor.user.email }}</td>
-            <td>{{ doctor.specialization }}</td>
-            <td>{{ doctor.experience }}</td>
-            <td>{{ doctor.consultation_fee }}</td>
-            <td>{{ doctor.get_availability_display }}</td>
-
-            <td>
-                <a
-                    href="{% url 'doctors:detail' doctor.pk %}"
-                    class="btn btn-sm btn-primary">
-                    View
-                </a>
-            </td>
-
-        </tr>
-
-        {% empty %}
-
-        <tr>
-
-            <td colspan="5">
-                No doctors found.
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
-    </tbody>
-
-</table>
-
-<nav>
-
-    <ul class="pagination justify-content-center">
-
-        {% if page_obj.has_previous %}
-
-            <li class="page-item">
-
-                <a
-                    class="page-link"
-                    href="?page={{ page_obj.previous_page_number }}&search={{ search }}">
-
-                    Previous
-
-                </a>
-
-            </li>
-
-        {% endif %}
-
-        <li class="page-item active">
-
-            <span class="page-link">
-
-                {{ page_obj.number }}
-
-            </span>
-
-        </li>
-
-        {% if page_obj.has_next %}
-
-            <li class="page-item">
-
-                <a
-                    class="page-link"
-                    href="?page={{ page_obj.next_page_number }}&search={{ search }}">
-
-                    Next
-
-                </a>
-
-            </li>
-
-        {% endif %}
-
-    </ul>
-
-</nav>
 {% endblock %}

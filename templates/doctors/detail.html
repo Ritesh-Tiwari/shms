@@ -6,58 +6,257 @@ Doctor Details
 
 {% block content %}
 
-<h2 class="mb-4">
-    Doctor Details
-</h2>
 
-<table class="table table-bordered">
+<main class="relative min-h-screen bg-background">
+    <div class="flex flex-col w-full relative min-h-full">
+        <!-- Header Background Decor -->
+        <div
+            class="absolute top-0 left-0 right-0 h-64 bg-surface-container-high rounded-b-[2rem] overflow-hidden -z-10">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
+            <div
+                class="absolute -right-32 -top-32 w-[32rem] h-[32rem] bg-primary-fixed/30 rounded-full blur-3xl opacity-50">
+            </div>
+        </div>
+        <div class="px-xl pt-lg pb-xxl max-w-7xl mx-auto w-full flex flex-col gap-xl">
+            <!-- Profile Header -->
+            <div class="flex flex-col md:flex-row items-start md:items-end gap-lg pt-12 relative">
+                <div class="relative group">
+                    <div
+                        class="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-lg border-4 border-surface bg-surface flex-shrink-0 z-10 transition-transform duration-300 group-hover:scale-105">
+                        <img alt="Dr. Sarah Wilson" class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida/AP1WRLs6O-iUaZv7t3V8LYRvR8uFWCJ9Xx58Z4WnGDt1mF3aKT1iTQHmJY6VQgyFrt9nOXGybqbLrvVzdG0bpr1va6tIrSQAixfXFsCzoRRMSiY8r_Qijoe_PwnCNmUpnjud8NIShuqZY_VxvwdYLcxn4fLYCxacfH3hnEeuDsXCJ8ESgbG4-Fj-ZYjZ9bFDNij8b5YuV5fdK3u4w5WuVzYjSm-zAnQ9pygVp12-UUeqOs5yL4573u6iE9Hy5aw">
+                    </div>
+                    <div
+                        class="absolute -bottom-3 -right-3 bg-secondary text-on-secondary px-sm py-xs rounded-full flex items-center gap-xs shadow-md border-2 border-surface z-20">
+                        <span class="material-symbols-outlined text-[16px]">verified</span>
+                        <span class="font-label-sm uppercase tracking-wider">Active</span>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col justify-end pb-sm">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-md mb-xs">
+                        <div>
+                            <div class="flex items-center gap-sm mb-1">
+                                <span
+                                    class="font-label-md text-primary bg-primary/10 px-sm py-xs rounded-md">{{ doctor.doctor_id }}</span>
+                                <span
+                                    class="font-label-sm text-on-surface-variant uppercase tracking-widest opacity-80">{{ doctor.specialization }}</span>
+                            </div>
+                            <h1 class="font-display-lg text-on-surface m-0 leading-none">Dr. {{ doctor.user.get_full_name }}</h1>
+                        </div>
+                        <div class="flex items-center gap-sm mt-4 md:mt-0">
+                            <a href="{% url 'doctors:update' doctor.pk %}"
+                                class="bg-surface text-on-surface hover:bg-surface-container-high px-md py-sm rounded-lg font-label-md shadow-sm transition-all flex items-center gap-sm">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                                Edit Profile
+                            </a>
+                            <button
+                                class="bg-primary text-on-primary hover:bg-primary/90 px-md py-sm rounded-lg font-label-md shadow-md transition-all flex items-center gap-sm">
+                                <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                                View Schedule
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-body-lg text-on-surface-variant font-medium">{{ doctor.qualification }}</div>
+                </div>
+            </div>
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-md w-full">
+                <div
+                    class="bg-surface rounded-xl p-md flex items-center gap-md shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+                    <div
+                        class="absolute -right-4 -top-4 w-16 h-16 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors">
+                    </div>
+                    <div
+                        class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined">work_history</span>
+                    </div>
+                    <div>
+                        <div class="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
+                            Experience</div>
+                        <div class="text-title-md text-on-surface">{{ doctor.experience }} Yrs</div>
+                    </div>
+                </div>
 
-    <tr>
-        <th>Doctor ID</th>
-        <td>{{ doctor.doctor_id }}</td>
-    </tr>
+                <div
+                    class="bg-surface rounded-xl p-md flex items-center gap-md shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+                    <div
+                        class="absolute -right-4 -top-4 w-16 h-16 bg-tertiary/5 rounded-full blur-xl group-hover:bg-tertiary/10 transition-colors">
+                    </div>
+                    <div
+                        class="w-12 h-12 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined">payments</span>
+                    </div>
+                    <div>
+                        <div class="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Consult
+                            Fee</div>
+                        <div class="text-title-md text-on-surface">₹{{ doctor.consultation_fee }}</div>
+                    </div>
+                </div>
 
-    <tr>
-        <th>Name</th>
-        <td>{{ doctor.user.get_full_name }}</td>
-    </tr>
+            </div>
+            <!-- Content Area -->
+            <div class="flex flex-col lg:flex-row gap-xl w-full">
+                <!-- Main Content (Left & Middle logically combined for desktop) -->
+                <div class="flex-1 flex flex-col gap-lg">
+                    <!-- Tabs -->
+                    <div
+                        class="flex items-center gap-md border-b border-outline-variant/30 overflow-x-auto pb-xs">
+                        <button
+                            class="px-md py-sm font-label-md text-primary border-b-2 border-primary whitespace-nowrap">Overview</button>
+                        <button
+                            class="px-md py-sm font-label-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">Appointments</button>
+                        <button
+                            class="px-md py-sm font-label-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">My
+                            Patients</button>
+                        <button
+                            class="px-md py-sm font-label-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">Availability</button>
 
-    <tr>
-        <th>Email</th>
-        <td>{{ doctor.user.email }}</td>
-    </tr>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                        <!-- Column 1: Summary & Edu -->
+                        <div class="flex flex-col gap-lg">
+                            <div class="bg-surface rounded-xl p-lg shadow-sm flex flex-col gap-md">
+                                <h2 class="font-title-md text-on-surface flex items-center gap-sm">
+                                    <span class="material-symbols-outlined text-primary">person_book</span>
+                                    Professional Summary
+                                </h2>
+                                <p class="text-body-md text-on-surface-variant leading-relaxed">
+                                    Dr. Sarah Wilson is a highly accomplished Senior Cardiologist with over a
+                                    decade of experience in diagnosing and treating complex cardiovascular
+                                    conditions. Dedicated to providing patient-centered care and utilizing the
+                                    latest medical advancements.
+                                </p>
+                                <div class="pt-sm border-t border-outline-variant/30">
+                                    <div
+                                        class="text-label-sm text-on-surface-variant uppercase tracking-wider mb-sm">
+                                        Specializations</div>
+                                    <div class="flex flex-wrap gap-xs">
+                                        <span
+                                            class="bg-surface-container-high text-on-surface px-sm py-1 rounded-md text-label-md">Interventional
+                                            Cardiology</span>
+                                        <span
+                                            class="bg-surface-container-high text-on-surface px-sm py-1 rounded-md text-label-md">Heart
+                                            Failure Management</span>
+                                    </div>
+                                </div>
+                            </div>
 
-    <tr>
-        <th>Phone</th>
-        <td>{{ doctor.user.phone_number }}</td>
-    </tr>
+                        </div>
+                        <!-- Column 2: Schedule -->
+                        <div class="flex flex-col gap-lg">
+                            <div class="bg-surface rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
+                                <div
+                                    class="p-lg bg-surface-container-low border-b border-outline-variant/30 flex justify-between items-center">
+                                    <h2 class="font-title-md text-on-surface flex items-center gap-sm">
+                                        <span class="material-symbols-outlined text-primary">schedule</span>
+                                        Today's Schedule
+                                    </h2>
+                                    <span
+                                        class="text-label-sm text-on-surface-variant bg-surface px-sm py-1 rounded-full shadow-sm">Oct
+                                        24, 2023</span>
+                                </div>
+                                <div class="flex-1 p-md flex flex-col gap-sm overflow-y-auto max-h-[400px]">
+                                    <!-- Schedule Item -->
+                                    <div
+                                        class="bg-surface-container-lowest rounded-lg p-sm flex items-center gap-md border-l-4 border-primary hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        <div
+                                            class="w-16 flex flex-col items-center justify-center border-r border-outline-variant/30 pr-md">
+                                            <span class="font-title-md text-on-surface">09:00</span>
+                                            <span class="text-label-sm text-on-surface-variant">AM</span>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="font-label-md text-on-surface">Rajesh Kumar</div>
+                                            <div class="text-body-sm text-on-surface-variant">Consultation
+                                                (Follow-up)</div>
+                                        </div>
+                                        <div
+                                            class="w-2 h-2 rounded-full bg-primary mr-sm shadow-[0_0_8px_rgba(0,74,198,0.5)]">
+                                        </div>
+                                    </div>
+                                    <!-- Schedule Item -->
+                                    <div
+                                        class="bg-surface-container-lowest rounded-lg p-sm flex items-center gap-md border-l-4 border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer opacity-70">
+                                        <div
+                                            class="w-16 flex flex-col items-center justify-center border-r border-outline-variant/30 pr-md">
+                                            <span class="font-title-md text-on-surface">09:30</span>
+                                            <span class="text-label-sm text-on-surface-variant">AM</span>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="font-label-md text-on-surface">Priya Sharma</div>
+                                            <div class="text-body-sm text-on-surface-variant">ECG Review</div>
+                                        </div>
+                                        <div
+                                            class="text-label-sm text-on-surface-variant px-sm py-1 bg-surface-container rounded-md">
+                                            Completed</div>
+                                    </div>
+                                    <!-- Schedule Item -->
+                                    <div
+                                        class="bg-surface-container-lowest rounded-lg p-sm flex items-center gap-md border-l-4 border-secondary hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        <div
+                                            class="w-16 flex flex-col items-center justify-center border-r border-outline-variant/30 pr-md">
+                                            <span class="font-title-md text-on-surface">10:15</span>
+                                            <span class="text-label-sm text-on-surface-variant">AM</span>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="font-label-md text-on-surface">Amit Patel</div>
+                                            <div class="text-body-sm text-on-surface-variant">Initial Consult
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="text-label-sm text-secondary px-sm py-1 bg-secondary/10 rounded-md">
+                                            Waiting</div>
+                                    </div>
+                                    <div class="mt-auto pt-md flex justify-center">
+                                        <button
+                                            class="text-primary font-label-md hover:underline flex items-center gap-xs">
+                                            View Full Schedule <span
+                                                class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Sidebar -->
+                <div class="w-full lg:w-80 flex flex-col gap-lg">
+                    <!-- Location & Dept -->
 
-    <tr>
-        <th>Specialization</th>
-        <td>{{ doctor.get_specialization_display }}</td>
-    </tr>
-
-    <tr>
-        <th>Qualification</th>
-        <td>{{ doctor.qualification }}</td>
-    </tr>
-
-    <tr>
-        <th>Experience</th>
-        <td>{{ doctor.experience }} Years</td>
-    </tr>
-
-    <tr>
-        <th>Consultation Fee</th>
-        <td>₹ {{ doctor.consultation_fee }}</td>
-    </tr>
-
-    <tr>
-        <th>Availability</th>
-        <td>{{ doctor.get_availability_display }}</td>
-    </tr>
-
-</table>
+                    <!-- Contact Info -->
+                    <div class="bg-surface rounded-xl p-lg shadow-sm flex flex-col gap-md">
+                        <h3 class="font-label-sm text-on-surface-variant uppercase tracking-wider">Contact &amp;
+                            Info</h3>
+                        <div class="space-y-md">
+                            <div>
+                                <div
+                                    class="text-label-sm text-on-surface-variant mb-xs flex items-center gap-xs">
+                                    <span class="material-symbols-outlined text-[16px]">mail</span> Work Email
+                                </div>
+                                <div class="font-body-md text-on-surface">{{ doctor.user.email }}</div>
+                            </div>
+                            <div>
+                                <div
+                                    class="text-label-sm text-on-surface-variant mb-xs flex items-center gap-xs">
+                                    <span class="material-symbols-outlined text-[16px]">phone</span> Extension /
+                                    Phone
+                                </div>
+                                <div class="font-body-md text-on-surface">Ext: 4021 <br> +91 {{ doctor.user.phone_number }}</div>
+                            </div>
+                            <div class="pt-sm border-t border-outline-variant/30">
+                                <div
+                                    class="text-label-sm text-on-surface-variant mb-xs flex items-center gap-xs">
+                                    <span class="material-symbols-outlined text-[16px]">translate</span>
+                                    Languages
+                                </div>
+                                <div class="font-body-md text-on-surface">English, Hindi, Bengali</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
 
 <a

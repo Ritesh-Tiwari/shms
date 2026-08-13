@@ -1,11 +1,11 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 
-
+from appointments.models import Appointment
 from .models import Patient
 from accounts.forms import UserRegistrationForm
 from .forms import PatientForm
@@ -63,31 +63,42 @@ def register_patient(request):
         request,
         "patients/register.html",
         context,
+
     )
 
-@role_required(
-    UserRole.ADMIN,
-)
+
+
+@role_required(UserRole.ADMIN)
 def patient_list(request):
 
     query = request.GET.get("q", "").strip()
 
-    patients = Patient.objects.select_related("user")
+    last_appointments = (
+        Appointment.objects
+        .select_related("doctor__user")
+        .order_by("-appointment_date", "-id")
+    )
+
+    patients = (
+        Patient.objects
+        .select_related("user")
+        .prefetch_related(
+            Prefetch(
+                "appointments",
+                queryset=last_appointments,
+                to_attr="patient_appointments",
+            )
+        )
+    )
 
     if query:
 
         patients = patients.filter(
-
             Q(patient_id__icontains=query)
-
             | Q(user__first_name__icontains=query)
-
             | Q(user__last_name__icontains=query)
-
             | Q(user__email__icontains=query)
-
             | Q(user__phone_number__icontains=query)
-
         )
 
     paginator = Paginator(
@@ -101,7 +112,6 @@ def patient_list(request):
         page_number,
     )
 
-
     return render(
         request,
         "patients/list.html",
@@ -111,6 +121,7 @@ def patient_list(request):
             "query": query,
         },
     )
+
 
 @role_required(
     UserRole.ADMIN,

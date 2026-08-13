@@ -6,13 +6,398 @@ Appointments
 
 {% block content %}
 
+
+<main class="relative min-h-screen bg-background">
+    <div class="flex flex-col w-full h-full relative">
+        <div class="px-lg py-xl flex justify-between items-end relative z-10">
+            <div>
+                <h1 class="font-display-lg text-display-lg text-on-background tracking-tight mb-sm">Appointments
+                </h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl leading-relaxed">
+                    Manage daily schedules, coordinate patient visits, and track clinical workflows across
+                    departments.
+                </p>
+            </div>
+            <!-- <button
+                class="bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md px-lg py-3 rounded-full flex items-center gap-sm transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                onclick="document.getElementById('booking-modal').classList.remove('hidden')">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+                Book New Appointment
+            </button> -->
+            <a
+                class="bg-primary hover:bg-primary/90 text-on-primary px-lg py-3 rounded-full text-label-md font-label-md flex items-center gap-sm transition-all shadow-md hover:shadow-lg whitespace-nowrap self-start sm:self-auto group relative overflow-hidden"
+                href="{% url 'appointments:create' %}">
+                <span
+                    class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+                <span class="material-symbols-outlined text-[20px] relative z-10">add</span>
+                <span class="relative z-10"> Book New Appointment</span>
+            </a>
+        </div>
+        <div
+            class="px-lg pb-md flex items-center justify-between border-b border-outline-variant/30 sticky top-16 bg-background/80 backdrop-blur-md z-20">
+            <div class="flex gap-lg" id="view-tabs">
+                <button
+                    class="relative pb-md font-label-md text-label-md text-primary transition-colors after:absolute after:bottom-[-1px] after:left-0 after:w-full after:h-0.5 after:bg-primary after:rounded-t-full"
+                    data-target="today">
+                    Today
+                    <span
+                        class="ml-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[10px]">12</span>
+                </button>
+                <button
+                    class="relative pb-md font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors"
+                    data-target="upcoming">
+                    Upcoming
+                    <span
+                        class="ml-xs bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full text-[10px]">45</span>
+                </button>
+                <button
+                    class="relative pb-md font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors"
+                    data-target="completed">
+                    Completed
+                </button>
+            </div>
+            <div class="flex items-center gap-md">
+                <div class="relative">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">calendar_month</span>
+                    <select
+                        class="appearance-none bg-surface-container rounded-full py-1.5 pl-10 pr-lg text-body-sm text-on-surface outline-none cursor-pointer border border-outline-variant/20 hover:bg-surface-container-high transition-colors">
+                        <option>All Doctors</option>
+                        <option>Dr. Sarah Wilson</option>
+                        <option>Dr. James Chen</option>
+                        <option>Dr. Emily Reyes</option>
+                    </select>
+                    <span
+                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px] pointer-events-none">arrow_drop_down</span>
+                </div>
+                <button
+                    class="p-1.5 bg-surface-container rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors"
+                    id="toggle-view">
+                    <span class="material-symbols-outlined text-[20px] active-icon">grid_view</span>
+                    <span class="material-symbols-outlined text-[20px] hidden inactive-icon">view_list</span>
+                </button>
+            </div>
+        </div>
+        <div class="p-lg flex-1 overflow-y-auto" id="appointment-container">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-md transition-all duration-300"
+                id="today-view">
+                <div
+                    class="bg-surface-container-low rounded-xl p-md flex flex-col gap-md border border-outline-variant/30 hover:shadow-md hover:border-outline-variant/60 transition-all cursor-pointer group">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-title-md text-title-md">
+                                AK
+                            </div>
+                            <div>
+                                <h3
+                                    class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors">
+                                    Arjun Kapoor</h3>
+                                <p class="font-body-sm text-body-sm text-on-surface-variant">ID: PT-8921</p>
+                            </div>
+                        </div>
+                        <span
+                            class="bg-secondary/10 text-secondary px-2 py-1 rounded-md font-label-sm text-label-sm uppercase tracking-wide flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            In Progress
+                        </span>
+                    </div>
+                    <div class="bg-surface rounded-lg p-sm border border-outline-variant/20">
+                        <div class="flex items-center gap-sm mb-xs">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[16px]">schedule</span>
+                            <span class="font-label-md text-label-md text-on-surface">09:00 AM - 09:30 AM</span>
+                        </div>
+                        <div class="flex items-center gap-sm">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[16px]">stethoscope</span>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">Dr. Sarah
+                                Wilson</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-1 opacity-70">
+                            Reason</p>
+                        <p class="font-body-md text-body-md text-on-surface line-clamp-1">Follow-up:
+                            Hypertension management</p>
+                    </div>
+                    <div class="mt-auto pt-sm flex gap-sm border-t border-outline-variant/20">
+                        <button
+                            class="flex-1 bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md py-2 rounded-lg transition-colors">Reschedule</button>
+                        <button
+                            class="w-10 h-10 flex items-center justify-center bg-primary text-on-primary rounded-lg hover:bg-primary/90 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+                <div
+                    class="bg-surface-container-low rounded-xl p-md flex flex-col gap-md border border-outline-variant/30 hover:shadow-md hover:border-outline-variant/60 transition-all cursor-pointer group">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30">
+                                <img class="w-full h-full object-cover"
+                                    data-alt="Close up portrait of an elderly Indian woman with grey hair, warm smile, wearing a traditional saree, soft studio lighting, clinical but friendly aesthetic"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZl6BVsz6lPThKkEawDPHsaoIxJBY6tGjKlZ5Yvl59ov1uJvfnuaO7QmmZZJH7vyGdnJ57pggpuos2_O9WkUsR6ylAFJE8jIi053BA3JFFbiHRZ2Op_nHCrAYhjoRn3yxHC_YAP3UjluHHUoN8hF2XfbBS8lVVC_Zli6sx022ic-IvPteMVL2YVU1Disb2kKGMo1-F7_81b6vaSO-ORSaeLvqkl5WYANV9zEijGM7fYzMl9ZEGQDiJ">
+                            </div>
+                            <div>
+                                <h3
+                                    class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors">
+                                    Meera Reddy</h3>
+                                <p class="font-body-sm text-body-sm text-on-surface-variant">ID: PT-4452</p>
+                            </div>
+                        </div>
+                        <span
+                            class="bg-surface-variant text-on-surface-variant px-2 py-1 rounded-md font-label-sm text-label-sm uppercase tracking-wide flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                            Scheduled
+                        </span>
+                    </div>
+                    <div class="bg-surface rounded-lg p-sm border border-outline-variant/20">
+                        <div class="flex items-center gap-sm mb-xs">
+                            <span class="material-symbols-outlined text-primary text-[16px]">schedule</span>
+                            <span class="font-label-md text-label-md text-on-surface">10:15 AM - 11:00 AM</span>
+                        </div>
+                        <div class="flex items-center gap-sm">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[16px]">stethoscope</span>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">Dr. James
+                                Chen</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-1 opacity-70">
+                            Reason</p>
+                        <p class="font-body-md text-body-md text-on-surface line-clamp-1">Comprehensive Annual
+                            Physical</p>
+                    </div>
+                    <div class="mt-auto pt-sm flex gap-sm border-t border-outline-variant/20">
+                        <button
+                            class="flex-1 bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md py-2 rounded-lg transition-colors">Reschedule</button>
+                        <button
+                            class="w-10 h-10 flex items-center justify-center bg-primary text-on-primary rounded-lg hover:bg-primary/90 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+                <div
+                    class="bg-surface-container-low rounded-xl p-md flex flex-col gap-md border border-outline-variant/30 hover:shadow-md hover:border-outline-variant/60 transition-all cursor-pointer group">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30">
+                                <img class="w-full h-full object-cover"
+                                    data-alt="Portrait of a young Indian man in his late 20s, casual attire, looking slightly concerned, neutral healthcare environment background, cool clean lighting"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKgK_a_dhcdybALZPkvCzNEbNUp5y4wqQKIhtTjJmrSvhPB9yJe_fJ1fyl_vQ1qIV1eo1m2sgvtZ9XOCvEFeRBXH0aQBgg0u_v5Dg6fiTOtsQqC8DU8l1-DcvjgaLu5x2XeyEF36jlduF1SD2TQBn7oBK0wn7zz5yUPS6V8rOGfz4qf2b43Yv321Jgdnb0pICRI5fydhj6q_CdJBLJcflBqng_eji4CT3M_kPdQL7SrkVHP-0QQGmj">
+                            </div>
+                            <div>
+                                <h3
+                                    class="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors">
+                                    Ravi Verma</h3>
+                                <p class="font-body-sm text-body-sm text-on-surface-variant">ID: PT-1093</p>
+                            </div>
+                        </div>
+                        <span
+                            class="bg-tertiary/10 text-tertiary px-2 py-1 rounded-md font-label-sm text-label-sm uppercase tracking-wide flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                            Waiting
+                        </span>
+                    </div>
+                    <div class="bg-surface rounded-lg p-sm border border-outline-variant/20">
+                        <div class="flex items-center gap-sm mb-xs">
+                            <span class="material-symbols-outlined text-error text-[16px]">schedule</span>
+                            <span class="font-label-md text-label-md text-on-surface">11:30 AM - 12:00 PM <span
+                                    class="text-error text-[12px] font-normal ml-1">(Delayed)</span></span>
+                        </div>
+                        <div class="flex items-center gap-sm">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[16px]">stethoscope</span>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">Dr. Emily
+                                Reyes</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-1 opacity-70">
+                            Reason</p>
+                        <p class="font-body-md text-body-md text-on-surface line-clamp-1">Acute lower back pain
+                            consultation</p>
+                    </div>
+                    <div class="mt-auto pt-sm flex gap-sm border-t border-outline-variant/20">
+                        <button
+                            class="flex-1 bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md py-2 rounded-lg transition-colors">Reschedule</button>
+                        <button
+                            class="w-10 h-10 flex items-center justify-center bg-primary text-on-primary rounded-lg hover:bg-primary/90 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm p-4"
+            id="booking-modal">
+            <div class="bg-surface w-full max-w-2xl rounded-2xl shadow-xl flex flex-col max-h-[921px] overflow-hidden transform scale-95 opacity-0 transition-all duration-200"
+                id="modal-content">
+                <div
+                    class="p-lg border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-lowest">
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface">New Appointment</h2>
+                    <button class="p-2 rounded-full hover:bg-surface-container-high transition-colors"
+                        onclick="closeModal()">
+                        <span class="material-symbols-outlined text-on-surface-variant">close</span>
+                    </button>
+                </div>
+                <div class="p-lg overflow-y-auto flex-1 space-y-lg">
+                    <div>
+                        <label
+                            class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Patient
+                            Details</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                            <input
+                                class="w-full bg-surface-container rounded-lg py-3 pl-11 pr-4 border-none focus:ring-2 focus:ring-primary/20 text-body-md outline-none"
+                                placeholder="Search patient by name or ID..." type="text">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-md">
+                        <div>
+                            <label
+                                class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Department</label>
+                            <select
+                                class="w-full bg-surface-container rounded-lg py-3 px-4 border-none focus:ring-2 focus:ring-primary/20 text-body-md outline-none appearance-none cursor-pointer">
+                                <option>General Practice</option>
+                                <option>Cardiology</option>
+                                <option>Orthopedics</option>
+                                <option>Neurology</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Doctor</label>
+                            <select
+                                class="w-full bg-surface-container rounded-lg py-3 px-4 border-none focus:ring-2 focus:ring-primary/20 text-body-md outline-none appearance-none cursor-pointer">
+                                <option>Select Doctor</option>
+                                <option>Dr. Sarah Wilson</option>
+                                <option>Dr. James Chen</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Date
+                            &amp; Time</label>
+                        <div class="grid grid-cols-2 gap-md">
+                            <input
+                                class="w-full bg-surface-container rounded-lg py-3 px-4 border-none focus:ring-2 focus:ring-primary/20 text-body-md outline-none"
+                                type="date">
+                            <input
+                                class="w-full bg-surface-container rounded-lg py-3 px-4 border-none focus:ring-2 focus:ring-primary/20 text-body-md outline-none"
+                                type="time">
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Reason
+                            for Visit</label>
+                        <textarea
+                            class="w-full bg-surface-container rounded-lg py-3 px-4 border-none focus:ring-2 focus:ring-primary/20 text-body-md outline-none resize-none"
+                            placeholder="Briefly describe the symptoms or reason for visit..."
+                            rows="3"></textarea>
+                    </div>
+                </div>
+                <div
+                    class="p-lg border-t border-outline-variant/30 bg-surface-container-lowest flex justify-end gap-md">
+                    <button
+                        class="px-6 py-2 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container transition-colors"
+                        onclick="closeModal()">Cancel</button>
+                    <button
+                        class="px-6 py-2 rounded-full font-label-md text-label-md bg-primary text-on-primary hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg">Confirm
+                        Booking</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Tab Switching Logic
+        const tabs = document.querySelectorAll('#view-tabs button');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                // Remove active classes from all
+                tabs.forEach(t => {
+                    t.classList.remove('text-primary', 'after:absolute', 'after:bottom-[-1px]', 'after:left-0', 'after:w-full', 'after:h-0.5', 'after:bg-primary', 'after:rounded-t-full');
+                    t.classList.add('text-on-surface-variant');
+                });
+
+                // Add active classes to clicked
+                const target = e.currentTarget;
+                target.classList.remove('text-on-surface-variant');
+                target.classList.add('text-primary', 'after:absolute', 'after:bottom-[-1px]', 'after:left-0', 'after:w-full', 'after:h-0.5', 'after:bg-primary', 'after:rounded-t-full');
+
+                // In a real app, you'd fetch/filter data here based on target.dataset.target
+                console.log('Switched to view:', target.dataset.target);
+            });
+        });
+
+        // View Toggle (Grid/List) - Simplified simulation
+        const toggleBtn = document.getElementById('toggle-view');
+        const container = document.getElementById('today-view');
+        const icons = toggleBtn.querySelectorAll('.material-symbols-outlined');
+        let isGrid = true;
+
+        toggleBtn.addEventListener('click', () => {
+            isGrid = !isGrid;
+
+            icons.forEach(icon => icon.classList.toggle('hidden'));
+
+            if (!isGrid) {
+                container.classList.remove('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+                container.classList.add('flex', 'flex-col');
+            } else {
+                container.classList.add('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+                container.classList.remove('flex', 'flex-col');
+            }
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('booking-modal');
+        const modalContent = document.getElementById('modal-content');
+
+        // Override the inline onclick to add animation
+        document.querySelector('button[onclick*="booking-modal"]').onclick = (e) => {
+            e.preventDefault();
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before animating opacity/transform
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200); // match duration-200
+        }
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</main>
+
+
 <h3 class="mb-4">
     Appointments
 </h3>
 
-<a
-    href="{% url 'appointments:create' %}"
-    class="btn btn-primary mb-3">
+<a href="{% url 'appointments:create' %}" class="btn btn-primary mb-3">
 
     Create Appointment
 
@@ -25,13 +410,8 @@ Appointments
             Search
         </label>
 
-        <input
-            type="text"
-            name="search"
-            value="{{ search }}"
-            class="form-control"
-            placeholder="Appointment ID, patient or doctor"
-        >
+        <input type="text" name="search" value="{{ search }}" class="form-control"
+            placeholder="Appointment ID, patient or doctor">
 
     </div>
 
@@ -42,26 +422,19 @@ Appointments
             Status
         </label>
 
-        <select
-            name="status"
-            class="form-select">
+        <select name="status" class="form-select">
 
             <option value="">
                 All Statuses
             </option>
 
             {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ value }}</option>
 
-                <option
-                    value="{{ value }}"
-                    {% if status == value %}
-                        selected
-                    {% endif %}
-                >
 
-                    {{ label }}
+                {{ label }}
 
-                </option>
+            </option>
 
             {% endfor %}
 
@@ -76,29 +449,20 @@ Appointments
             Appointment Date
         </label>
 
-        <input
-            type="date"
-            name="date"
-            value="{{ date }}"
-            class="form-control"
-        >
+        <input type="date" name="date" value="{{ date }}" class="form-control">
 
     </div>
 
 
     <div class="col-md-2 d-flex align-items-end">
 
-        <button
-            type="submit"
-            class="btn btn-primary me-2">
+        <button type="submit" class="btn btn-primary me-2">
 
             Search
 
         </button>
 
-        <a
-            href="{% url 'appointments:list' %}"
-            class="btn btn-secondary">
+        <a href="{% url 'appointments:list' %}" class="btn btn-secondary">
 
             Reset
 
@@ -124,46 +488,45 @@ Appointments
 
         {% for appointment in page_obj %}
 
-            <tr>
+        <tr>
 
-                <td>
-                    <a
-                        href="{% url 'appointments:detail' appointment.pk %}">
+            <td>
+                <a href="{% url 'appointments:detail' appointment.pk %}">
 
-                        {{ appointment.appointment_id }}
+                    {{ appointment.appointment_id }}
 
-                    </a>
-                </td>
+                </a>
+            </td>
 
-                <td>
-                    {{ appointment.patient.user.get_full_name }}
-                </td>
+            <td>
+                {{ appointment.patient.user.get_full_name }}
+            </td>
 
-                <td>
-                    {{ appointment.doctor.user.get_full_name }}
-                </td>
+            <td>
+                {{ appointment.doctor.user.get_full_name }}
+            </td>
 
-                <td>
-                    {{ appointment.appointment_date }}
-                </td>
+            <td>
+                {{ appointment.appointment_date }}
+            </td>
 
-                <td>
-                    {{ appointment.appointment_time|time:"h:i A" }}
-                </td>
+            <td>
+                {{ appointment.appointment_time|time:"h:i A" }}
+            </td>
 
-                <td>
-                    {{ appointment.get_status_display }}
-                </td>
+            <td>
+                {{ appointment.get_status_display }}
+            </td>
 
-            </tr>
+        </tr>
 
         {% empty %}
 
-            <tr>
-                <td colspan="6">
-                    No appointments found.
-                </td>
-            </tr>
+        <tr>
+            <td colspan="6">
+                No appointments found.
+            </td>
+        </tr>
 
         {% endfor %}
 
@@ -172,8 +535,7 @@ Appointments
 </table>
 {% if page_obj.has_previous %}
 
-<a
-    href="?page={{ page_obj.previous_page_number }}&search={{ search }}&status={{ status }}&date={{ date }}"
+<a href="?page={{ page_obj.previous_page_number }}&search={{ search }}&status={{ status }}&date={{ date }}"
     class="btn btn-outline-primary">
 
     Previous
@@ -193,8 +555,7 @@ Appointments
 
 {% if page_obj.has_next %}
 
-<a
-    href="?page={{ page_obj.next_page_number }}&search={{ search }}&status={{ status }}&date={{ date }}"
+<a href="?page={{ page_obj.next_page_number }}&search={{ search }}&status={{ status }}&date={{ date }}"
     class="btn btn-outline-primary">
 
     Next

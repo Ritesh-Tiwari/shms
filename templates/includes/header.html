@@ -5,11 +5,12 @@
             class="w-full bg-surface-container rounded-full py-2 pl-11 pr-md border-none focus:ring-2 focus:ring-primary/20 text-body-sm outline-none"
             placeholder="Search Patients, Appts, Doctors..." type="text" /></div>
     <div class="flex items-center gap-lg ml-lg">
-        <div
-            class="flex items-center gap-sm bg-secondary-container/30 px-md py-1 rounded-full text-on-secondary-container">
-            <span class="material-symbols-outlined text-[18px]">verified_user</span><span
-                class="text-label-md font-label-md">Admin</span>
-        </div><button class="p-sm hover:bg-surface-container-high rounded-full transition-colors"><span
+        <a href="{% url 'accounts:logout' %}"
+            class="flex items-center gap-sm bg-error-container/30 text-on-error-container px-md py-1 rounded-full ">
+            <span class="material-symbols-outlined text-[16px]">logout</span><span
+                class="text-label-md font-label-md">Logout</span>
+        </a>
+        <button class="p-sm hover:bg-surface-container-high rounded-full transition-colors"><span
                 class="material-symbols-outlined text-on-surface-variant">notifications</span></button><button
             class="p-sm hover:bg-surface-container-high rounded-full transition-colors"><span
                 class="material-symbols-outlined text-on-surface-variant">dark_mode</span></button>

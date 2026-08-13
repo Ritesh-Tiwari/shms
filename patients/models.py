@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.conf import settings
 
@@ -68,6 +70,23 @@ class Patient(models.Model):
 
     def __str__(self):
         return self.patient_id
+
+
+    @property
+    def age(self):
+        if not self.date_of_birth:
+            return None
+
+        today = date.today()
+
+        return (
+            today.year
+            - self.date_of_birth.year
+            - (
+                (today.month, today.day)
+                < (self.date_of_birth.month, self.date_of_birth.day)
+            )
+        )
 
     def save(self, *args, **kwargs):
         if not self.patient_id:

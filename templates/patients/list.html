@@ -6,162 +6,337 @@ Patients
 
 {% block content %}
 
-<h2 class="mb-4">Patients</h2>
-
-<form method="get" class="mb-4">
-
-    <div class="row">
-
-        <div class="col-md-8">
-
-            <input
-                type="text"
-                name="q"
-                class="form-control"
-                placeholder="Search by Patient ID, Name, Email or Phone"
-                value="{{ query }}">
-
-        </div>
-
-        <div class="col-md-2">
-
-            <button
-                type="submit"
-                class="btn btn-primary w-100">
-
-                Search
-
-            </button>
-
-        </div>
-
-        <div class="col-md-2">
-
+<main class="relative min-h-screen bg-background">
+    <div class="flex flex-col w-full p-lg gap-lg">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+            <div class="flex flex-col gap-xs">
+                <h1 class="font-headline-lg text-headline-lg text-on-surface">Patients</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">Manage and view all registered
+                    patients in the system.</p>
+            </div>
             <a
-                href="{% url 'patients:list' %}"
-                class="btn btn-secondary w-100">
-
-                Clear
-
+                class="bg-primary hover:bg-primary/90 text-on-primary px-lg py-3 rounded-full text-label-md font-label-md flex items-center gap-sm transition-all shadow-md hover:shadow-lg whitespace-nowrap self-start sm:self-auto group relative overflow-hidden"
+                href="{% url 'patients:register' %}">
+                <span
+                    class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+                <span class="material-symbols-outlined text-[20px] relative z-10">add</span>
+                <span class="relative z-10">Add New Patient</span>
             </a>
-
         </div>
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col h-[calc(100vh-200px)]">
+           <form method="get">                
 
+                <div
+                    class="p-md flex flex-col sm:flex-row items-center justify-between gap-md border-b border-surface-variant">
+                    <div class="relative w-full sm:w-96">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                        <input
+                            class="w-full bg-surface-container rounded-full py-2 pl-11 pr-md border-none focus:ring-2 focus:ring-primary/20 text-body-sm font-body-sm text-on-surface outline-none placeholder:text-on-surface-variant/50"
+                            placeholder="Search by name, ID, or phone..." type="text" name="q" value="{{ query }}" />
+                    </div>
+                    <div class="flex items-center gap-sm w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 hide-scrollbar">
+                        <button
+                            class="flex items-center gap-xs px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-high transition-colors whitespace-nowrap">
+                            <span class="material-symbols-outlined text-[16px]">filter_list</span>
+                            All Filters
+                        </button>
+                        <select
+                            class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-3 py-1.5 rounded-full border-none outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer appearance-none pr-8 relative">
+                            <option>Gender: All</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                        <select
+                            class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-3 py-1.5 rounded-full border-none outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer appearance-none pr-8 relative">
+                            <option>Status: All</option>
+                            <option>Active</option>
+                            <option>Inactive</option>
+                        </select>
+
+                        <a href="{% url 'patients:list' %}"
+                            class="flex items-center gap-xs px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-high transition-colors whitespace-nowrap">
+                            <span class="material-symbols-outlined text-[16px]">filter_list_off</span>
+                            Clear
+                        </a>
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="flex-1 overflow-auto">
+                <table class="w-full text-left border-collapse min-w-[900px]">
+                    <thead
+                        class="sticky top-0 bg-surface-container-lowest z-10 after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-surface-variant">
+                        <tr>
+                            <th
+                                class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold w-12 text-center">
+                                <input
+                                    class="rounded text-primary focus:ring-primary accent-primary w-4 h-4 cursor-pointer"
+                                    type="checkbox" />
+                            </th>
+                            <th class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold">
+                                Patient ID</th>
+                            <th class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold">
+                                Name</th>
+                            <th class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold">
+                                Details</th>
+                            <th class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold">
+                                Blood Group</th>
+                            <th class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold">
+                                Last Appointment</th>
+                            <th class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold">
+                                Status</th>
+                            <th
+                                class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold text-right">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                         {% for patient in patients %}
+
+                        <tr
+                            class="hover:bg-surface-container/50 transition-colors group cursor-pointer border-b border-surface-variant/50 last:border-0">
+                            <td class="py-sm px-md text-center">
+                                <input
+                                    class="rounded text-primary focus:ring-primary accent-primary w-4 h-4 cursor-pointer"
+                                    type="checkbox" />
+                            </td>
+                            <td class="py-sm px-md">
+                                <a href="{% url 'patients:detail' patient.pk %}">
+                                    <span
+                                        class="font-label-md text-label-md text-primary font-mono bg-primary/10 px-2 py-1 rounded">{{ patient.patient_id }}</span>
+                                </a>
+                            </td>
+                            <td class="py-sm px-md">
+                                <div class="flex items-center gap-sm">
+                                    <img class="w-8 h-8 rounded-full object-cover"
+                                        data-alt="Professional headshot of a middle-aged Indian man, neutral background, clinical lighting, high quality."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBV6bUSKBweaIRdRo_tbzD-7MyPosCUEZQZXOEWimEoc_teXDJzofDxHxBw3xQLJ0BC85pif-MWF-O05fCm4Uq49xLRJecjDbq7YsPljktUGZm_W-o7fuDPyv2D8jy__T9DFs-zv3DgsJVgaIlCoFbR7x5QvEbKXB6duWSqfstCN4sRexPAMGToGHwZGNlOyHnufN777VEozkxXJCKaBzmMMINGDGVQWSJe6WrKszwenifed0O6MKMH" />
+                                    <div class="flex flex-col">
+                                        <span class="font-label-md text-label-md text-on-surface font-medium">{{ patient.user.first_name }} {{ patient.user.last_name }}</span>
+                                        <span class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">+91
+                                            {{ patient.user.phone_number }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-sm px-md">
+                                <span class="font-body-sm text-body-sm text-on-surface-variant">
+                                    {% if patient.age is not None %}
+                                        {{ patient.age }} yrs
+                                    {% else %}
+                                        N/A
+                                    {% endif %}, 
+                                    {{ patient.get_gender_display }}</span>
+                            </td>
+                            <td class="py-sm px-md">
+                                <span
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">{{ patient.get_blood_group_display }}</span>
+                            </td>
+                            <td class="py-sm px-md">
+                                <div class="flex flex-col">
+                                {% with appointment=patient.patient_appointments|first %}
+                                    {% if appointment %}
+                                    <span class="font-body-sm text-body-sm text-on-surface">{{ appointment.appointment_date|date:"d M Y" }}</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">Dr.
+                                        {{ appointment.doctor.user.first_name.0 }}. {{ appointment.doctor.user.last_name }}</span>
+                                    {% else %}
+
+                                        <span>No appointment</span>
+
+                                    {% endif %}
+
+                                {% endwith %}
+
+                                </div>
+                            </td>
+                            <td class="py-sm px-md">
+                                <span
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container/20 text-on-secondary-container font-label-sm text-label-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+                                </span>
+                            </td>
+                            <td class="py-sm px-md text-right">
+                                <div
+                                    class="flex items-center justify-end gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <a
+                                        class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary-container/20 rounded-full transition-colors"
+                                        title="View Patient" href="{% url 'patients:detail' patient.id %}">
+                                        <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                    </a>
+                                    <a
+                                        class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary-container/20 rounded-full transition-colors"
+                                        title="Edit Details" href="{% url 'patients:update' patient.id %}">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </a>
+                                    <a
+                                        class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-full transition-colors"
+                                        title="Delete Patient" href="{% url 'patients:delete' patient.id %}">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+
+                        <tr
+                            class="hover:bg-surface-container/50 transition-colors group cursor-pointer border-b border-surface-variant/50 last:border-0">
+                        
+                            <td colspan="5">
+                                No patients found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                        <tr
+                            class="hover:bg-surface-container/50 transition-colors group cursor-pointer border-b border-surface-variant/50 last:border-0">
+                            <td class="py-sm px-md text-center">
+                                <input
+                                    class="rounded text-primary focus:ring-primary accent-primary w-4 h-4 cursor-pointer"
+                                    type="checkbox" />
+                            </td>
+                            <td class="py-sm px-md">
+                                <span
+                                    class="font-label-md text-label-md text-primary font-mono bg-primary/10 px-2 py-1 rounded">SHMS-2492</span>
+                            </td>
+                            <td class="py-sm px-md">
+                                <div class="flex items-center gap-sm">
+                                    <img class="w-8 h-8 rounded-full object-cover"
+                                        data-alt="Professional headshot of an elderly Indian woman, neutral background, clinical lighting, high quality."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnKfEVElpDZfB8P_E7xTm5ygvp55DaFcIGWHI6B31sjCjU0l7KXxDngeRYS6Jun59DVTmFV8PrcAjF-NdvrMl4ocWXnR1JmorwNHPP7zwA1dFbbDU9wNJobeh1Va4dP96QuCLHvWpzZxHySJKRP-yOpFm3pBcDMQr8A9yTw52t_4OQuGYsfuYf2No0JCy-0zPi9rbppklZ-Bq2dSSa3f0YIHVby1W4yf9_nfTVCqmeOI-qQXphxc_P" />
+                                    <div class="flex flex-col">
+                                        <span class="font-label-md text-label-md text-on-surface font-medium">Sunita
+                                            Sharma</span>
+                                        <span class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">+91
+                                            98765 43211</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-sm px-md">
+                                <span class="font-body-sm text-body-sm text-on-surface-variant">62 yrs,
+                                    Female</span>
+                            </td>
+                            <td class="py-sm px-md">
+                                <span
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">B-</span>
+                            </td>
+                            <td class="py-sm px-md">
+                                <div class="flex flex-col">
+                                    <span class="font-body-sm text-body-sm text-on-surface">10 Oct, 2023</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">Dr.
+                                        A. Patel</span>
+                                </div>
+                            </td>
+                            <td class="py-sm px-md">
+                                <span
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-variant/50 text-on-surface-variant font-label-sm text-label-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Inactive
+                                </span>
+                            </td>
+                            <td class="py-sm px-md text-right">
+                                <div
+                                    class="flex items-center justify-end gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button
+                                        class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary-container/20 rounded-full transition-colors"
+                                        title="View Patient">
+                                        <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                    </button>
+                                    <button
+                                        class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary-container/20 rounded-full transition-colors"
+                                        title="Edit Details">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </button>
+                                    <button
+                                        class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-full transition-colors"
+                                        title="Delete Patient">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div
+                class="p-sm px-md border-t border-surface-variant flex items-center justify-between bg-surface-container-lowest rounded-b-xl">
+
+                <!-- Showing X-Y of Z patients -->
+                <span class="font-body-sm text-body-sm text-on-surface-variant">
+                    Showing
+                    {{ page_obj.start_index }}-{{ page_obj.end_index }}
+                    of {{ page_obj.paginator.count }} patients
+                </span>
+
+                <div class="flex items-center gap-1">
+
+                    <!-- Previous -->
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                        class="p-1 text-on-surface-variant hover:bg-surface-container rounded transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">
+                                chevron_left
+                            </span>
+                        </a>
+                    {% else %}
+                        <button
+                            class="p-1 text-on-surface-variant hover:bg-surface-container rounded transition-colors disabled:opacity-50"
+                            disabled>
+                            <span class="material-symbols-outlined text-[20px]">
+                                chevron_left
+                            </span>
+                        </button>
+                    {% endif %}
+
+
+                    <!-- Page Numbers -->
+                    {% for num in page_obj.paginator.page_range %}
+
+                        {% if page_obj.number == num %}
+
+                            <!-- Active page -->
+                            <button
+                                class="w-8 h-8 rounded bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center">
+                                {{ num }}
+                            </button>
+
+                        {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+
+                            <!-- Nearby pages -->
+                            <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                            class="w-8 h-8 rounded text-on-surface hover:bg-surface-container font-label-sm text-label-sm flex items-center justify-center transition-colors">
+                                {{ num }}
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    <!-- Next -->
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                        class="p-1 text-on-surface-variant hover:bg-surface-container rounded transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">
+                                chevron_right
+                            </span>
+                        </a>
+                    {% else %}
+                        <button
+                            class="p-1 text-on-surface-variant hover:bg-surface-container rounded transition-colors disabled:opacity-50"
+                            disabled>
+                            <span class="material-symbols-outlined text-[20px]">
+                                chevron_right
+                            </span>
+                        </button>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
     </div>
-
-</form>
-
-<table class="table table-bordered table-striped">
-
-    <thead>
-        <tr>
-            <th>Patient ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Gender</th>
-            <th>Blood Group</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        {% for patient in patients %}
-
-        <tr>
-
-            <td>{{ patient.patient_id }}</td>
-
-            <td>
-                {{ patient.user.first_name }}
-                {{ patient.user.last_name }}
-            </td>
-
-            <td>{{ patient.user.email }}</td>
-
-            <td>{{ patient.gender }}</td>
-
-            <td>{{ patient.blood_group }}</td>
-            <td>
-                <a
-                    href="{% url 'patients:detail' patient.id %}"
-                    class="btn btn-sm btn-primary">
-                    View
-                </a>
-            </td>
-
-        </tr>
-
-        {% empty %}
-
-        <tr>
-
-            <td colspan="5">
-                No patients found.
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
-    </tbody>
-
-</table>
-
-<nav class="mt-4">
-
-    <ul class="pagination justify-content-center">
-
-        {% if page_obj.has_previous %}
-
-        <li class="page-item">
-
-            <a
-                class="page-link"
-                href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
-
-                Previous
-
-            </a>
-
-        </li>
-
-        {% endif %}
-
-        {% for page in page_obj.paginator.page_range %}
-
-        <li class="page-item {% if page == page_obj.number %}active{% endif %}">
-
-            <a
-                class="page-link"
-                href="?page={{ page }}{% if query %}&q={{ query }}{% endif %}">
-
-                {{ page }}
-
-            </a>
-
-        </li>
-
-        {% endfor %}
-
-        {% if page_obj.has_next %}
-
-        <li class="page-item">
-
-            <a
-                class="page-link"
-                href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
-
-                Next
-
-            </a>
-
-        </li>
-
-        {% endif %}
-
-    </ul>
-
-</nav>
+</main>
 
 {% endblock %}
