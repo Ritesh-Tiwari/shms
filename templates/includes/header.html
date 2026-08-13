@@ -1,0 +1,24 @@
+<header
+    class="fixed top-0 left-72 right-0 h-16 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 z-40 flex items-center px-lg justify-between">
+    <div class="flex-1 max-w-xl relative"><span
+            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span><input
+            class="w-full bg-surface-container rounded-full py-2 pl-11 pr-md border-none focus:ring-2 focus:ring-primary/20 text-body-sm outline-none"
+            placeholder="Search Patients, Appts, Doctors..." type="text" /></div>
+    <div class="flex items-center gap-lg ml-lg">
+        <div
+            class="flex items-center gap-sm bg-secondary-container/30 px-md py-1 rounded-full text-on-secondary-container">
+            <span class="material-symbols-outlined text-[18px]">verified_user</span><span
+                class="text-label-md font-label-md">Admin</span>
+        </div><button class="p-sm hover:bg-surface-container-high rounded-full transition-colors"><span
+                class="material-symbols-outlined text-on-surface-variant">notifications</span></button><button
+            class="p-sm hover:bg-surface-container-high rounded-full transition-colors"><span
+                class="material-symbols-outlined text-on-surface-variant">dark_mode</span></button>
+        <div class="flex items-center gap-md pl-md border-l border-outline-variant/30">
+            <div class="text-right hidden sm:block">
+                <div class="text-label-md font-label-md">{{ user.first_name|default:user.username }}</div>
+                <div class="text-label-sm text-on-surface-variant">{{ user.email }}</div>
+            </div><img alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary/10"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBweYBQL3QciAVNAsZSKcwOJhJMDYfZctX3eWhDn05lyCVXybhh888-lttAqWwuXBXaGTQ8Eux5Toh7soOgtpZb9-sax86W5OtsWJdQD6Nc2V-F8XswhZCVu4IPalakaT_mevcaVH_7zKYXGvkK8Ei2vv7uVch-UnithaY_AdsHf2c_61OfqR--2AnLynP0Xr2tRBfauJ_GlMy0q--bwWsQsWk1GfzgNlgytPnFrOAii2GX_Ajo1n0Q" />
+        </div>
+    </div>
+</header>

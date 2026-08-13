@@ -1,4 +1,61 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+<aside
+    class="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col border-r border-outline-variant/30">
+    <a class="p-lg mb-md flex items-center gap-md" href="{% url 'dashboard:dashboard' %}"><img alt="SHMS Logo" class="h-8 w-auto object-contain"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBEjwzdTps4eCheVdjWMiHhmdkuSS0jcT0Mto_KMvKtpubshKMjB8m3134lbWLXNLrn-hUhGWC3ZLAPonNuVePsTf4iHL_Evmfk0Usm4I7RFHpqzsdwx_AuWVfLCX9-_BbVtwm-swfE7AWv9UcnjY_hxIiz8wcE_lyR8ldfj34I7woPLRo26YKGzwZETkVxQAbYDhXxMWR48mFmcJkgHpqHmOpmBSxqvWijq6hy55BwfFxflZZzVoW" /><span
+            class="font-title-md text-title-md text-primary tracking-tight">SHMS</span></a>
+    <nav class="flex-1 px-md overflow-y-auto space-y-xs"
+        data-active-classes="bg-primary-container text-on-primary-container font-semibold">
+        <div
+            class="px-md py-sm text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest opacity-60">
+            Main</div>
+            
+            <a aria-current="page"
+            class="flex items-center px-md py-3 rounded-lg transition-all bg-primary-container text-on-primary-container font-semibold"
+            data-path="dashboard" href="{% url 'dashboard:dashboard' %}"> <span class="material-symbols-outlined mr-md">dashboard</span>Dashboard</a>
+            
+            <a
+            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            data-path="patients" href="{% url 'patients:list' %}"><span class="material-symbols-outlined mr-md">person</span>Patients</a>
+            
+            <a
+            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            data-path="doctors" href="{% url 'doctors:list' %}"><span
+                class="material-symbols-outlined mr-md">medical_services</span>Doctors</a>
+            
+            <a
+            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            data-path="appointments" href="{% url 'appointments:list' %}"><span
+                class="material-symbols-outlined mr-md">calendar_today</span>Appointments</a>
+        <div
+            class="pt-lg px-md py-sm text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest opacity-60">
+            Clinical</div><a
+            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            data-path="prescriptions" href="#"><span
+                class="material-symbols-outlined mr-md">prescriptions</span>Prescriptions</a><a
+            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            data-path="medical-history" href="#"><span class="material-symbols-outlined mr-md">history_edu</span>Medical
+            History</a>
+        <div
+            class="pt-lg px-md py-sm text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest opacity-60">
+            Finance</div><a
+            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            data-path="billing" href="#"><span class="material-symbols-outlined mr-md">receipt_long</span>Billing</a><a
+            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            data-path="payments" href="#"><span class="material-symbols-outlined mr-md">payments</span>Payments</a>
+        <div
+            class="pt-lg px-md py-sm text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest opacity-60">
+            Analysis</div><a
+            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            data-path="analytics" href="#"><span class="material-symbols-outlined mr-md">bar_chart</span>Analytics</a>
+    </nav>
+    <div class="p-md border-t border-outline-variant/30"><a
+            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            data-path="settings" href="#"><span class="material-symbols-outlined mr-md">settings</span>Settings</a>
+    </div>
+</aside>
+
+
+<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container-fluid">
 
         <a
@@ -43,4 +100,4 @@
         </div>
 
     </div>
-</nav>
+</nav> -->
