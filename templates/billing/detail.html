@@ -1,8 +1,331 @@
 {% extends "base.html" %}
 
+{% block title %}Bill Details{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<div class="flex flex-col w-full">
+<div class="px-margin-desktop py-lg max-w-7xl mx-auto w-full space-y-lg">
+    <!-- Top Context & Actions Navigation -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-md">
+        <div class="space-y-xs">
+            <a class="inline-flex items-center gap-xs font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors group"
+                 href="{% url 'appointments:detail' billing.appointment.pk %}">
+                <span
+                    class="material-symbols-outlined text-[18px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                <span class="">Back to Appointment</span>
+                <span
+                    class="font-label-sm text-label-sm px-xs py-0.5 rounded bg-surface-container-high text-on-surface-variant ml-1 font-mono">{{billing.appointment.appointment_id}}</span>
+            </a>
+            <div class="flex items-center gap-md pt-1">
+                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+                    Bill Details <br> 
+                </h1>
+                <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-fixed text-tertiary font-label-md text-label-md">
+                    <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+                    Payment {{ billing.get_payment_status_display }}
+                </span>
+            </div>
+        </div>
+        {% comment %} <div class="flex items-center gap-sm flex-wrap">
+            <button
+                class="inline-flex items-center gap-xs px-md py-2.5 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all shadow-sm font-label-md text-label-md"
+                onclick="window.print()">
+                <span class="material-symbols-outlined text-[20px]">print</span>
+                <span class="">Print Bill</span>
+            </button>
+            <button
+                class="inline-flex items-center gap-xs px-md py-2.5 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all shadow-sm font-label-md text-label-md">
+                <span class="material-symbols-outlined text-[20px]">download</span>
+                <span class="">Download PDF</span>
+            </button>
+        </div> {% endcomment %}
+    </div>
+    <!-- Notice / High Impact Alert Banner -->
+
+    <!-- Main Bento Grid (Top Section) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+        <!-- 1. Bill & Encounter Information Card (8 cols) -->
+        <div
+            class="lg:col-span-7 bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col justify-between">
+            <div
+                class="flex items-center justify-between pb-md mb-md border-b border-outline-variant/20">
+                <div class="flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-primary text-[22px]">receipt_long</span>
+                    <h2 class="font-title-md text-title-md text-on-surface">
+                        Invoice &amp; Encounter Details
+                    </h2>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+                <div class="p-md rounded-lg bg-surface-container-low">
+                    <div
+                        class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
+                        Bill ID
+                    </div>
+                    <div class="font-mono font-semibold text-body-md text-on-surface">
+                        {{billing.bill_id}}
+                    </div>
+                </div>
+                <div class="p-md rounded-lg bg-surface-container-low">
+                    <div
+                        class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
+                        Appointment
+                    </div>
+                    <a class="font-mono font-semibold text-body-md text-primary hover:underline"
+                        href="{% url 'appointments:detail' billing.appointment.pk %}">
+                        {{billing.appointment.appointment_id}}
+                    </a>
+                </div>
+                <div class="p-md rounded-lg bg-surface-container-low">
+                    <div
+                        class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
+                        Patient
+                    </div>
+                    <div class="font-medium text-body-md text-on-surface">
+                        {{ billing.patient.patient_id }}
+                -
+                {{ billing.patient.user.get_full_name }}
+                    </div>
+                </div>
+                <div class="p-md rounded-lg bg-surface-container-low">
+                    <div
+                        class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
+                        Doctor
+                    </div>
+                    <div class="font-medium text-body-md text-on-surface">
+                        {{ billing.appointment.doctor.doctor_id }} - {{ billing.appointment.doctor.user.get_full_name }}
+                    </div>
+                </div>
+                <div class="p-md rounded-lg bg-surface-container-low sm:col-span-2">
+                    <div
+                        class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
+                        Bill Date
+                    </div>
+                    <div class="font-medium text-body-md text-on-surface">
+                        {{ billing.bill_date|date:"d M Y, g:i A" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+         {% if billing.get_payment_status_display != "Paid" %}
+        <!-- 3. Payment Summary Card (5 cols) -->
+        <div
+            class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col justify-between">
+            <div>
+                <div
+                    class="flex items-center justify-between pb-md mb-md border-b border-outline-variant/20">
+                    <div class="flex items-center gap-sm">
+                        <span
+                            class="material-symbols-outlined text-primary text-[22px]">account_balance_wallet</span>
+                        <h2 class="font-title-md text-title-md text-on-surface">
+                            Payment Summary
+                        </h2>
+                    </div>
+                </div>
+                <div class="space-y-sm">
+                    <div
+                        class="flex items-center justify-between py-2 text-body-md text-on-surface-variant">
+                        <span class="">Total Bill</span><span
+                            class="text-on-surface font-semibold font-mono">₹{{ billing.amount|floatformat:2 }}</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between py-2 text-body-md text-on-surface-variant">
+                        <span class="">Total Paid</span><span
+                            class="text-on-surface font-semibold font-mono">₹{{ paid_amount|floatformat:2 }}</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between py-2.5 px-md rounded-lg bg-error-container/30 text-error">
+                        <span class="font-label-md text-label-md font-semibold">Remaining
+                            Due</span><span
+                            class="font-title-md text-title-md font-bold font-mono">₹{{ remaining_amount|floatformat:2 }}</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between py-2 text-body-md text-on-surface-variant">
+                        <span class="">Payment Status</span><span
+                            class="font-semibold text-tertiary">{{ billing.get_payment_status_display }}</span>
+                    </div>
+                </div>
+            </div>
+           
+                <div class="pt-md mt-md">
+                    <a 
+    
+                        class="block w-full py-2.5 px-md bg-primary-container text-on-primary font-label-md text-label-md rounded-lg font-medium hover:bg-primary transition shadow text-center cursor-pointer"
+                        href="{% url 'billing:payment_create' billing.pk %}"
+                        >
+                        Collect Payment
+                    </a>
+                    
+                </div>
+            
+        </div>
+        {% endif %}
+    </div>
+
+    {% if billing.get_payment_status_display != "Paid" %}
+    <!-- 2. Itemized Amount Details Breakdown (Card) -->
+    <div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm">
+        <div class="flex items-center justify-between mb-md pb-sm border-b border-outline-variant/20">
+            <div>
+                <h2 class="font-title-md text-title-md text-on-surface">
+                    Amount Details
+                </h2>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead
+                    class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                    <tr>
+                        <th class="py-3 px-md rounded-l-lg">
+                            Item / Description
+                        </th>
+                        <th class="py-3 px-md text-center">Tax Type</th>
+                        <th class="py-3 px-md text-right">Tax Amount</th>
+                        <th class="py-3 px-md text-right rounded-r-lg">
+                            Total Amount
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="text-body-md font-body-md divide-none">
+                    <tr>
+                        <td class="py-4 px-md">
+                            <div class="font-medium text-on-surface">
+                                Consultation Fee
+                            </div>
+                        </td>
+                        <td class="py-4 px-md text-center">
+                            <span
+                                class="inline-flex px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm"> {{ billing.get_tax_type_display }}</span>
+                        </td>
+                        <td class="py-4 px-md text-right font-mono text-on-surface-variant">
+                         ₹{{ billing.tax_amount }}
+                        </td>
+                        <td class="py-4 px-md text-right font-bold font-mono text-on-surface">
+                            ₹{{ billing.total_amount|floatformat:2 }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-md pt-md border-t border-outline-variant/20 flex justify-end">
+            <div class="w-full sm:w-72 space-y-xs">
+                <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
+                    <span class="">Consultation Fee</span><span
+                        class="font-mono text-on-surface">₹{{ billing.amount|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
+                    <span class="">Tax Amount</span><span class="font-mono text-on-surface">₹{{ billing.tax_amount|floatformat:2 }}</span>
+                </div>
+                <div
+                    class="pt-sm flex justify-between items-center text-on-surface font-title-md text-title-md border-t border-outline-variant/20">
+                    <span class="font-bold">Total Amount</span><span
+                        class="font-mono font-bold text-primary">₹{{ billing.total_amount|floatformat:2 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <!-- 4. Payment History Card -->
+    <div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm">
+        <div class="flex items-center justify-between pb-md mb-md border-b border-outline-variant/20">
+            <h2 class="font-title-md text-title-md text-on-surface">
+                Payment History
+            </h2>
+             {% if remaining_amount > 0 %}
+                <a
+                    class="inline-flex items-center gap-xs px-md py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition font-label-md text-label-md font-medium"
+                    href="{% url 'billing:payment_create' billing.pk %}">
+                    <span class="material-symbols-outlined text-[18px]">add</span><span class="">Add
+                        Payment</span>
+                </a>
+             {% endif %}
+        </div>
+
+        {% with payments=billing.payments.all %}
+            {% if payments %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead
+                        class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                        <tr>
+                            <th class="py-3 px-md rounded-l-lg">Payment ID</th>
+                            <th class="py-3 px-md">Date </th>
+                            <th class="py-3 px-md">Payment Method</th>
+                            <th class="py-3 px-md">Payment Type</th>
+                            <th class="py-3 px-md">Transaction Ref</th>
+                            <th class="py-3 px-md text-right">Amount Paid</th>
+                            <th class="py-3 px-md text-center rounded-r-lg">Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-body-sm font-body-sm divide-none">
+                        {% for payment in payments %}
+                            <tr
+                                class="border-b border-outline-variant/20 hover:bg-surface-container-low/50 transition-colors">
+                                <td class="py-4 px-md"><span
+                                        class="font-mono font-semibold text-primary">{{ payment.payment_id }}</span></td>
+                                <td class="py-4 px-md text-on-surface-variant"> {{ payment.payment_date|date:"d M Y, h:i A" }}</td>
+                                <td class="py-4 px-md">
+                                    <div class="flex items-center gap-1.5 text-on-surface font-medium"><span
+                                            class="material-symbols-outlined text-[18px] text-on-surface-variant">qr_code_2</span><span
+                                            class="">{{ payment.get_payment_method_display }}</span></div>
+                                </td>
+                                <td class="py-4 px-md text-on-surface-variant"><span
+                                        class="inline-flex px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">{{ payment.get_payment_type_display }}</span>
+                                </td>
+                                <td class="py-4 px-md font-mono text-label-sm text-on-surface-variant">
+                                    {% if payment.transaction_reference %}
+                                       {{ payment.transaction_reference }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td class="py-4 px-md text-right font-mono font-bold text-on-surface">₹{{ payment.amount }}
+                                </td>
+                                <td class="py-4 px-md text-center">
+                                    <a
+                                        href="{% url 'billing:payment_receipt' payment.pk %}"
+                                        class="btn btn-sm btn-outline-primary"
+                                    > View Receipt </a>
+                                </td>
+                            </tr>
+                         {% endfor %}
+                       
+                    </tbody>
+                </table>
+            </div>                
+
+            {% else %}
+                <div class="p-lg text-center bg-surface-container-low rounded-lg">
+                    <p class="text-body-md text-on-surface-variant">
+                        No payments recorded yet.
+                    </p>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+
+
+    </div>
+    <!-- Navigation & Action Footer -->
+    <div
+        class="flex flex-col sm:flex-row items-center justify-between gap-md py-md bg-surface-container-lowest p-md rounded-xl shadow-sm">
+        <a class="inline-flex items-center gap-xs px-lg py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all"
+            href="{% url 'appointments:detail' billing.appointment.pk %}">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span class="">Back to Appointment ({{billing.appointment.appointment_id}})</span>
+        </a>
+    </div>
+</div>
+</div>
+
+
+
+
+
+{% comment %} <div class="container mt-4">
 
     <h2>Bill Details</h2>
 
@@ -208,6 +531,6 @@
 
     </div>
 
-</div>
+</div> {% endcomment %}
 
 {% endblock %}

@@ -1,6 +1,360 @@
 {% extends "base.html" %}
 
+{% block title %}Update Prescription{% endblock %}
+
 {% block content %}
+
+<div class="flex flex-col w-full">
+    <div class="p-lg max-w-7xl mx-auto w-full space-y-lg">
+        <!-- Top Bar & Breadcrumb -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md">
+            <div class="space-y-xs">
+                <nav class="flex items-center gap-xs text-on-surface-variant font-label-md text-label-md">
+                    <a class="hover:text-primary transition-colors" href="{% url "appointments:list" %}">Appointments</a>
+                    <span class="material-symbols-outlined text-[16px] opacity-60">chevron_right</span>
+                    <a class="hover:text-primary transition-colors" href="{% url "appointments:detail" prescription.appointment.pk %}">{{ prescription.appointment.appointment_id }}</a>
+                    <span class="material-symbols-outlined text-[16px] opacity-60">chevron_right</span>
+                    <span class="text-on-surface font-semibold">Update Prescription</span>
+                </nav>
+                <div class="flex items-center gap-md pt-xs">
+                    <a class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-all"
+                        href="{% url "appointments:detail" prescription.appointment.pk %}">
+                        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    </a>
+                    <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Update
+                        Prescription</h1>
+                </div>
+            </div>
+            <!-- Quick Action Secondary CTA -->
+            <div class="flex items-center gap-sm">
+                <button
+                    class="px-md py-2 rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors"
+                    type="button">
+                    Discard Changes
+                </button>
+                <button
+                    class="px-lg py-2 rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md shadow-sm hover:opacity-95 transition-all flex items-center gap-xs"
+                    onclick="document.getElementById('prescription-form').requestSubmit();" type="button">
+                    <span class="material-symbols-outlined text-[18px]">check</span>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+        <!-- Main Form Element -->
+        <form class="space-y-lg" id="prescription-form"
+            onsubmit="event.preventDefault(); triggerSaveAlert();">
+            <!-- Section 1: Appointment Read-Only Overview Card -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+                <div class="flex items-center justify-between pb-md mb-md border-b-0">
+                    <div class="flex items-center gap-sm">
+                        <span
+                            class="material-symbols-outlined text-primary text-[20px]">assignment_turned_in</span>
+                        <h2 class="font-title-md text-title-md text-on-surface">Appointment Information</h2>
+                    </div>
+                    <span
+                        class="px-sm py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Verified
+                        Record</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md">
+                    <div class="p-md rounded-lg bg-surface-container-low">
+                        <div
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider opacity-70">
+                            Appointment ID</div>
+                        <div class="font-title-md text-title-md text-primary mt-xs font-semibold">{{ prescription.appointment.appointment_id }}</div>
+                        
+                    </div>
+                    <div class="p-md rounded-lg bg-surface-container-low">
+                        <div
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider opacity-70">
+                            Patient Name</div>
+                        <div
+                            class="font-body-md text-body-md text-on-surface font-medium mt-xs flex items-center gap-xs">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[18px]">person</span>
+                            {{ prescription.appointment.patient.user.get_full_name }}
+                        </div>
+                    </div>
+                    <div class="p-md rounded-lg bg-surface-container-low">
+                        <div
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider opacity-70">
+                            Attending Doctor</div>
+                        <div
+                            class="font-body-md text-body-md text-on-surface font-medium mt-xs flex items-center gap-xs">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[18px]">stethoscope</span>
+                            Dr. {{ prescription.appointment.doctor.user.get_full_name }}
+                        </div>
+                    </div>
+                    <div class="p-md rounded-lg bg-surface-container-low">
+                        <div
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider opacity-70">
+                            Consultation Date</div>
+                        <div
+                            class="font-body-md text-body-md text-on-surface font-medium mt-xs flex items-center gap-xs">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[18px]">calendar_month</span>
+                            {{ prescription.appointment.appointment_date|date:"d M Y" }}
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Section 2: Clinical Details -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg space-y-md">
+                <div class="flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-primary text-[20px]">notes</span>
+                    <h2 class="font-title-md text-title-md text-on-surface">Clinical Findings &amp;
+                        Instructions</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                    <div class="space-y-xs">
+                        <label class="block font-label-md text-label-md text-on-surface font-medium"
+                            for="diagnosis-input">
+                            Primary Diagnosis <span class="text-error">*</span>
+                        </label>
+                        <div class="relative">
+                            <input
+                                class="w-full h-11 px-md bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50"
+                                id="diagnosis-input" placeholder="Enter clinical diagnosis..." required=""
+                                type="text" value="Viral fever" />
+                        </div>
+                        
+                    </div>
+                    <div class="space-y-xs">
+                        <label class="block font-label-md text-label-md text-on-surface font-medium"
+                            for="remarks-input">
+                            Clinical Remarks &amp; Regimen Notes
+                        </label>
+                        <div class="relative">
+                            <input
+                                class="w-full h-11 px-md bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50"
+                                id="remarks-input"
+                                placeholder="e.g. Complete medicine course, stay hydrated..." type="text"
+                                value="Complete your medicine course" />
+                        </div>
+                        
+                    </div>
+                </div>
+            </section>
+            <!-- Section 3: Prescribed Medicines -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg space-y-md">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-sm">
+                    <div>
+                        <div class="flex items-center gap-sm">
+                            <span
+                                class="material-symbols-outlined text-primary text-[20px]">medication</span>
+                            <h2 class="font-title-md text-title-md text-on-surface">Medication Regimen</h2>
+                        </div>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Adjust dosage
+                            quantities, intervals, and patient instructions.</p>
+                    </div>
+                    <button
+                        class="inline-flex items-center gap-xs px-md py-2 bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold rounded-lg transition-colors self-start sm:self-auto"
+                        id="btn-add-medicine" type="button">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Medicine
+                    </button>
+                </div>
+                <!-- Medicines Table Container -->
+                <div class="overflow-x-auto rounded-lg bg-surface-container-low/40">
+                    
+                    <table class="w-full text-left border-collapse min-w-[760px]">
+                        <thead>
+                            <tr
+                                class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                                <th class="py-md px-md w-1/4">Medicine Name</th>
+                                <th class="py-md px-md w-36">Dosage</th>
+                                <th class="py-md px-md w-44">Frequency</th>
+                                <th class="py-md px-md w-32">Duration</th>
+                                <th class="py-md px-md">Instructions</th>
+                                <th class="py-md px-md text-center w-16">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y-0 text-body-sm font-body-sm text-on-surface"
+                            id="medicine-tbody">
+                            <!-- Row 1 -->
+                            <tr class="hover:bg-surface-container-low/80 transition-colors group">
+                                <td class="p-sm px-md">
+                                    <input
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        placeholder="e.g. Paracetamol" required="" type="text"
+                                        value="Dolo 650" />
+                                </td>
+                                <td class="p-sm px-md">
+                                    <input
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        placeholder="Dosage" required="" type="text" value="1 tablet" />
+                                </td>
+                                <td class="p-sm px-md">
+                                    <select
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                                        <option selected="" value="3 time">3 times (1-1-1)</option>
+                                        <option value="2 time">2 times (1-0-1)</option>
+                                        <option value="1 time (Morning)">1 time (Morning)</option>
+                                        <option value="1 time (Night)">1 time (Night)</option>
+                                        <option value="SOS / As needed">SOS / As needed</option>
+                                    </select>
+                                </td>
+                                <td class="p-sm px-md">
+                                    <input
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        placeholder="Duration" required="" type="text" value="5 days" />
+                                </td>
+                                <td class="p-sm px-md">
+                                    <input
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        placeholder="Timing notes" type="text" value="after food" />
+                                </td>
+                                <td class="p-sm px-md text-center">
+                                    <button
+                                        class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors"
+                                        onclick="removeMedicineRow(this)" title="Remove item" type="button">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Row 2 -->
+                            <tr class="hover:bg-surface-container-low/80 transition-colors group">
+                                <td class="p-sm px-md">
+                                    <input
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        placeholder="e.g. Paracetamol" required="" type="text"
+                                        value="Cetirizine 10mg" />
+                                </td>
+                                <td class="p-sm px-md">
+                                    <input
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        placeholder="Dosage" required="" type="text" value="1 tablet" />
+                                </td>
+                                <td class="p-sm px-md">
+                                    <select
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                                        <option value="3 time">3 times (1-1-1)</option>
+                                        <option value="2 time">2 times (1-0-1)</option>
+                                        <option value="1 time (Morning)">1 time (Morning)</option>
+                                        <option selected="" value="1 time (Night)">1 time (Night)</option>
+                                        <option value="SOS / As needed">SOS / As needed</option>
+                                    </select>
+                                </td>
+                                <td class="p-sm px-md">
+                                    <input
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        placeholder="Duration" required="" type="text" value="3 days" />
+                                </td>
+                                <td class="p-sm px-md">
+                                    <input
+                                        class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        placeholder="Timing notes" type="text" value="Before sleep" />
+                                </td>
+                                <td class="p-sm px-md text-center">
+                                    <button
+                                        class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors"
+                                        onclick="removeMedicineRow(this)" title="Remove item" type="button">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <!-- Section 4: Action Footer Buttons -->
+            <footer class="pt-sm pb-xxl flex flex-col-reverse sm:flex-row items-center justify-end gap-md">
+                <a class="w-full sm:w-auto px-xl py-3 rounded-lg text-center bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-colors"
+                    href="#">
+                    Cancel
+                </a>
+                <button
+                    class="w-full sm:w-auto px-xxl py-3 rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-medium shadow-sm hover:opacity-95 transition-all flex items-center justify-center gap-xs"
+                    type="submit">
+                    <span class="material-symbols-outlined text-[20px]">save</span>
+                    Save Changes
+                </button>
+            </footer>
+        </form>
+        <!-- Save Confirmation Toast Toast Notification (Invisible by default) -->
+        <div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-md px-lg py-md rounded-xl bg-on-background text-on-primary shadow-xl"
+            id="save-toast">
+            <span class="material-symbols-outlined text-secondary-container">task_alt</span>
+            <div>
+                <div class="font-label-md text-label-md">Prescription Updated</div>
+                <div class="font-label-sm text-label-sm opacity-80">APT000002 changes synced successfully.
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Add Medicine dynamic row handler
+        const addBtn = document.getElementById('btn-add-medicine');
+        const tableBody = document.getElementById('medicine-tbody');
+
+        if (addBtn && tableBody) {
+            addBtn.addEventListener('click', () => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-surface-container-low/80 transition-colors group animate-fadeIn';
+                tr.innerHTML = `
+<td class="p-sm px-md">
+<input required type="text" placeholder="Medicine Name" class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+</td>
+<td class="p-sm px-md">
+<input required type="text" placeholder="1 tablet / 5ml" class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+</td>
+<td class="p-sm px-md">
+<select class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+    <option value="3 time">3 times (1-1-1)</option>
+    <option value="2 time" selected>2 times (1-0-1)</option>
+    <option value="1 time (Morning)">1 time (Morning)</option>
+    <option value="1 time (Night)">1 time (Night)</option>
+    <option value="SOS / As needed">SOS / As needed</option>
+</select>
+</td>
+<td class="p-sm px-md">
+<input required type="text" placeholder="e.g. 5 days" class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+</td>
+<td class="p-sm px-md">
+<input type="text" placeholder="e.g. after meals" class="w-full h-10 px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+</td>
+<td class="p-sm px-md text-center">
+<button type="button" onclick="removeMedicineRow(this)" title="Remove item" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors">
+    <span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</td>
+`;
+                tableBody.appendChild(tr);
+                // Focus on the newly inserted medicine input
+                const firstInput = tr.querySelector('input');
+                if (firstInput) firstInput.focus();
+            });
+        }
+
+        // Remove row functionality
+        function removeMedicineRow(btn) {
+            const row = btn.closest('tr');
+            if (row) {
+                // Keep at least one row or allow deleting
+                const allRows = tableBody.querySelectorAll('tr');
+                if (allRows.length > 1) {
+                    row.remove();
+                } else {
+                    // Clear inputs if last row
+                    row.querySelectorAll('input').forEach(input => input.value = '');
+                }
+            }
+        }
+
+        // Trigger visual toast
+        function triggerSaveAlert() {
+            const toast = document.getElementById('save-toast');
+            if (toast) {
+                toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+                toast.classList.add('translate-y-0', 'opacity-100');
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+                }, 3200);
+            }
+        }
+    </script>
+</div>
 
 <div class="container mt-4">
 

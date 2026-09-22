@@ -10,20 +10,20 @@
             Main</div>
             
             <a aria-current="page"
-            class="flex items-center px-md py-3 rounded-lg transition-all bg-primary-container text-on-primary-container font-semibold"
+            class="flex items-center px-md py-3 rounded-lg {% if request.resolver_match.namespace == 'dashboard' %}transition-all bg-primary-container text-on-primary-container font-semibold {% else %} text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all {% endif %}"
             data-path="dashboard" href="{% url 'dashboard:dashboard' %}"> <span class="material-symbols-outlined mr-md">dashboard</span>Dashboard</a>
             
             <a
-            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            class="flex items-center px-md py-3 rounded-lg {% if request.resolver_match.namespace == 'patients' %}transition-all bg-primary-container text-on-primary-container font-semibold {% else %} text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all {% endif %}"
             data-path="patients" href="{% url 'patients:list' %}"><span class="material-symbols-outlined mr-md">person</span>Patients</a>
             
             <a
-            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            class="flex items-center px-md py-3 rounded-lg {% if request.resolver_match.namespace == 'doctors' %}transition-all bg-primary-container text-on-primary-container font-semibold {% else %} text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all {% endif %}"
             data-path="doctors" href="{% url 'doctors:list' %}"><span
                 class="material-symbols-outlined mr-md">medical_services</span>Doctors</a>
             
             <a
-            class="flex items-center px-md py-3 rounded-lg text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            class="flex items-center px-md py-3 rounded-lg {% if request.resolver_match.namespace == 'appointments' %}transition-all bg-primary-container text-on-primary-container font-semibold {% else %} text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all {% endif %}"
             data-path="appointments" href="{% url 'appointments:list' %}"><span
                 class="material-symbols-outlined mr-md">calendar_today</span>Appointments</a>
         <div

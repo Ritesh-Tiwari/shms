@@ -25,7 +25,7 @@ class PaymentType(models.TextChoices):
 
 class TaxType(models.TextChoices):
     EXEMPT = "EXEMPT", "Exempt"
-    GST = "GST", "GST"
+    GST = "GST", "GST (18%)"
     OTHER = "OTHER", "Other"
 
 

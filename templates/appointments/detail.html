@@ -1,229 +1,140 @@
 {% extends "base.html" %}
 
-{% block title %}
-Appointment Details
-{% endblock %}
+{% block title %}Appointment Details{% endblock %}
 
 {% block content %}
+<div class="flex flex-col w-full p-lg gap-lg">
+    <a href="{% url 'appointments:list' %}"
+        class="flex w-fit items-center gap-xs px-sm py-sm rounded-lg text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors -ml-sm">
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        Back to Appointments
+    </a>
 
-<h3 class="mb-4">
-    Appointment Details
-</h3>
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-lg pb-md">
+        <div class="flex flex-col gap-sm">
+            <div class="flex items-center gap-md flex-wrap">
+                <h1 class="text-headline-lg font-headline-lg text-on-surface">Appointment Details</h1>
+                <span class="px-sm py-xs bg-primary-fixed text-on-primary-fixed-variant rounded-full text-label-sm font-label-sm flex items-center gap-xs">
+                    <span class="material-symbols-outlined text-[14px]">event_available</span>
+                    {{ appointment.get_status_display }}
+                </span>
+            </div>
+            <p class="text-body-md text-on-surface-variant">Review and manage {{ appointment.appointment_id }}.</p>
+        </div>
 
-<div class="card">
-
-    <div class="card-body">
-
-        <h5 class="card-title">
-            {{ appointment.appointment_id }}
-        </h5>
-
-        <hr>
-
-        <p>
-            <strong>Patient:</strong>
-            {{ appointment.patient.patient_id }}
-            -
-            {{ appointment.patient.user.get_full_name }}
-        </p>
-
-        <p>
-            <strong>Doctor:</strong>
-            {{ appointment.doctor.doctor_id }}
-            -
-            {{ appointment.doctor.user.get_full_name }}
-        </p>
-
-        <p>
-            <strong>Date:</strong>
-            {{ appointment.appointment_date }}
-        </p>
-
-        <p>
-            <strong>Time:</strong>
-            {{ appointment.appointment_time }}
-        </p>
-
-        <p>
-            <strong>Reason:</strong>
-            {{ appointment.reason_for_visit }}
-        </p>
-
-        <p>
-            <strong>Status:</strong>
-            {{ appointment.get_status_display }}
-        </p>
-
-        <p>
-            <strong>Created:</strong>
-            {{ appointment.created_at }}
-        </p>
-
-
-        <a
-            href="{% url 'appointments:list' %}"
-            class="btn btn-secondary">
-
-            Back to Appointments
-
-        </a>
-
-        {% if appointment.status != "CANCELLED" and appointment.status != "COMPLETED" %}
-
-        <a
-            href="{% url 'appointments:update' appointment.pk %}"
-            class="btn btn-primary">
-
-            Reschedule / Update
-
-        </a>
-
-        <a
-            href="{% url 'appointments:cancel' appointment.pk %}"
-            class="btn btn-danger">
-
-            Cancel Appointment
-
-        </a>
-
-    {% endif %}
-
-    {% if appointment.status == "SCHEDULED" %}
-
-    <form
-        method="post"
-        action="{% url 'appointments:update_status' appointment.pk %}"
-        class="d-inline">
-
-        {% csrf_token %}
-
-        <input
-            type="hidden"
-            name="status"
-            value="CONFIRMED">
-
-        <button
-            type="submit"
-            class="btn btn-success">
-
-            Confirm Appointment
-
-        </button>
-
-    </form>
-
-    {% elif appointment.status == "CONFIRMED" %}
-
-        <form
-            method="post"
-            action="{% url 'appointments:update_status' appointment.pk %}"
-            class="d-inline">
-
-            {% csrf_token %}
-
-            <input
-                type="hidden"
-                name="status"
-                value="COMPLETED">
-
-            <button
-                type="submit"
-                class="btn btn-success">
-
-                Mark Completed
-
-            </button>
-
-        </form>
-
-    {% endif %}
-
-    {% if appointment.status == "COMPLETED" %}
-
-        {% if appointment.doctor.user == request.user %}
-
-            {% if not appointment.prescription %}
-
-                <a
-                    href="{% url 'prescriptions:create' appointment.pk %}"
-                    class="btn btn-primary">
-
-                    Create Prescription
-
+        <div class="flex flex-wrap items-center gap-sm">
+            {% if appointment.status != "CANCELLED" and appointment.status != "COMPLETED" %}
+                <a href="{% url 'appointments:cancel' appointment.pk %}"
+                    class="px-md py-2 rounded-lg bg-error-container text-on-error-container text-label-md font-label-md hover:bg-error hover:text-on-error shadow-sm transition-all flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-[18px]">cancel</span>Cancel
                 </a>
-
-            {% else %}
-
-                <a
-                    href="{% url 'prescriptions:detail' appointment.prescription.pk %}"
-                    class="btn btn-success">
-
-                    View Prescription
-
+                <a href="{% url 'appointments:update' appointment.pk %}"
+                    class="px-md py-2 rounded-lg bg-surface-container-highest text-on-surface text-label-md font-label-md hover:bg-surface-dim shadow-sm transition-all flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-[18px]">update</span>Reschedule
                 </a>
-
             {% endif %}
-
-        {% endif %}
-
-    {% endif %}
-
+            
+            {% if appointment.status == "SCHEDULED" %}
+                <form method="post" action="{% url 'appointments:update_status' appointment.pk %}">
+                    {% csrf_token %}<input type="hidden" name="status" value="CONFIRMED">
+                    <button type="submit" class="px-md py-2 rounded-lg bg-primary text-on-primary text-label-md font-label-md hover:bg-primary-container shadow-md transition-all flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-[18px]">check_circle</span>Confirm Appointment
+                    </button>
+                </form>
+            {% elif appointment.status == "CONFIRMED" %}
+                <form method="post" action="{% url 'appointments:update_status' appointment.pk %}">
+                    {% csrf_token %}<input type="hidden" name="status" value="COMPLETED">
+                    <button type="submit" class="px-md py-2 rounded-lg bg-primary text-on-primary text-label-md font-label-md hover:bg-primary-container shadow-md transition-all flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-[18px]">check_circle</span>Mark Completed
+                    </button>
+                </form>
+            {% endif %}
+        </div>
     </div>
 
-</div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+        <div class="lg:col-span-8 flex flex-col gap-lg">
+            <section class="bg-surface-container-lowest shadow-sm rounded-xl p-lg flex flex-col gap-lg">
+                <h2 class="text-title-md font-title-md text-on-surface flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-primary">info</span>General Information
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg bg-surface-container-low p-md rounded-lg">
+                    <div class="flex flex-col gap-xs"><span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Appointment ID</span><span class="text-body-md font-semibold">{{ appointment.appointment_id }}</span></div>
+                    <div class="flex flex-col gap-xs"><span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Reason for Visit</span><span class="text-body-md">{{ appointment.reason_for_visit }}</span></div>
+                    <div class="flex flex-col gap-xs"><span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Date &amp; Time</span><span class="text-body-md flex items-center gap-xs"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>{{ appointment.appointment_date|date:"d M Y" }} at {{ appointment.appointment_time|time:"h:i A" }}</span></div>
+                    <div class="flex flex-col gap-xs"><span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Created On</span><span class="text-body-md">{{ appointment.created_at|date:"d M Y, h:i A" }}</span></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                    <a href="{% url 'patients:detail' appointment.patient.pk %}" class="bg-surface p-md rounded-xl flex items-center gap-md hover:shadow-sm transition-shadow group">
+                        <span class="w-11 h-11 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center material-symbols-outlined">person</span>
+                        <span class="flex flex-col"><span class="text-label-sm text-on-surface-variant">Patient</span><span class="text-body-md text-primary font-semibold">{{ appointment.patient.patient_id }} · {{ appointment.patient.user.get_full_name }}</span></span>
+                        <span class="material-symbols-outlined ml-auto text-on-surface-variant group-hover:text-primary">arrow_forward_ios</span>
+                    </a>
+                    <a href="{% url 'doctors:detail' appointment.doctor.pk %}" class="bg-surface p-md rounded-xl flex items-center gap-md hover:shadow-sm transition-shadow group">
+                        <span class="w-11 h-11 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center material-symbols-outlined">medical_services</span>
+                        <span class="flex flex-col"><span class="text-label-sm text-on-surface-variant">Attending Doctor</span><span class="text-body-md text-primary font-semibold">{{ appointment.doctor.doctor_id }} · Dr. {{ appointment.doctor.user.get_full_name }}</span></span>
+                        <span class="material-symbols-outlined ml-auto text-on-surface-variant group-hover:text-primary">arrow_forward_ios</span>
+                    </a>
+                </div>
+            </section>
 
-<div class="card mb-4 mt-4">
-    <div class="card-body">
+            {# Billing logic: show the existing bill, offer bill creation only when completed, otherwise lock it. #}
+            <section class="bg-surface-container-lowest shadow-sm rounded-xl overflow-hidden">
+                <div class="px-lg py-md bg-surface-container-low flex items-center justify-between gap-md border-b border-outline-variant/20">
+                    <div class="flex items-center gap-sm"><span class="material-symbols-outlined text-primary">receipt_long</span><div><h2 class="text-title-md font-title-md text-on-surface">Billing &amp; Payment</h2><p class="text-body-sm text-on-surface-variant">Consultation charges and payment status for this visit.</p></div></div>
+                    {% if billing %}
+                        {% if billing.get_payment_status_display  == "PAID" %}<span class="px-sm py-xs rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">Paid</span>
+                        {% elif billing.get_payment_status_display  == "PARTIAL" %}<span class="px-sm py-xs rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant text-label-sm font-label-sm">Partially Paid</span>
+                        {% else %}<span class="px-sm py-xs rounded-full bg-error-container text-on-error-container text-label-sm font-label-sm">Payment Pending</span>{% endif %}
+                    {% endif %}
+                </div>
 
-        <h5 class="card-title">Billing</h5>
+                {% if billing %}
+                    <div class="p-lg flex flex-col gap-lg">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
+                            <div class="rounded-lg bg-surface-container-low p-md flex flex-col gap-xs"><span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Bill Number</span><span class="text-body-md font-semibold text-on-surface">{{ billing.bill_id }}</span></div>
+                            <div class="rounded-lg bg-surface-container-low p-md flex flex-col gap-xs"><span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Consultation Fee</span><span class="text-body-md font-semibold text-on-surface">₹{{ billing.amount }}</span></div>
+                            <div class="rounded-lg bg-primary-fixed p-md flex flex-col gap-xs"><span class="text-label-sm text-on-primary-fixed-variant uppercase tracking-wider">Total Amount</span><span class="text-title-md font-title-md text-on-primary-fixed">₹{{ billing.total_amount }}</span></div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md pt-sm border-t border-outline-variant/20">
+                            <div class="flex items-center gap-sm text-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">calendar_today</span>Issued {{ billing.bill_date|date:"d M Y, h:i A" }} · {{ billing.get_tax_type_display }} tax: ₹{{ billing.tax_amount }}</div>
+                            <a href="{% url 'billing:detail' billing.pk %}" class="px-md py-2 rounded-lg bg-primary text-on-primary text-label-md font-label-md hover:bg-primary-container shadow-sm transition-all flex items-center justify-center gap-sm"><span class="material-symbols-outlined text-[18px]">visibility</span>View Bill &amp; Payments</a>
+                        </div>
+                    </div>
+                {% elif appointment.status == "COMPLETED" %}
+                    <div class="p-lg flex flex-col sm:flex-row sm:items-center gap-lg">
+                        <div class="w-14 h-14 shrink-0 rounded-full bg-primary-fixed flex items-center justify-center"><span class="material-symbols-outlined text-[28px] text-primary">request_quote</span></div>
+                        <div class="flex-1"><h3 class="text-title-md font-title-md text-on-surface">Ready to create a bill</h3><p class="text-body-sm text-on-surface-variant mt-xs">This appointment is complete. The bill will use the doctor’s consultation fee of ₹{{ appointment.doctor.consultation_fee }} and lets you add applicable tax.</p></div>
+                        {% if request.user.role == "ADMIN" or request.user == appointment.doctor.user %}<a href="{% url 'billing:create' appointment.pk %}" class="shrink-0 px-md py-2 rounded-lg bg-primary text-on-primary text-label-md font-label-md hover:bg-primary-container shadow-sm transition-all flex items-center justify-center gap-sm"><span class="material-symbols-outlined text-[18px]">add_card</span>Create Bill</a>{% endif %}
+                    </div>
+                {% else %}
+                    <div class="p-lg flex flex-col sm:flex-row sm:items-center gap-lg"><div class="w-14 h-14 shrink-0 rounded-full bg-surface-container-high flex items-center justify-center"><span class="material-symbols-outlined text-[28px] text-on-surface-variant">lock</span></div><div><h3 class="text-title-md font-title-md text-on-surface">Billing becomes available after completion</h3><p class="text-body-sm text-on-surface-variant mt-xs">Mark the appointment as completed before generating a bill or recording payments.</p></div></div>
+                {% endif %}
+            </section>
+        </div>
 
-        {% if billing %}
+        {% if appointment.status == "COMPLETED" %}
+            {% comment %} {% if appointment.doctor.user == request.user %} {% endcomment %}
 
-            <p>
-                <strong>Bill ID:</strong>
-                {{ billing.bill_id }}
-            </p>
-
-            <p>
-                <strong>Total Amount:</strong>
-                ₹{{ billing.total_amount }}
-            </p>
-
-            <p>
-                <strong>Payment Status:</strong>
-                {{ billing.get_payment_status_display }}
-            </p>
-
-            <a
-                href="{% url 'billing:detail' billing.pk %}"
-                class="btn btn-primary"
-            >
-                View Bill
-            </a>
-
-        {% elif appointment.status == "COMPLETED" %}
-
-            <p class="text-muted">
-                No bill has been created for this appointment.
-            </p>
-
-            <a
-                href="{% url 'billing:create' appointment.pk %}"
-                class="btn btn-primary"
-            >
-                Create Bill
-            </a>
-
-        {% else %}
-
-            <p class="text-muted">
-                Billing will be available after the appointment
-                is completed.
-            </p>
-
+                <aside class="lg:col-span-4 flex flex-col gap-lg">
+                    <section class="bg-surface-container-lowest shadow-sm rounded-xl p-lg flex flex-col gap-md">
+                        <h2 class="text-title-md font-title-md text-on-surface flex items-center gap-sm"><span class="material-symbols-outlined text-secondary">clinical_notes</span>Clinical Record</h2>
+                        
+                        {% if not appointment.prescription %}
+                            <p class="text-body-sm text-on-surface-variant">No prescription has been added yet.</p>
+                            <a href="{% url 'prescriptions:create' appointment.pk %}" class="w-full px-md py-2 rounded-lg bg-secondary text-on-secondary text-label-md font-label-md hover:opacity-90 transition-colors flex justify-center items-center gap-sm"><span class="material-symbols-outlined text-[18px]">prescriptions</span>Create Prescription</a>
+                        
+                        {% else %}                        
+                            <p class="text-body-sm text-on-surface-variant">A prescription has been recorded for this completed appointment.</p>
+                            <a href="{% url 'prescriptions:detail' appointment.prescription.pk %}" class="w-full px-md py-2 rounded-lg bg-surface-container-high text-on-surface text-label-md font-label-md hover:bg-surface-variant transition-colors flex justify-center items-center gap-sm"><span class="material-symbols-outlined text-[18px]">visibility</span>View Prescription</a>
+                        {% endif %}
+                    </section>
+                </aside>
+            {% comment %} {% endif %} {% endcomment %}
         {% endif %}
+
+
 
     </div>
 </div>
-
 {% endblock %}

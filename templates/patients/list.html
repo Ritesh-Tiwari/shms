@@ -6,7 +6,6 @@ Patients
 
 {% block content %}
 
-<main class="relative min-h-screen bg-background">
     <div class="flex flex-col w-full p-lg gap-lg">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
             <div class="flex flex-col gap-xs">
@@ -23,7 +22,7 @@ Patients
                 <span class="relative z-10">Add New Patient</span>
             </a>
         </div>
-        <div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col h-[calc(100vh-200px)]">
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col h-[calc(120vh-10px)]">
            <form method="get">                
 
                 <div
@@ -65,8 +64,8 @@ Patients
 
             </form>
 
-            <div class="flex-1 overflow-auto">
-                <table class="w-full text-left border-collapse min-w-[900px]">
+            <div class="flex-1 overflow-auto min-h-[500px]">
+                <table class="w-full text-left border-collapse min-w-[900px] ">
                     <thead
                         class="sticky top-0 bg-surface-container-lowest z-10 after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-surface-variant">
                         <tr>
@@ -337,6 +336,6 @@ Patients
             </div>
         </div>
     </div>
-</main>
+
 
 {% endblock %}

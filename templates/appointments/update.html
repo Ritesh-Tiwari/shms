@@ -1,19 +1,495 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %} Update Appointment
+<script id="tailwind-config">
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#996100",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "surface-container-low": "#eff4ff",
+                    "on-primary-container": "#eeefff",
+                    error: "#ba1a1a",
+                    "surface-container-highest": "#d3e4fe",
+                    "outline-variant": "#c3c6d7",
+                    outline: "#737686",
+                    "surface-bright": "#f8f9ff",
+                    tertiary: "#784b00",
+                    "on-secondary-fixed": "#002113",
+                    "secondary-fixed-dim": "#4edea3",
+                    "surface-tint": "#0053db",
+                    "on-secondary-fixed-variant": "#005236",
+                    "on-primary-fixed": "#00174b",
+                    "surface-dim": "#cbdbf5",
+                    "surface-container": "#e5eeff",
+                    "surface-variant": "#d3e4fe",
+                    background: "#f8f9ff",
+                    primary: "#004ac6",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#b4c5ff",
+                    "secondary-fixed": "#6ffbbe",
+                    "on-secondary-container": "#00714d",
+                    "on-primary": "#ffffff",
+                    surface: "#f8f9ff",
+                    "inverse-surface": "#213145",
+                    "on-tertiary-container": "#ffeedd",
+                    secondary: "#006c49",
+                    "error-container": "#ffdad6",
+                    "on-background": "#0b1c30",
+                    "secondary-container": "#6cf8bb",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-surface": "#0b1c30",
+                    "on-tertiary-fixed": "#2a1700",
+                    "primary-container": "#2563eb",
+                    "primary-fixed": "#dbe1ff",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface-variant": "#434655",
+                    "primary-fixed-dim": "#b4c5ff",
+                },
+                borderRadius: {
+                    DEFAULT: "0.25rem",
+                    lg: "0.5rem",
+                    xl: "0.75rem",
+                    full: "9999px",
+                },
+                spacing: {
+                    lg: "24px",
+                    gutter: "24px",
+                    xl: "32px",
+                    md: "16px",
+                    sm: "8px",
+                    xxl: "48px",
+                    xs: "4px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    unit: "4px",
+                },
+                fontFamily: {
+                    "body-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "label-md": ["Inter"],
+                    "title-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                },
+                fontSize: {
+                    "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+                    "headline-lg-mobile": [
+                        "24px",
+                        { lineHeight: "32px", fontWeight: "600" },
+                    ],
+                    "label-md": [
+                        "14px",
+                        {
+                            lineHeight: "20px",
+                            letterSpacing: "0.01em",
+                            fontWeight: "500",
+                        },
+                    ],
+                    "title-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                    "display-lg": [
+                        "48px",
+                        {
+                            lineHeight: "56px",
+                            letterSpacing: "-0.02em",
+                            fontWeight: "700",
+                        },
+                    ],
+                    "headline-lg": [
+                        "32px",
+                        {
+                            lineHeight: "40px",
+                            letterSpacing: "-0.01em",
+                            fontWeight: "600",
+                        },
+                    ],
+                    "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                    "label-sm": [
+                        "12px",
+                        {
+                            lineHeight: "16px",
+                            letterSpacing: "0.05em",
+                            fontWeight: "600",
+                        },
+                    ],
+                    "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+                },
+            },
+        },
+    };
+</script>
+  {% endblock %}
 
-{% block title %}
-Update Appointment
-{% endblock %}
+  {% block content %}
+          <div class="flex flex-col w-full p-lg">
+            <div class="max-w-4xl mx-auto w-full">
+              <!-- Page Header -->
+              <div class="mb-xl flex items-center justify-between">
+                <div>
+                  <div class="flex items-center gap-sm mb-xs">
+                    <button
+                      class="p-xs hover:bg-surface-container rounded-full text-on-surface-variant transition-colors"
+                      title="Go Back"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >arrow_back</span
+                      >
+                    </button>
+                    <span
+                      class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest"
+                      >Appointments</span
+                    >
+                  </div>
+                  <h1
+                    class="text-headline-lg font-headline-lg text-on-surface tracking-tight"
+                  >
+                    Reschedule Appointment
+                  </h1>
+                </div>
+                <div
+                  class="hidden sm:flex items-center gap-sm bg-error-container/30 text-on-error-container px-md py-sm rounded-full"
+                >
+                  <span class="material-symbols-outlined text-[18px]">info</span>
+                  <span class="text-label-md font-label-md"
+                    >Overdue by 2 days</span
+                  >
+                </div>
+              </div>
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-lg relative">
+                <!-- Decorative blurred background -->
+                <div
+                  class="absolute -top-xxl -right-xxl w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none"
+                ></div>
+                <!-- Main Form Column -->
+                <div class="lg:col-span-2 space-y-lg relative z-10">
+                  <!-- Current Context Card -->
+                  <div
+                    class="bg-surface-container-lowest rounded-xl shadow-sm border-l-4"
+                    style="border-left-color: var(--color-primary)"
+                  >
+                    <div class="p-lg">
+                      <div class="flex items-center gap-md mb-md">
+                        <span class="material-symbols-outlined text-primary"
+                          >calendar_clock</span
+                        >
+                        <h2 class="text-title-md font-title-md text-on-surface">
+                          Current Appointment Details
+                        </h2>
+                      </div>
+                      <div
+                        class="grid grid-cols-1 sm:grid-cols-2 gap-md bg-surface-container/50 p-md rounded-lg"
+                      >
+                        <div>
+                          <p
+                            class="text-label-sm font-label-sm text-on-surface-variant mb-xs"
+                          >
+                            Appointment ID
+                          </p>
+                          <p
+                            class="text-body-md font-body-md text-on-surface font-medium"
+                          >
+                            {{ appointment.appointment_id }}
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            class="text-label-sm font-label-sm text-on-surface-variant mb-xs"
+                          >
+                            Status
+                          </p>
+                          <div
+                            class="inline-flex items-center gap-xs px-2 py-1 rounded bg-tertiary-container/20 text-on-tertiary-container text-label-sm font-label-sm"
+                          >
+                            <span class="material-symbols-outlined text-[14px]"
+                              >pending_actions</span
+                            >
+                            {{ appointment.status }}
+                          </div>
+                        </div>
+                        <div>
+                          <p
+                            class="text-label-sm font-label-sm text-on-surface-variant mb-xs"
+                          >
+                            Patient
+                          </p>
+                          <div class="flex items-center gap-sm">
+                            <div
+                              class="w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-label-sm font-label-sm"
+                            >
+                              RT
+                            </div>
+                            <p
+                              class="text-body-md font-body-md text-on-surface font-medium"
+                            >
+                              {{ appointment.patient.user.get_full_name }}
+                            </p>
+                          </div>
+                          <p
+                            class="text-body-sm font-body-sm text-on-surface-variant ml-8"
+                          >
+                            {{ appointment.patient.patient_id }}
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            class="text-label-sm font-label-sm text-on-surface-variant mb-xs"
+                          >
+                            Doctor
+                          </p>
+                          <div class="flex items-center gap-sm">
+                            <div
+                              class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center text-label-sm font-label-sm"
+                            >
+                              MP
+                            </div>
+                            <p
+                              class="text-body-md font-body-md text-on-surface font-medium"
+                            >
+                             {{ appointment.doctor.user.get_full_name }}
+                            </p>
+                          </div>
+                          <p
+                            class="text-body-sm font-body-sm text-on-surface-variant ml-8"
+                          >
+                            {{ appointment.doctor.doctor_id }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Reschedule Form Card -->
+                  <div
+                    class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden group"
+                  >
+                    <div
+                      class="h-1 bg-gradient-to-r from-primary to-secondary-fixed opacity-50 group-hover:opacity-100 transition-opacity"
+                    ></div>
+                    <div class="p-lg">
+                      <h2
+                        class="text-title-md font-title-md text-on-surface mb-lg flex items-center gap-sm"
+                      >
+                        <span class="material-symbols-outlined text-primary"
+                          >edit_calendar</span
+                        >
+                        New Date &amp; Time
+                      </h2>
+                      <form class="space-y-lg" method="post">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-lg">
+                          <!-- Date Picker -->
+                          <div class="space-y-sm relative">
+                            <label
+                              class="text-label-md font-label-md text-on-surface block"
+                              >Appointment Date
+                               {% if form.appointment_date.errors %}
+                            <span class="text-error ">*
+                                {{ form.appointment_date.errors }}
+                            </span>
+                            {% endif %}
+                              </label
+                            >
+                            <div class="relative">
+                              <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
+                                >calendar_month</span
+                              >
+                              <input name="{{ form.appointment_date.html_name }}"
+                                class="w-full bg-surface-container-low text-on-surface rounded-lg py-2 pl-10 pr-md focus:ring-2 focus:ring-primary/50 focus:bg-surface-container-lowest transition-all outline-none"
+                                type="date"
+                                required
+                              />
+                            </div>
+                          </div>
+                          <!-- Time Picker -->
+                          <div class="space-y-sm relative">
+                            <label
+                              class="text-label-md font-label-md text-on-surface block"
+                              >Appointment Time
+                              {% if form.appointment_time.errors %}
+                            <span class="text-error ">*
+                                {{ form.appointment_time.errors }}
+                            </span>
+                            {% endif %}
 
-{% block content %}
+                              </label
+                            >
+                            <div class="relative">
+                              <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
+                                >schedule</span
+                              >
+                              <input
+                                class="w-full bg-surface-container-low text-on-surface rounded-lg py-2 pl-10 pr-md focus:ring-2 focus:ring-primary/50 focus:bg-surface-container-lowest transition-all outline-none"
+                               name="{{ form.appointment_time.html_name }}" type="time"
+                                       required
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Reason Textarea -->
+                        <div class="space-y-sm">
+                          <label
+                            class="text-label-md font-label-md text-on-surface block flex justify-between"
+                          >
+                            Reason for Visit <span class="text-error">*</span>
+                            <span
+                              class="text-label-sm font-label-sm text-on-surface-variant font-normal"
+                              >Max 500 chars</span
+                            >
+                          </label>
+                          <textarea  name="{{ form.reason_for_visit.html_name }}"
+                            class="w-full bg-surface-container-low text-on-surface rounded-lg py-2 px-md focus:ring-2 focus:ring-primary/50 focus:bg-surface-container-lowest transition-all outline-none resize-y"
+                            required=""
+                            rows="3"
+                          > </textarea>
+                        </div>
+                       
+                        <hr class="border-outline-variant/30 my-lg" />
+                        <!-- Actions -->
+                        <div class="flex items-center justify-end gap-md">
+                          <a href="{% url 'appointments:detail' appointment.pk %}"
+                            class="px-md py-2 rounded-lg text-body-md font-body-md text-on-surface-variant hover:bg-surface-container-high transition-colors"
+                            >
+                            Cancel
+                        </a>
+                          <button
+                            class="px-lg py-2 rounded-lg bg-primary text-on-primary text-body-md font-body-md hover:bg-primary/90 hover:shadow-lg transition-all flex items-center gap-sm"
+                            type="submit"
+                          >
+                            <span class="material-symbols-outlined text-[20px]"
+                              >save</span
+                            >
+                            Update Appointment
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <!-- Sidebar / Context Column -->
+                <div class="space-y-lg relative z-10">
+                  <!-- Doctor Availability Snippet -->
+                  <div
+                    class="bg-surface-container-lowest rounded-xl shadow-sm p-lg"
+                  >
+                    <h3
+                      class="text-title-md font-title-md text-on-surface mb-md flex items-center gap-sm"
+                    >
+                      <span
+                        class="material-symbols-outlined text-secondary-fixed-dim"
+                        >event_available</span
+                      >
+                      Dr. {{appointment.doctor.user.get_full_name}}
+                    </h3>
+                    <div class="space-y-md">
+                      <div
+                        class="flex justify-between items-center text-body-sm font-body-sm"
+                      >
+                        <span class="text-on-surface-variant">Today</span>
+                        <span class="text-error font-medium">Fully Booked</span>
+                      </div>
+                      <div
+                        class="flex justify-between items-center text-body-sm font-body-sm"
+                      >
+                        <span class="text-on-surface-variant">Tomorrow</span>
+                        <span class="text-primary font-medium"
+                          >3 Slots Available</span
+                        >
+                      </div>
+                      <div
+                        class="flex justify-between items-center text-body-sm font-body-sm"
+                      >
+                        <span class="text-on-surface-variant">Next Week</span>
+                        <span class="text-secondary font-medium">Wide Open</span>
+                      </div>
+                    </div>
+                    <button
+                      class="mt-md w-full py-2 text-label-md font-label-md text-primary hover:bg-primary/5 rounded-lg transition-colors border border-primary/20"
+                    >
+                      View Full Calendar
+                    </button>
+                  </div>
+                  <!-- Reschedule Policy -->
+                  <div
+                    class="bg-surface-container-low rounded-xl p-lg border border-outline-variant/30"
+                  >
+                    <h3
+                      class="text-label-md font-label-md text-on-surface uppercase tracking-wider mb-sm opacity-70"
+                    >
+                      Reschedule Policy
+                    </h3>
+                    <p
+                      class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed mb-md"
+                    >
+                      Appointments rescheduled within 24 hours of the original
+                      time may be subject to a late fee unless due to medical
+                      emergency.
+                    </p>
+                    <div
+                      class="flex items-start gap-sm text-label-sm font-label-sm text-on-surface-variant/80"
+                    >
+                      <span class="material-symbols-outlined text-[16px] mt-0.5"
+                        >notification_important</span
+                      >
+                      <span
+                        >Patient will receive an automated SMS and Email
+                        confirmation upon update.</span
+                      >
+                    </div>
+                  </div>
+                  <!-- Visual Decoration -->
+                  <div
+                    class="hidden lg:block w-full h-32 rounded-xl bg-surface-container overflow-hidden relative"
+                  >
+                    <div
+                      class="absolute inset-0 opacity-20"
+                      style="
+                        background-image: radial-gradient(
+                          circle at 2px 2px,
+                          var(--color-primary) 1px,
+                          transparent 0
+                        );
+                        background-size: 16px 16px;
+                      "
+                    ></div>
+                    <div
+                      class="absolute bottom-0 right-0 p-sm text-on-surface-variant/40"
+                    >
+                      <span class="material-symbols-outlined text-[48px]"
+                        >event</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <script>
+            // Simple micro-interaction for input focus
+            document.querySelectorAll("input, textarea").forEach((element) => {
+                element.addEventListener("focus", function () {
+                    this.parentElement.classList.add("scale-[1.01]");
+                });
+                element.addEventListener("blur", function () {
+                    this.parentElement.classList.remove("scale-[1.01]");
+                });
+            });
+        </script>
 
-<h3 class="mb-4">
-    Reschedule Appointment
-</h3>
+        {% comment %} old page  {% endcomment %}
+<!-- <h3 class="mb-4">Reschedule Appointment</h3>
 
 <div class="card mb-4">
-
     <div class="card-body">
-
         <p>
             <strong>Appointment:</strong>
             {{ appointment.appointment_id }}
@@ -21,62 +497,41 @@ Update Appointment
 
         <p>
             <strong>Patient:</strong>
-            {{ appointment.patient.patient_id }}
-            -
-            {{ appointment.patient.user.get_full_name }}
+            {{ appointment.patient.patient_id }} - {{
+            appointment.patient.user.get_full_name }}
         </p>
 
         <p>
             <strong>Doctor:</strong>
-            {{ appointment.doctor.doctor_id }}
-            -
-            {{ appointment.doctor.user.get_full_name }}
+            {{ appointment.doctor.doctor_id }} - {{
+            appointment.doctor.user.get_full_name }}
         </p>
-
     </div>
-
 </div>
 
 <form method="post">
-
-    {% csrf_token %}
-
-    {{ form.non_field_errors }}
+    {% csrf_token %} {{ form.non_field_errors }}
 
     <div class="mb-3">
-        {{ form.appointment_date.label_tag }}
-        {{ form.appointment_date }}
-        {{ form.appointment_date.errors }}
+        {{ form.appointment_date.label_tag }} {{ form.appointment_date }} {{
+        form.appointment_date.errors }}
     </div>
 
     <div class="mb-3">
-        {{ form.appointment_time.label_tag }}
-        {{ form.appointment_time }}
-        {{ form.appointment_time.errors }}
+        {{ form.appointment_time.label_tag }} {{ form.appointment_time }} {{
+        form.appointment_time.errors }}
     </div>
 
     <div class="mb-3">
-        {{ form.reason_for_visit.label_tag }}
-        {{ form.reason_for_visit }}
-        {{ form.reason_for_visit.errors }}
+        {{ form.reason_for_visit.label_tag }} {{ form.reason_for_visit }} {{
+        form.reason_for_visit.errors }}
     </div>
 
-    <button
-        type="submit"
-        class="btn btn-primary">
+    <button type="submit" class="btn btn-primary">Update Appointment</button>
 
-        Update Appointment
-
-    </button>
-
-    <a
-        href="{% url 'appointments:detail' appointment.pk %}"
-        class="btn btn-secondary">
-
+    <a href="{% url 'appointments:detail' appointment.pk %}" class="btn btn-secondary">
         Cancel
-
     </a>
-
-</form>
+</form> -->
 
 {% endblock %}

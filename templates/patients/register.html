@@ -5,33 +5,238 @@ Register Patient
 {% endblock %}
 
 {% block content %}
+    <div class="flex flex-col w-full px-lg py-xl max-w-7xl mx-auto gap-xl">
+        <div class="flex items-end justify-between w-full">
+            <div class="flex flex-col gap-sm">
+                <div class="flex items-center gap-sm text-label-md text-on-surface-variant font-label-md">
+                    <a class="hover:text-primary transition-colors" href="{% url 'patients:list' %}">Patients</a>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    <span class="text-on-surface">Register Patient</span>
+                </div>
+                <h1 class="text-display-lg font-display-lg text-on-surface tracking-tight">New Patient
+                    Registration</h1>
+                <p class="text-body-lg text-on-surface-variant max-w-2xl">Enter comprehensive patient details to
+                    create a new health record. Fields marked with an asterisk (*) are required.</p>
+            </div>
+            <div class="hidden md:flex gap-md">
+                <a href="{% url 'patients:list' %}"
+                    class="px-lg py-3 rounded-full text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors"
+                    type="button">Cancel</a>
+                <button
+                    class="px-lg py-3 rounded-full bg-primary text-on-primary text-label-md font-label-md hover:bg-primary/90 transition-colors shadow-md"
+                    form="registration-form" type="submit">Register Patient</button>
+            </div>
+        </div>
+        <form method="POST" class="flex flex-col lg:flex-row gap-xl w-full relative" id="registration-form">
+            {% csrf_token %}
+            <div class="flex-1 flex flex-col gap-xl">
+                <!-- Account Info -->
+                <section
+                    class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden flex flex-col">
+                    <div class="p-lg bg-surface-container-low flex items-center gap-md">
+                        <div
+                            class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined">manage_accounts</span>
+                        </div>
+                        <div>
+                            <h2 class="text-title-md font-title-md text-on-surface">Account Credentials</h2>
+                            <p class="text-label-sm text-on-surface-variant font-label-sm">System access and
+                                notification details.</p>
+                        </div>
+                    </div>
+                    <div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg bg-surface-container-lowest">
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ user_form.username.id_for_label }}">Username 
+                                <span class="text-error">* {% if user_form.username.errors %}{{ user_form.username.errors.0 }}{% endif %}</span></label>
+                            {{ user_form.username }}
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ user_form.password.id_for_label }}">Password 
+                                <span class="text-error">* {% if user_form.password.errors %}{{ user_form.password.errors.0 }}{% endif %}</span></label>
+                            {{ user_form.password }}
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant" for="{{ user_form.email.id_for_label }}">Email
+                                Address</label> <span class="text-error"> {% if user_form.email.errors %}{{ user_form.email.errors.0 }}{% endif %}</span>
+                            {{ user_form.email }}
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant" for="{{ user_form.phone_number.id_for_label }}">Phone
+                                Number <span class="text-error">* {% if user_form.phone_number.errors %}{{ user_form.phone_number.errors.0 }}{% endif %}</span></label>
+                            {{ user_form.phone_number }}
+                        </div>
+                    </div>
+                </section>
+                <!-- Personal Info -->
+                <section
+                    class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden flex flex-col relative">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-secondary-container/10 blur-3xl rounded-full -mr-20 -mt-20 pointer-events-none">
+                    </div>
+                    <div class="p-lg bg-surface-container-low flex items-center gap-md relative z-10">
+                        <div
+                            class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined">badge</span>
+                        </div>
+                        <div>
+                            <h2 class="text-title-md font-title-md text-on-surface">Demographic Profile</h2>
+                            <p class="text-label-sm text-on-surface-variant font-label-sm">Primary patient
+                                identification and location.</p>
+                        </div>
+                    </div>
+                    <div
+                        class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg bg-surface-container-lowest relative z-10">
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ user_form.first_name.id_for_label }}">First Name 
+                                <span class="text-error">* {% if user_form.first_name.errors %}{{ user_form.first_name.errors.0 }}{% endif %}</span></label>
+                            {{user_form.first_name}}
+                                
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ user_form.last_name.id_for_label }}">Last Name 
+                                <span class="text-error">* {% if user_form.last_name.errors %}{{ user_form.last_name.errors.0 }}{% endif %}</span></label>
+                            {{user_form.last_name}}
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant" for="{{ patient_form.date_of_birth.id_for_label }}">Date of
+                                Birth <span class="text-error">* {% if patient_form.date_of_birth.errors %}{{ patient_form.date_of_birth.errors.0 }}{% endif %} </span></label>
+                            <div class="relative">
+                                {{patient_form.date_of_birth}}
+                                <span
+                                    class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">calendar_month</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-xs">
 
-<h2 class="mb-4">
-    Register Patient
-</h2>
+                            <label
+                                class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ patient_form.gender.id_for_label }}"
+                            >
+                                Gender <span class="text-error">* {% if patient_form.gender.errors %}{{ patient_form.gender.errors.0 }}{% endif %}</span>
+                            </label>
 
-<form method="post">
+                            <div class="relative">
 
-    {% csrf_token %}
+                                {{ patient_form.gender }}
 
-    <h4>Account Information</h4>
+                                <span
+                                    class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
+                                >
+                                    expand_more
+                                </span>
 
-    {{ user_form.as_p }}
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-xs md:col-span-2">
+                            <label class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ patient_form.address.id_for_label }}">Street Address</label>
+                                <span class="text-error"> {% if patient_form.address.errors %}{{ patient_form.address.errors.0 }}{% endif %}</span>
+                            {{patient_form.address}}
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ patient_form.city.id_for_label }}">City</label>
+                                <span class="text-error"> {% if patient_form.city.errors %}{{ patient_form.city.errors.0 }}{% endif %}</span>
+                            {{patient_form.city}}
+                        </div>
+                        <div class="flex gap-lg">
+                            <div class="flex flex-col gap-xs flex-1">
+                                <label class="text-label-md font-label-md text-on-surface-variant"
+                                    for="{{ patient_form.state.id_for_label }}">State</label>
+                                <span class="text-error"> {% if patient_form.state.errors %}{{ patient_form.state.errors.0 }}{% endif %}</span>
+                                {{patient_form.state}}
+                            </div>
+                            <div class="flex flex-col gap-xs flex-1">
+                                <label class="text-label-md font-label-md text-on-surface-variant"
+                                    for="{{ patient_form.pincode.id_for_label }}">Pincode</label>
+                                <span class="text-error"> {% if patient_form.pincode.errors %}{{ patient_form.pincode.errors.0 }}{% endif %}</span>
+                                {{patient_form.pincode}}
+                                    
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- Clinical Side Panel -->
+            <div class="w-full lg:w-96 shrink-0 flex flex-col gap-lg">
+                <section
+                    class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden flex flex-col h-full">
+                    <div class="p-lg bg-tertiary-container/10 flex items-center gap-md">
+                        <div
+                            class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined">vital_signs</span>
+                        </div>
+                        <div>
+                            <h2 class="text-title-md font-title-md text-on-surface">Clinical Basics</h2>
+                            <p class="text-label-sm text-on-surface-variant font-label-sm">Essential medical
+                                context.</p>
+                        </div>
+                    </div>
+                    <div class="p-lg flex flex-col gap-lg bg-surface-container-lowest flex-1">
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ patient_form.blood_group.id_for_label }}">Blood Group</label>
+                                <span class="text-error"> {% if patient_form.blood_group.errors %}{{ patient_form.blood_group.errors.0 }}{% endif %}</span>
+                            <div class="relative">
+                                {{patient_form.blood_group}}
+                                <span
+                                    class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">water_drop</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label
+                                class="text-label-md font-label-md text-on-surface-variant flex items-center gap-2"
+                                for="{{ patient_form.emergency_contact.id_for_label }}">
+                                Emergency Contact
+                                <span class="material-symbols-outlined text-[16px] text-error">warning {% if patient_form.emergency_contact.errors %}{{ patient_form.emergency_contact.errors.0 }}{% endif %}</span>
+                            </label>
+                            {{patient_form.emergency_contact}}
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ patient_form.allergies.id_for_label }}">Known Allergies</label>
+                                <span class="text-error"> {% if patient_form.allergies.errors %}{{ patient_form.allergies.errors.0 }}{% endif %}</span>
+                            {{patient_form.allergies}}
+                        </div>
+                        <div class="flex flex-col gap-xs flex-1">
+                            <label class="text-label-md font-label-md text-on-surface-variant"
+                                for="{{ patient_form.medical_history.id_for_label }}">Brief Medical History</label>
+                            <span class="text-error"> {% if patient_form.medical_history.errors %}{{ patient_form.medical_history.errors.0 }}{% endif %}</span>
+                            {{patient_form.medical_history}}
+                        </div>
+                    </div>
+                </section>
+                <!-- Visual Anchor -->
+                <div class="rounded-2xl overflow-hidden h-48 relative shadow-md hidden lg:block">
+                    <div class="w-full h-full bg-cover bg-center"
+                        data-alt="A macro, abstract photograph of layered translucent glass panels in calming shades of soft blue and teal, conveying a sense of transparency, clinical cleanliness, and modern healthcare technology in the Zenith Health design system aesthetic."
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDK4zYocziqB2cXwvAtNUlbGgbSM3N2t6xG7M5pSf8uu0wlM397gTBV_u4kygr91yvaAT5C1TzTClegU2Slm19BLsE5Womqe48oy4W-vPEQ7Xbu8kqnSLL2EgjWi0kg-raf7HuKCXn_sapdTCKw5LpQ8Ft242xE2qrObdmbxFGNXHQCXgwrCczuKIcDeA7amzMOBRxbyYSGFyLH9NzexZQfmW_fQDIs--V_lUQhrkhYF7X-_lSVf3Zk')">
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent">
+                    </div>
+                    <div class="absolute bottom-md left-md text-inverse-on-surface">
+                        <div class="text-label-sm font-label-sm tracking-widest uppercase opacity-70">Security
+                            Protocol</div>
+                        <div class="text-body-sm font-body-sm">Data is encrypted at rest.</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Actions -->
+            <div class="flex md:hidden flex-col gap-md mt-lg w-full">
+                <button
+                    class="w-full px-lg py-3 rounded-full bg-primary text-on-primary text-label-md font-label-md shadow-md"
+                    type="submit">Register Patient</button>
+                <button
+                    class="w-full px-lg py-3 rounded-full text-label-md font-label-md text-on-surface-variant bg-surface-container"
+                    type="button">Cancel</button>
+            </div>
+        </form>
+    </div>
 
-    <hr>
-
-    <h4>Medical Information</h4>
-
-    {{ patient_form.as_p }}
-
-    <button
-        type="submit"
-        class="btn btn-primary">
-
-        Register Patient
-
-    </button>
-
-</form>
 
 {% endblock %}

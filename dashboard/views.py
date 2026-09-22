@@ -14,6 +14,7 @@ from patients.models import Patient
 @role_required(
     UserRole.ADMIN,
     UserRole.DOCTOR,
+    UserRole.PATIENT,
 )
 def dashboard(request):
     

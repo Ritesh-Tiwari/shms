@@ -4,7 +4,7 @@ from .models import Doctor
 
 
 class DoctorForm(forms.ModelForm):
-
+ 
     class Meta:
 
         model = Doctor
@@ -15,3 +15,8 @@ class DoctorForm(forms.ModelForm):
             "created_at",
             "updated_at",
         )
+
+        widgets = {
+
+            
+        }

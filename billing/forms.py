@@ -14,11 +14,7 @@ class BillingForm(forms.ModelForm):
         ]
 
         widgets = {
-            "tax_type": forms.Select(
-                attrs={
-                    "class": "form-select",
-                }
-            ),
+            
             "tax_amount": forms.NumberInput(
                 attrs={
                     "class": "form-control",

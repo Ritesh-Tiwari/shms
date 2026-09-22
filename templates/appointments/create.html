@@ -6,54 +6,431 @@ Create Appointment
 
 {% block content %}
 
-<h3 class="mb-4">
-    Create Appointment
-</h3>
-
-<form method="post">
-
-    {% csrf_token %}
-
-    {{ form.non_field_errors }}
-
-    <div class="mb-3">
-        {{ form.patient.label_tag }}
-        {{ form.patient }}
-        {{ form.patient.errors }}
+<div class="flex flex-col w-full p-lg pb-xxl relative min-h-[calc(100vh-64px)] overflow-x-hidden">
+    <!-- Decorative background element -->
+    <div
+        class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-primary-fixed-dim/20 via-surface to-surface pointer-events-none -z-10 rounded-bl-[120px]">
     </div>
-
-    <div class="mb-3">
-        {{ form.doctor.label_tag }}
-        {{ form.doctor }}
-        {{ form.doctor.errors }}
+    <!-- Header Section -->
+    <div class="w-full max-w-6xl mx-auto mb-xl flex flex-col md:flex-row md:items-end justify-between gap-md relative">
+        <div class="relative z-10">
+            <h1 class="font-display-lg text-display-lg text-on-surface mb-sm">Schedule Appointment</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Book a new consultation
+                or follow-up. Select the appropriate clinician and available time slot.</p>
+        </div>
+        <div class="flex items-center gap-md">
+            <div class="hidden md:flex flex-col text-right">
+                <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Current
+                    Date</span>
+                <span class="font-title-md text-title-md text-primary" id="current-date-display">Oct 24,
+                    2023</span>
+            </div>
+            <button
+                class="flex items-center justify-center gap-sm bg-surface-container-high hover:bg-surface-dim text-on-surface font-label-md text-label-md px-md py-sm rounded-lg transition-colors shadow-sm"
+                type="button">
+                <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+                View Calendar
+            </button>
+        </div>
     </div>
+    <!-- Main Content Layout -->
+    <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-xl relative z-10">
+        <!-- Form Section (Left Column) -->
 
-    <div class="mb-3">
-        {{ form.appointment_date.label_tag }}
-        {{ form.appointment_date }}
-        {{ form.appointment_date.errors }}
+        <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-lg">
+            <div class="bg-surface-container-lowest rounded-xl shadow-md p-xl flex flex-col gap-xl">
+                <div class="flex items-center gap-md pb-md">
+                    <div
+                        class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+                        <span class="material-symbols-outlined">person_add</span>
+                    </div>
+                    <div>
+                        <h2 class="font-title-md text-title-md text-on-surface">Appointment Details</h2>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Fill in the required
+                            information to secure a slot.</p>
+                    </div>
+                </div>
+                <form method="post" class="flex flex-col gap-lg" id="appointment-form">
+                    {% csrf_token %}
+
+                    <!-- Patient & Doctor Selection -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+
+                        <!-- Patient -->
+                        <div class="flex flex-col gap-xs">
+                            <label class="font-label-md text-label-md text-on-surface"
+                                for="{{ form.patient.id_for_label }}">
+                                Select Patient <span class="text-error">*</span>
+                            </label>
+
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
+                                    search
+                                </span>
+
+                                <select
+                                    class="w-full bg-surface-container hover:bg-surface-container-high focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 rounded-lg pl-10 pr-lg py-3 font-body-md text-body-md text-on-surface appearance-none outline-none transition-all shadow-sm cursor-pointer"
+                                    id="{{ form.patient.id_for_label }}" name="{{ form.patient.html_name }}" required>
+                                    <option value="" disabled {% if not form.patient.value %}selected{% endif %}>
+                                        Search or select ID...
+                                    </option>
+
+                                    {% for patient in form.patient.field.queryset %}
+                                    <option value="{{ patient.pk }}" {% if
+                                        form.patient.value|stringformat:"s"==patient.pk|stringformat:"s" %}selected{%
+                                        endif %}>
+                                        {{ patient.patient_id }} - {{ patient.user.get_full_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+
+                                <span
+                                    class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
+                                    arrow_drop_down
+                                </span>
+                            </div>
+
+                            {% if form.patient.errors %}
+                            <div class="text-error text-sm mt-1">
+                                {{ form.patient.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+
+                        <!-- Doctor -->
+                        <div class="flex flex-col gap-xs">
+                            <label class="font-label-md text-label-md text-on-surface"
+                                for="{{ form.doctor.id_for_label }}">
+                                Select Doctor <span class="text-error">*</span>
+                            </label>
+
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
+                                    stethoscope
+                                </span>
+
+                                <select
+                                    class="w-full bg-surface-container hover:bg-surface-container-high focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 rounded-lg pl-10 pr-lg py-3 font-body-md text-body-md text-on-surface appearance-none outline-none transition-all shadow-sm cursor-pointer"
+                                    id="{{ form.doctor.id_for_label }}" name="{{ form.doctor.html_name }}" required>
+                                    <option value="" disabled {% if not form.doctor.value %}selected{% endif %}>
+                                        Choose a specialist...
+                                    </option>
+
+                                    {% for doctor in form.doctor.field.queryset %}
+                                    <option value="{{ doctor.pk }}" {% if
+                                        form.doctor.value|stringformat:"s"==doctor.pk|stringformat:"s" %}selected{%
+                                        endif %}>
+                                        {{ doctor.doctor_id }} - Dr. {{ doctor.user.get_full_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+
+                                <span
+                                    class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
+                                    arrow_drop_down
+                                </span>
+                            </div>
+
+                            {% if form.doctor.errors %}
+                            <div class="text-error text-sm mt-1">
+                                {{ form.doctor.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Date & Time Selection -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-lg relative">
+
+                        <!-- Connecting line for visual grouping -->
+                        <div
+                            class="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-[2px] bg-surface-container-highest z-0">
+                        </div>
+
+                        <!-- Date -->
+                        <div class="flex flex-col gap-xs z-10">
+                            <label class="font-label-md text-label-md text-on-surface"
+                                for="{{ form.appointment_date.id_for_label }}">
+                                Date <span class="text-error">*</span>
+                            </label>
+
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
+                                    event
+                                </span>
+
+                                <input
+                                    class="w-full bg-surface-container hover:bg-surface-container-high focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 rounded-lg pl-10 pr-md py-3 font-body-md text-body-md text-on-surface outline-none transition-all shadow-sm cursor-pointer [color-scheme:light]"
+                                    id="{{ form.appointment_date.id_for_label }}"
+                                    name="{{ form.appointment_date.html_name }}" type="date"
+                                    value="{{ form.appointment_date.value|default:'' }}" required>
+                            </div>
+
+                            {% if form.appointment_date.errors %}
+                            <div class="text-error text-sm mt-1">
+                                {{ form.appointment_date.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+
+                        <!-- Time -->
+                        <div class="flex flex-col gap-xs z-10">
+                            <label class="font-label-md text-label-md text-on-surface"
+                                for="{{ form.appointment_time.id_for_label }}">
+                                Time <span class="text-error">*</span>
+                            </label>
+
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
+                                    schedule
+                                </span>
+
+                                <input
+                                    class="w-full bg-surface-container hover:bg-surface-container-high focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 rounded-lg pl-10 pr-md py-3 font-body-md text-body-md text-on-surface outline-none transition-all shadow-sm cursor-pointer [color-scheme:light]"
+                                    id="{{ form.appointment_time.id_for_label }}"
+                                    name="{{ form.appointment_time.html_name }}" type="time"
+                                    value="{{ form.appointment_time.value|default:'' }}" required>
+                            </div>
+
+                            {% if form.appointment_time.errors %}
+                            <div class="text-error text-sm mt-1">
+                                {{ form.appointment_time.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Reason for Visit -->
+                    <div class="flex flex-col gap-xs">
+                        <div class="flex justify-between items-end">
+                            <label class="font-label-md text-label-md text-on-surface"
+                                for="{{ form.reason_for_visit.id_for_label }}">
+                                Reason for Visit <span class="text-error">*</span>
+                            </label>
+
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">
+                                Max 500 chars
+                            </span>
+                        </div>
+
+                        <div class="relative">
+                            <textarea
+                                class="w-full bg-surface-container hover:bg-surface-container-high focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 rounded-lg p-md font-body-md text-body-md text-on-surface outline-none transition-all shadow-sm resize-y min-h-[120px]"
+                                id="{{ form.reason_for_visit.id_for_label }}"
+                                name="{{ form.reason_for_visit.html_name }}"
+                                placeholder="Describe symptoms, primary concerns, or purpose of follow-up..."
+                                maxlength="500" required
+                                rows="4">{{ form.reason_for_visit.value|default:'' }}</textarea>
+                        </div>
+
+                        {% if form.reason_for_visit.errors %}
+                        <div class="text-error text-sm mt-1">
+                            {{ form.reason_for_visit.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+
+                    <!-- Non-field Errors -->
+                    {% if form.non_field_errors %}
+                    <div class="text-error text-sm">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-end gap-md pt-lg mt-md">
+
+                        <button
+                            class="px-xl py-3 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors"
+                            type="button" onclick="history.back()">
+                            Cancel
+                        </button>
+
+                        <button
+                            class="px-xl py-3 rounded-lg bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md transition-colors shadow-md hover:shadow-lg flex items-center gap-sm"
+                            type="submit">
+                            <span class="material-symbols-outlined text-[20px]">
+                                check_circle
+                            </span>
+                            Schedule Appointment
+                        </button>
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <!-- Context Panel (Right Column) -->
+        <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-lg">
+            <!-- Quick Stats/Info Card -->
+            <div class="bg-primary text-on-primary rounded-xl shadow-lg p-xl relative overflow-hidden group">
+                <div
+                    class="absolute -right-8 -top-8 w-32 h-32 bg-on-primary/10 rounded-full blur-2xl group-hover:bg-on-primary/20 transition-all duration-700">
+                </div>
+                <div class="absolute -left-12 -bottom-12 w-48 h-48 bg-primary-container/30 rounded-full blur-3xl">
+                </div>
+                <div class="relative z-10 flex flex-col gap-md">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-title-md text-title-md">Today's Load</h3>
+                        <span class="material-symbols-outlined">analytics</span>
+                    </div>
+                    <div class="flex items-end gap-sm">
+                        <span class="font-display-lg text-display-lg leading-none">42</span>
+                        <span class="font-body-sm text-body-sm text-on-primary/80 pb-1">Total Appts</span>
+                    </div>
+                    <div class="w-full bg-on-primary/20 rounded-full h-1 mt-sm">
+                        <div class="bg-on-primary h-1 rounded-full w-[65%]"></div>
+                    </div>
+                    <div class="flex justify-between font-label-sm text-label-sm text-on-primary/80">
+                        <span>65% Capacity</span>
+                        <span>12 Slots Left</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Doctor Availability Preview (Interactive but static data for visual) -->
+            <div class="bg-surface-container-lowest rounded-xl shadow-md flex flex-col">
+                <div
+                    class="p-lg border-b border-outline-variant/20 flex items-center justify-between bg-surface-container-lowest rounded-t-xl z-10">
+                    <h3 class="font-title-md text-title-md text-on-surface">Doctor Availability</h3>
+                    <button
+                        class="p-xs hover:bg-surface-container rounded-full text-on-surface-variant transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                    </button>
+                </div>
+                <div class="p-lg flex flex-col gap-md relative">
+                    <!-- Subtle background map/pattern to add texture to the sidebar -->
+                    <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
+                        style="background-image: radial-gradient(#0b1c30 1px, transparent 1px); background-size: 16px 16px;">
+                    </div>
+                    <div
+                        class="flex items-center justify-between p-sm rounded-lg hover:bg-surface-container transition-colors cursor-pointer group">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-label-md">
+                                MP</div>
+                            <div>
+                                <div class="font-label-md text-label-md text-on-surface">Dr. Mohan Prashad
+                                </div>
+                                <div class="font-body-sm text-body-sm text-secondary flex items-center gap-xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Available
+                                </div>
+                            </div>
+                        </div>
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-high px-2 py-1 rounded">3
+                            slots</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between p-sm rounded-lg hover:bg-surface-container transition-colors cursor-pointer group">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-label-md">
+                                RN</div>
+                            <div>
+                                <div class="font-label-md text-label-md text-on-surface">Dr. Ram Narayan
+                                </div>
+                                <div class="font-body-sm text-body-sm text-error flex items-center gap-xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-error"></span> Busy until 2 PM
+                                </div>
+                            </div>
+                        </div>
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-high px-2 py-1 rounded">0
+                            slots</span>
+                    </div>
+                    <div
+                        class="flex items-center justify-between p-sm rounded-lg hover:bg-surface-container transition-colors cursor-pointer group">
+                        <div class="flex items-center gap-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-label-md">
+                                RS</div>
+                            <div>
+                                <div class="font-label-md text-label-md text-on-surface">Dr. Rajesh Sharma
+                                </div>
+                                <div class="font-body-sm text-body-sm text-secondary flex items-center gap-xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Available
+                                </div>
+                            </div>
+                        </div>
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-high px-2 py-1 rounded">5
+                            slots</span>
+                    </div>
+                </div>
+                <div class="p-md text-center bg-surface-container-low rounded-b-xl mt-auto">
+                    <a class="font-label-md text-label-md text-primary hover:text-primary-fixed-variant transition-colors inline-flex items-center gap-xs"
+                        href="#">
+                        View full roster <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
     </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Highlight active nav item
+        const navItems = document.querySelectorAll('nav[data-active-classes] a');
+        const activeClasses = document.querySelector('nav').getAttribute('data-active-classes').split(' ');
 
-    <div class="mb-3">
-        {{ form.appointment_time.label_tag }}
-        {{ form.appointment_time }}
-        {{ form.appointment_time.errors }}
-    </div>
+        navItems.forEach(item => {
+            if (item.getAttribute('data-path') === 'appointments') {
+                // Remove hover classes that conflict with active state
+                item.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high', 'hover:text-on-surface');
+                // Add active classes
+                item.classList.add(...activeClasses);
+                // Ensure icon inherits color
+                const icon = item.querySelector('.material-symbols-outlined');
+                if (icon) {
+                    icon.style.fontVariationSettings = "'FILL' 1";
+                }
+            }
+        });
 
-    <div class="mb-3">
-        {{ form.reason_for_visit.label_tag }}
-        {{ form.reason_for_visit }}
-        {{ form.reason_for_visit.errors }}
-    </div>
+        // Set current date display
+        const dateDisplay = document.getElementById('current-date-display');
+        if (dateDisplay) {
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            dateDisplay.textContent = new Date().toLocaleDateString('en-IN', options);
+        }
 
-    <button
-        type="submit"
-        class="btn btn-primary">
+        // Set min date to today for date picker
+        const dateInput = document.getElementById('appointment-date');
+        if (dateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+        }
 
-        Create Appointment
+        // Form submission simulation
+        const form = document.getElementById('appointment-form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                // e.preventDefault();
+                const btn = form.querySelector('button[type="submit"]');
+                const originalText = btn.innerHTML;
 
-    </button>
+                // Loading state
+                btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span> Scheduling...';
+                btn.classList.add('opacity-80', 'cursor-not-allowed');
 
-</form>
+                
+            });
+        }
+    });
+</script>
+
 
 {% endblock %}
