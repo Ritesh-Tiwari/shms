@@ -83,8 +83,8 @@
                 <div class="px-lg py-md bg-surface-container-low flex items-center justify-between gap-md border-b border-outline-variant/20">
                     <div class="flex items-center gap-sm"><span class="material-symbols-outlined text-primary">receipt_long</span><div><h2 class="text-title-md font-title-md text-on-surface">Billing &amp; Payment</h2><p class="text-body-sm text-on-surface-variant">Consultation charges and payment status for this visit.</p></div></div>
                     {% if billing %}
-                        {% if billing.get_payment_status_display  == "PAID" %}<span class="px-sm py-xs rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">Paid</span>
-                        {% elif billing.get_payment_status_display  == "PARTIAL" %}<span class="px-sm py-xs rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant text-label-sm font-label-sm">Partially Paid</span>
+                        {% if billing.get_payment_status_display  == "Paid" %}<span class="px-sm py-xs rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">Paid</span>
+                        {% elif billing.get_payment_status_display  == "Partial" %}<span class="px-sm py-xs rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant text-label-sm font-label-sm">Partially Paid</span>
                         {% else %}<span class="px-sm py-xs rounded-full bg-error-container text-on-error-container text-label-sm font-label-sm">Payment Pending</span>{% endif %}
                     {% endif %}
                 </div>

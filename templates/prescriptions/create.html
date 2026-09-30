@@ -2,912 +2,531 @@
 {% block title %}Create Prescription{% endblock %}
 
 {% block content %}
-
 <div class="flex flex-col w-full">
     <div class="px-margin-desktop py-lg max-w-6xl mx-auto w-full space-y-lg">
+
         <!-- Navigation / Header Bar -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-sm">
             <div class="space-y-xs">
                 <nav class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
                     <a class="hover:text-primary transition-colors" href="{% url 'appointments:list' %}">Appointments</a>
-                    <span class="">/</span>
-                    <a class="hover:text-primary transition-colors" href="{% url 'appointments:detail' appointment.pk %}">{{appointment.appointment_id }}</a>
-                    <span class="">/</span>
+                    <span>/</span>
+                    <a class="hover:text-primary transition-colors" href="{% url 'appointments:detail' appointment.pk %}">{{ appointment.appointment_id }}</a>
+                    <span>/</span>
                     <span class="text-on-surface font-semibold">Create Prescription</span>
                 </nav>
-                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Create
-                    Prescription</h1> (prescription creation process complete nhi hua hai)
+                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+                    Create Prescription
+                </h1>
             </div>
+
             <a class="inline-flex items-center gap-xs font-label-md text-label-md text-primary hover:text-primary-container font-medium self-start sm:self-center transition-colors"
-                href="{% url 'appointments:detail' appointment.pk %}">
+               href="{% url 'appointments:detail' appointment.pk %}">
                 <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-                Back to Appointment ({{appointment.appointment_id }})
+                Back to Appointment ({{ appointment.appointment_id }})
             </a>
         </div>
-        <!-- Section 1: Appointment Details -->
+
+        <!-- Appointment Details -->
         <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg space-y-md">
             <div class="flex items-center justify-between">
-                <span
-                    class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Appointment
-                    Details</span>
+                <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">
+                    Appointment Details
+                </span>
             </div>
+
             <div class="grid grid-cols-2 md:grid-cols-5 gap-md">
                 <div class="bg-surface-container-low rounded-lg p-md space-y-xs">
                     <div class="font-label-sm text-label-sm text-on-surface-variant">Appointment ID</div>
-                    <div class="font-title-md text-body-md font-semibold text-on-surface">{{appointment.appointment_id }}</div>
+                    <div class="font-title-md text-body-md font-semibold text-on-surface">
+                        {{ appointment.appointment_id }}
+                    </div>
                 </div>
+
                 <div class="bg-surface-container-low rounded-lg p-md space-y-xs">
                     <div class="font-label-sm text-label-sm text-on-surface-variant">Patient</div>
-                    <div class="font-body-md text-body-md font-semibold text-on-surface truncate">{{ appointment.patient.user.get_full_name }}</div>
-                        
+                    <div class="font-body-md text-body-md font-semibold text-on-surface truncate">
+                        {{ appointment.patient.user.get_full_name }}
+                    </div>
                 </div>
+
                 <div class="bg-surface-container-low rounded-lg p-md space-y-xs">
                     <div class="font-label-sm text-label-sm text-on-surface-variant">Doctor</div>
-                    <div class="font-body-md text-body-md font-semibold text-on-surface truncate">{{ appointment.doctor.user.get_full_name }}</div>
+                    <div class="font-body-md text-body-md font-semibold text-on-surface truncate">
+                        {{ appointment.doctor.user.get_full_name }}
+                    </div>
                 </div>
+
                 <div class="bg-surface-container-low rounded-lg p-md space-y-xs">
                     <div class="font-label-sm text-label-sm text-on-surface-variant">Date</div>
-                    <div class="font-body-md text-body-md font-semibold text-on-surface">{{ appointment.appointment_date }}</div>
+                    <div class="font-body-md text-body-md font-semibold text-on-surface">
+                        {{ appointment.appointment_date }}
+                    </div>
                 </div>
+
                 <div class="bg-surface-container-low rounded-lg p-md space-y-xs col-span-2 md:col-span-1">
                     <div class="font-label-sm text-label-sm text-on-surface-variant">Time Slot</div>
-                    <div class="font-body-md text-body-md font-semibold text-on-surface">{{ appointment.appointment_time|time:"h:i A" }}</div>
+                    <div class="font-body-md text-body-md font-semibold text-on-surface">
+                        {{ appointment.appointment_time|time:"h:i A" }}
+                    </div>
                 </div>
             </div>
         </section>
-        <form method="post">
+
+        <!-- IMPORTANT: One form wraps ALL fields + medicine formset + submit button -->
+        <form method="post" id="prescription-form">
             {% csrf_token %}
+
             {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {{ form.non_field_errors }}
-                </div>
-            {% endif %}
-
-
-            {% if formset.non_form_errors %}
-                <div class="alert alert-danger">
-                    {% for error in formset.non_form_errors %}
-                        <div>
-                            {{ error }}
-                        </div>
+                <div class="mb-lg rounded-lg bg-error-container/40 p-md text-error">
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
                     {% endfor %}
                 </div>
             {% endif %}
-        <!-- Section 2: Prescription Details (Clinical Notes) -->
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg space-y-lg">
-            <div>
-                <h2 class="font-title-md text-title-md text-on-surface">Prescription Details</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-                <div class="space-y-xs">
-                    <label class="block font-label-md text-label-md text-on-surface font-medium"
-                        for="diagnosis">Diagnosis</label>
-                    <textarea
-                        class="w-full rounded-lg bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
-                        id="diagnosis"
-                        placeholder="e.g. Acute Upper Respiratory Tract Infection with Mild Pharyngitis..."
-                        rows="3"></textarea>
+
+            {% if formset.non_form_errors %}
+                <div class="mb-lg rounded-lg bg-error-container/40 p-md text-error">
+                    {% for error in formset.non_form_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
                 </div>
-                <div class="space-y-xs">
-                    <label class="block font-label-md text-label-md text-on-surface font-medium"
-                        for="remarks">Remarks</label>
-                    <textarea
-                        class="w-full rounded-lg bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
-                        id="remarks"
-                        placeholder="Advise hydration, rest for 3 days. Revisit if temperature exceeds 101°F..."
-                        rows="3"></textarea>
-                </div>
-            </div>
-        </section>
-        <!-- Section 3: Medicines -->
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg space-y-md relative">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-sm pb-xs">
+            {% endif %}
+
+            <!-- Prescription Details -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg space-y-lg">
                 <div>
-                    <h2 class="font-title-md text-title-md text-on-surface">Medicines</h2>
+                    <h2 class="font-title-md text-title-md text-on-surface">Prescription Details</h2>
                 </div>
-                <button
-                    class="inline-flex items-center gap-xs px-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md font-medium transition-colors self-start sm:self-auto cursor-pointer"
-                    id="add-medicine-btn" type="button">
-                    <span class="material-symbols-outlined text-[18px]">add</span>
-                    Add Medicine
-                </button>
-            </div>
-            <div class="flex items-center gap-xs flex-wrap pt-xs pb-sm border-b border-outline-variant/20">
-                <div class="flex items-center gap-xs mr-xs"><span
-                        class="material-symbols-outlined text-[18px] text-primary">auto_awesome</span><span
-                        class="font-label-sm text-label-sm font-semibold text-on-surface-variant uppercase tracking-wider">Quick
-                        Add:</span></div><button
-                    class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
-                    data-dosage="650mg" data-duration="5 days" data-freq="1-0-1 (Twice daily)"
-                    data-instructions="Take after food" data-name="Paracetamol 650mg" type="button"><span
-                        class="material-symbols-outlined text-[14px]">add</span>Paracetamol
-                    650mg</button><button
-                    class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
-                    data-dosage="40mg" data-duration="14 days" data-freq="1-0-0 (Morning)"
-                    data-instructions="Take before breakfast" data-name="Pantoprazole 40mg"
-                    type="button"><span class="material-symbols-outlined text-[14px]">add</span>Pantoprazole
-                    40mg</button><button
-                    class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
-                    data-dosage="10mg" data-duration="5 days" data-freq="0-0-1 (Night)"
-                    data-instructions="Take at bedtime" data-name="Cetirizine 10mg" type="button"><span
-                        class="material-symbols-outlined text-[14px]">add</span>Cetirizine
-                    10mg</button><button
-                    class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
-                    data-dosage="500mg" data-duration="3 days" data-freq="1-0-0 (Morning)"
-                    data-instructions="Take 1 hour before food" data-name="Azithromycin 500mg"
-                    type="button"><span class="material-symbols-outlined text-[14px]">add</span>Azithromycin
-                    500mg</button><button
-                    class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
-                    data-dosage="500mg" data-duration="7 days" data-freq="1-1-1 (Thrice daily)"
-                    data-instructions="Take with warm water" data-name="Amoxicillin 500mg"
-                    type="button"><span class="material-symbols-outlined text-[14px]">add</span>Amoxicillin
-                    500mg</button><button
-                    class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
-                    data-dosage="400mg" data-duration="3 days" data-freq="SOS (As required)"
-                    data-instructions="Take after food if pain persists" data-name="Ibuprofen 400mg"
-                    type="button"><span class="material-symbols-outlined text-[14px]">add</span>Ibuprofen
-                    400mg</button>
-            </div>
-            <!-- Medicine Rows Container -->
-            <div class="overflow-x-auto -mx-lg px-lg">
-                <div class="min-w-[760px] space-y-sm" id="medicines-table-body">
-                    <!-- Column Headers -->
-                    <div
-                        class="grid grid-cols-12 gap-sm px-md py-xs text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
-                        <div class="col-span-4">Medicine Name &amp; Strength</div>
-                        <div class="col-span-2">Dosage</div>
-                        <div class="col-span-2">Frequency</div>
-                        <div class="col-span-1">Duration</div>
-                        <div class="col-span-2">Instructions</div>
-                        <div class="col-span-1 text-center">Action</div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                    <div class="space-y-xs">
+                        <label class="block font-label-md text-label-md text-on-surface font-medium" for="{{ form.diagnosis.id_for_label }}">
+                            Diagnosis
+                        </label>
+
+                        <textarea
+                            class="w-full rounded-lg bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+                            id="{{ form.diagnosis.id_for_label }}"
+                            name="{{ form.diagnosis.html_name }}"
+                            placeholder="e.g. Acute Upper Respiratory Tract Infection with Mild Pharyngitis..."
+                            rows="3">{{ form.diagnosis.value|default_if_none:"" }}</textarea>
+
+                        {% for error in form.diagnosis.errors %}
+                            <span class="block text-error text-sm">{{ error }}</span>
+                        {% endfor %}
                     </div>
-                    <!-- Row 1 -->
-                    <div
-                        class="medicine-row grid grid-cols-12 gap-sm items-center bg-surface-container-low p-sm rounded-lg hover:bg-surface-container transition-colors">
+
+                    <div class="space-y-xs">
+                        <label class="block font-label-md text-label-md text-on-surface font-medium" for="{{ form.remarks.id_for_label }}">
+                            Remarks
+                        </label>
+
+                        <textarea
+                            class="w-full rounded-lg bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+                            id="{{ form.remarks.id_for_label }}"
+                            name="{{ form.remarks.html_name }}"
+                            placeholder="Advise hydration, rest for 3 days. Revisit if temperature exceeds 101°F..."
+                            rows="3">{{ form.remarks.value|default_if_none:"" }}</textarea>
+
+                        {% for error in form.remarks.errors %}
+                            <span class="block text-error text-sm">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Medicines -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg space-y-md relative mt-lg">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-sm pb-xs">
+                    <div>
+                        <h2 class="font-title-md text-title-md text-on-surface">Medicines</h2>
+                    </div>
+
+                    <button
+                        class="inline-flex items-center gap-xs px-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md font-medium transition-colors self-start sm:self-auto cursor-pointer"
+                        id="add-medicine-btn"
+                        type="button">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Medicine
+                    </button>
+                </div>
+
+                <!-- Quick Add -->
+                <div class="flex items-center gap-xs flex-wrap pt-xs pb-sm border-b border-outline-variant/20">
+                    <div class="flex items-center gap-xs mr-xs">
+                        <span class="material-symbols-outlined text-[18px] text-primary">auto_awesome</span>
+                        <span class="font-label-sm text-label-sm font-semibold text-on-surface-variant uppercase tracking-wider">Quick Add:</span>
+                    </div>
+
+                    <button class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
+                            data-dosage="650mg" data-duration="5 days" data-freq="1-0-1 (Twice daily)" data-instructions="Take after food" data-name="Paracetamol 650mg" type="button">
+                        <span class="material-symbols-outlined text-[14px]">add</span>Paracetamol 650mg
+                    </button>
+
+                    <button class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
+                            data-dosage="40mg" data-duration="14 days" data-freq="1-0-0 (Morning)" data-instructions="Take before breakfast" data-name="Pantoprazole 40mg" type="button">
+                        <span class="material-symbols-outlined text-[14px]">add</span>Pantoprazole 40mg
+                    </button>
+
+                    <button class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
+                            data-dosage="10mg" data-duration="5 days" data-freq="0-0-1 (Night)" data-instructions="Take at bedtime" data-name="Cetirizine 10mg" type="button">
+                        <span class="material-symbols-outlined text-[14px]">add</span>Cetirizine 10mg
+                    </button>
+
+                    <button class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
+                            data-dosage="500mg" data-duration="3 days" data-freq="1-0-0 (Morning)" data-instructions="Take 1 hour before food" data-name="Azithromycin 500mg" type="button">
+                        <span class="material-symbols-outlined text-[14px]">add</span>Azithromycin 500mg
+                    </button>
+
+                    <button class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
+                            data-dosage="500mg" data-duration="7 days" data-freq="1-1-1 (Thrice daily)" data-instructions="Take with warm water" data-name="Amoxicillin 500mg" type="button">
+                        <span class="material-symbols-outlined text-[14px]">add</span>Amoxicillin 500mg
+                    </button>
+
+                    <button class="template-chip inline-flex items-center gap-xs px-sm py-1 rounded-full bg-surface-container-low hover:bg-primary hover:text-on-primary text-on-surface font-label-sm text-label-sm transition-colors border border-outline-variant/30 cursor-pointer"
+                            data-dosage="400mg" data-duration="3 days" data-freq="SOS (As required)" data-instructions="Take after food if pain persists" data-name="Ibuprofen 400mg" type="button">
+                        <span class="material-symbols-outlined text-[14px]">add</span>Ibuprofen 400mg
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto -mx-lg px-lg">
+                    {{ formset.management_form }}
+
+                    <div class="min-w-[760px] space-y-sm" id="medicine-forms">
+                        <div class="grid grid-cols-12 gap-sm px-md py-xs text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+                            <div class="col-span-4">Medicine Name &amp; Strength</div>
+                            <div class="col-span-2">Dosage</div>
+                            <div class="col-span-2">Frequency</div>
+                            <div class="col-span-1">Duration</div>
+                            <div class="col-span-2">Instructions</div>
+                            <div class="col-span-1 text-center">Action</div>
+                        </div>
+
+                        {% for medicine_form in formset %}
+                            <div class="medicine-row grid grid-cols-12 gap-sm items-center bg-surface-container-low p-sm rounded-lg hover:bg-surface-container transition-colors"
+                                 data-form-index="{{ forloop.counter0 }}">
+
+                                <div class="col-span-4">
+                                    <input
+                                        class="med-name w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                        id="{{ medicine_form.medicine_name.id_for_label }}"
+                                        name="{{ medicine_form.medicine_name.html_name }}"
+                                        placeholder="Medicine name"
+                                        type="text"
+                                        value="{{ medicine_form.medicine_name.value|default_if_none:"" }}" />
+                                    {% for error in medicine_form.medicine_name.errors %}
+                                        <span class="block text-error text-xs mt-1">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-span-2">
+                                    <input
+                                        class="med-dosage w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                        id="{{ medicine_form.dosage.id_for_label }}"
+                                        name="{{ medicine_form.dosage.html_name }}"
+                                        placeholder="Dosage"
+                                        type="text"
+                                        value="{{ medicine_form.dosage.value|default_if_none:"" }}" />
+                                    {% for error in medicine_form.dosage.errors %}
+                                        <span class="block text-error text-xs mt-1">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-span-2">
+                                    <input
+                                        class="med-frequency w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                        id="{{ medicine_form.frequency.id_for_label }}"
+                                        name="{{ medicine_form.frequency.html_name }}"
+                                        placeholder="e.g. 2 times/day"
+                                        type="text"
+                                        value="{{ medicine_form.frequency.value|default_if_none:"" }}" />
+                                    {% for error in medicine_form.frequency.errors %}
+                                        <span class="block text-error text-xs mt-1">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-span-1">
+                                    <input
+                                        class="med-duration w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                        id="{{ medicine_form.duration.id_for_label }}"
+                                        name="{{ medicine_form.duration.html_name }}"
+                                        placeholder="Duration"
+                                        type="text"
+                                        value="{{ medicine_form.duration.value|default_if_none:"" }}" />
+                                    {% for error in medicine_form.duration.errors %}
+                                        <span class="block text-error text-xs mt-1">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-span-2">
+                                    <input
+                                        class="med-instructions w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                        id="{{ medicine_form.instructions.id_for_label }}"
+                                        name="{{ medicine_form.instructions.html_name }}"
+                                        placeholder="Instructions"
+                                        type="text"
+                                        value="{{ medicine_form.instructions.value|default_if_none:"" }}" />
+                                    {% for error in medicine_form.instructions.errors %}
+                                        <span class="block text-error text-xs mt-1">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-span-1 flex justify-center">
+                                    {{ medicine_form.DELETE.as_hidden }}
+                                    <button class="remove-row-btn p-1.5 rounded text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors"
+                                            title="Remove medication" type="button">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Empty Django formset template. JS replaces __prefix__ with the next index. -->
+                <template id="empty-form-template">
+                    <div class="medicine-row grid grid-cols-12 gap-sm items-center bg-surface-container-low p-sm rounded-lg hover:bg-surface-container transition-colors"
+                         data-form-index="__prefix__">
+
                         <div class="col-span-4">
-                            <input
-                                class="med-name w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
-                                placeholder="Medicine name" type="text" value="Paracetamol 650mg" />
+                            <input class="med-name w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                   id="id___prefix___medicine_name"
+                                   name="__prefix__-medicine_name"
+                                   placeholder="Medicine name" type="text" />
                         </div>
+
                         <div class="col-span-2">
-                            <input
-                                class="med-dosage w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
-                                placeholder="Dosage" type="text" value="1 tablet" />
+                            <input class="med-dosage w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                   id="id___prefix___dosage"
+                                   name="__prefix__-dosage"
+                                   placeholder="Dosage" type="text" />
                         </div>
+
                         <div class="col-span-2">
-                            <select
-                                class="med-freq w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none">
-                                <option selected="">1-0-1 (Twice daily)</option>
-                                <option>1-0-0 (Morning)</option>
-                                <option>0-0-1 (Night)</option>
-                                <option>1-1-1 (Thrice daily)</option>
-                                <option>SOS (As required)</option>
-                            </select>
+                            <input class="med-frequency w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                   id="id___prefix___frequency"
+                                   name="__prefix__-frequency"
+                                   placeholder="e.g. 2 times/day" type="text" />
                         </div>
+
                         <div class="col-span-1">
-                            <input
-                                class="med-duration w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
-                                placeholder="Duration" type="text" value="5 days" />
+                            <input class="med-duration w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                   id="id___prefix___duration"
+                                   name="__prefix__-duration"
+                                   placeholder="Duration" type="text" />
                         </div>
+
                         <div class="col-span-2">
-                            <input
-                                class="med-instructions w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
-                                placeholder="Instructions" type="text" value="Take after food" />
+                            <input class="med-instructions w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                                   id="id___prefix___instructions"
+                                   name="__prefix__-instructions"
+                                   placeholder="Instructions" type="text" />
                         </div>
+
                         <div class="col-span-1 flex justify-center">
-                            <button
-                                class="remove-row-btn p-1.5 rounded text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors"
-                                title="Remove medication" type="button">
+                            <input type="hidden" name="__prefix__-DELETE" id="id___prefix___DELETE" />
+                            <button class="remove-row-btn p-1.5 rounded text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors"
+                                    title="Remove medication" type="button">
                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                             </button>
                         </div>
                     </div>
-                    <!-- Row 2 -->
-                    <div
-                        class="medicine-row grid grid-cols-12 gap-sm items-center bg-surface-container-low p-sm rounded-lg hover:bg-surface-container transition-colors">
-                        <div class="col-span-4">
-                            <input
-                                class="med-name w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
-                                placeholder="Medicine name" type="text" value="Amoxicillin 500mg" />
-                        </div>
-                        <div class="col-span-2">
-                            <input
-                                class="med-dosage w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
-                                placeholder="Dosage" type="text" value="500 mg" />
-                        </div>
-                        <div class="col-span-2">
-                            <select
-                                class="med-freq w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none">
-                                <option>1-0-1 (Twice daily)</option>
-                                <option>1-0-0 (Morning)</option>
-                                <option>0-0-1 (Night)</option>
-                                <option selected="">1-1-1 (Thrice daily)</option>
-                                <option>SOS (As required)</option>
-                            </select>
-                        </div>
-                        <div class="col-span-1">
-                            <input
-                                class="med-duration w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
-                                placeholder="Duration" type="text" value="7 days" />
-                        </div>
-                        <div class="col-span-2">
-                            <input
-                                class="med-instructions w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
-                                placeholder="Instructions" type="text" value="Take with warm water" />
-                        </div>
-                        <div class="col-span-1 flex justify-center">
-                            <button
-                                class="remove-row-btn p-1.5 rounded text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors"
-                                title="Remove medication" type="button">
-                                <span class="material-symbols-outlined text-[20px]">delete</span>
-                            </button>
-                        </div>
-                    </div>
+                </template>
+
+                <p class="text-error text-sm hidden" id="medicine-client-error"></p>
+            </section>
+
+            <!-- Footer Action Bar: MUST stay inside the POST form -->
+            <div class="pt-sm pb-xl flex flex-col sm:flex-row items-center justify-between gap-md">
+                <div class="flex items-center gap-md w-full sm:w-auto justify-end">
+                    <a href="{% url 'appointments:detail' appointment.pk %}"
+                       class="w-full sm:w-auto px-lg py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-medium transition-colors text-center">
+                        Cancel
+                    </a>
+
+                    <button
+                        class="w-full sm:w-auto px-xl py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-xs shadow-sm"
+                        type="submit"
+                        id="create-prescription-btn">
+                        <span class="material-symbols-outlined text-[20px]">check</span>
+                        Create Prescription
+                    </button>
                 </div>
             </div>
-            <!-- Subtle Quick-Add Suggestions -->
-            <div class="mt-md pt-md border-t border-outline-variant/20 space-y-sm">
-                <div class="flex items-center justify-between"><span
-                        class="font-label-sm text-label-sm text-on-surface-variant font-medium flex items-center gap-xs"><span
-                            class="material-symbols-outlined text-[18px] text-primary">search_insights</span>Suggested
-                        Formulations &amp; Dosage</span><span
-                        class="font-label-sm text-label-sm text-on-surface-variant opacity-60">Select
-                        formulation to auto-populate</span></div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-sm">
-                    <div
-                        class="p-sm rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 transition-all flex items-center justify-between">
-                        <div class="space-y-xs">
-                            <div class="font-label-md text-label-md font-semibold text-on-surface">
-                                Pantoprazole Gastro-Resistant</div>
-                            <div class="font-label-sm text-label-sm text-on-surface-variant">40mg • 1-0-0 •
-                                Before Breakfast</div>
-                        </div><button
-                            class="formulation-add-btn px-sm py-1 rounded bg-surface-container-lowest hover:bg-primary hover:text-on-primary text-primary font-label-sm text-label-sm font-medium transition-colors shadow-sm cursor-pointer"
-                            data-dosage="40mg" data-duration="14 days" data-freq="1-0-0 (Morning)"
-                            data-instructions="Take before breakfast"
-                            data-name="Pantoprazole Gastro-Resistant" type="button">+ Add</button>
-                    </div>
-                    <div
-                        class="p-sm rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 transition-all flex items-center justify-between">
-                        <div class="space-y-xs">
-                            <div class="font-label-md text-label-md font-semibold text-on-surface">
-                                Azithromycin Tablet</div>
-                            <div class="font-label-sm text-label-sm text-on-surface-variant">500mg • 1-0-0 •
-                                Once daily (3 days)</div>
-                        </div><button
-                            class="formulation-add-btn px-sm py-1 rounded bg-surface-container-lowest hover:bg-primary hover:text-on-primary text-primary font-label-sm text-label-sm font-medium transition-colors shadow-sm cursor-pointer"
-                            data-dosage="500mg" data-duration="3 days" data-freq="1-0-0 (Morning)"
-                            data-instructions="Take 1 hour before or 2 hours after food"
-                            data-name="Azithromycin Tablet" type="button">+ Add</button>
-                    </div>
-                    <div
-                        class="p-sm rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 transition-all flex items-center justify-between">
-                        <div class="space-y-xs">
-                            <div class="font-label-md text-label-md font-semibold text-on-surface">Ibuprofen
-                                + Paracetamol</div>
-                            <div class="font-label-sm text-label-sm text-on-surface-variant">400mg/325mg •
-                                SOS • After Food</div>
-                        </div><button
-                            class="formulation-add-btn px-sm py-1 rounded bg-surface-container-lowest hover:bg-primary hover:text-on-primary text-primary font-label-sm text-label-sm font-medium transition-colors shadow-sm cursor-pointer"
-                            data-dosage="400mg/325mg" data-duration="3 days" data-freq="SOS (As required)"
-                            data-instructions="Take after food" data-name="Ibuprofen + Paracetamol"
-                            type="button">+ Add</button>
-                    </div>
-                </div>
-            </div>
-        </section>
         </form>
-        <!-- Footer Action Bar -->
-        <div class="pt-sm pb-xl flex flex-col sm:flex-row items-center justify-between gap-md">
-            <div class="flex items-center gap-md w-full sm:w-auto justify-end">
-                <button
-                    class="w-full sm:w-auto px-lg py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-medium transition-colors"
-                    type="button">
-                    Cancel
-                </button>
-                <button
-                    class="w-full sm:w-auto px-xl py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-xs shadow-sm"
-                    type="button">
-                    <span class="material-symbols-outlined text-[20px]">check</span>
-                    Create Prescription
-                </button>
-            </div>
-        </div>
     </div>
 </div>
+
 <!-- Toast Notification -->
 <div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-sm bg-inverse-surface text-inverse-on-surface px-md py-3 rounded-xl shadow-lg border border-outline-variant/20 font-label-md text-label-md"
-    id="medicine-toast">
+     id="medicine-toast">
     <span class="material-symbols-outlined text-secondary-fixed text-[20px]">check_circle</span>
     <span id="toast-message">Medication added to prescription</span>
 </div>
+
 <script>
-(function () {
-    const tableBody = document.getElementById('medicines-table-body');
-    const addBtn = document.getElementById('add-medicine-btn');
-    const toast = document.getElementById('medicine-toast');
-    const toastMsg = document.getElementById('toast-message');
+document.addEventListener("DOMContentLoaded", function () {
+    const tableBody = document.getElementById("medicine-forms");
+    const addBtn = document.getElementById("add-medicine-btn");
+    const toast = document.getElementById("medicine-toast");
+    const toastMsg = document.getElementById("toast-message");
+    const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]');
+    const emptyTemplate = document.getElementById("empty-form-template");
+    const prescriptionForm = document.getElementById("prescription-form");
+    const submitBtn = document.getElementById("create-prescription-btn");
+
+    if (!tableBody || !totalForms || !emptyTemplate) {
+        console.error("Prescription formset elements not found.");
+        return;
+    }
+
+    const formPrefix = totalForms.name.replace(/-TOTAL_FORMS$/, "");
     let toastTimeout;
 
     function showToast(text) {
-        if (!toast) return;
+        if (!toast || !toastMsg) return;
         toastMsg.textContent = text;
-        toast.classList.remove('translate-y-20', 'opacity-0');
-        toast.classList.add('translate-y-0', 'opacity-100');
+        toast.classList.remove("translate-y-20", "opacity-0");
+        toast.classList.add("translate-y-0", "opacity-100");
         clearTimeout(toastTimeout);
         toastTimeout = setTimeout(() => {
-            toast.classList.remove('translate-y-0', 'opacity-100');
-            toast.classList.add('translate-y-20', 'opacity-0');
+            toast.classList.remove("translate-y-0", "opacity-100");
+            toast.classList.add("translate-y-20", "opacity-0");
         }, 2600);
     }
 
-    function createRow(name = '', dosage = '', freq = '1-0-1 (Twice daily)', duration = '', instructions = '') {
-        const row = document.createElement('div');
-        row.className = 'medicine-row grid grid-cols-12 gap-sm items-center bg-surface-container-low p-sm rounded-lg hover:bg-surface-container transition-all duration-200';
-        row.innerHTML = `
-        <div class="col-span-4">
-          <input type="text" value="${name.replace(/"/g, '&quot;')}" placeholder="Medicine name" class="med-name w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none" />
-        </div>
-        <div class="col-span-2">
-          <input type="text" value="${dosage.replace(/"/g, '&quot;')}" placeholder="Dosage" class="med-dosage w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none" />
-        </div>
-        <div class="col-span-2">
-          <select class="med-freq w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none">
-            <option ${freq.includes('Twice') || freq === '1-0-1' ? 'selected' : ''}>1-0-1 (Twice daily)</option>
-            <option ${freq.includes('Morning') || freq === '1-0-0' || freq.includes('Once') ? 'selected' : ''}>1-0-0 (Morning)</option>
-            <option ${freq.includes('Night') || freq === '0-0-1' ? 'selected' : ''}>0-0-1 (Night)</option>
-            <option ${freq.includes('Thrice') || freq === '1-1-1' ? 'selected' : ''}>1-1-1 (Thrice daily)</option>
-            <option ${freq.includes('SOS') || freq.includes('required') || freq.includes('needed') ? 'selected' : ''}>SOS (As required)</option>
-          </select>
-        </div>
-        <div class="col-span-1">
-          <input type="text" value="${duration.replace(/"/g, '&quot;')}" placeholder="Duration" class="med-duration w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none" />
-        </div>
-        <div class="col-span-2">
-          <input type="text" value="${instructions.replace(/"/g, '&quot;')}" placeholder="Instructions" class="med-instructions w-full bg-surface-container-lowest px-md py-2 rounded font-body-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none" />
-        </div>
-        <div class="col-span-1 flex justify-center">
-          <button type="button" class="remove-row-btn p-1.5 rounded text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors" title="Remove medication">
-            <span class="material-symbols-outlined text-[20px]">delete</span>
-          </button>
-        </div>
-      `;
-                return row;
-            }
-
-            function addOrPopulateMedicine(name, dosage, freq, duration, instructions) {
-                if (!tableBody) return;
-                const rows = tableBody.querySelectorAll('.medicine-row');
-                let emptyRow = null;
-                for (const row of rows) {
-                    const nameInput = row.querySelector('.med-name');
-                    if (nameInput && nameInput.value.trim() === '') {
-                        emptyRow = row;
-                        break;
-                    }
-                }
-
-                let targetRow;
-                if (emptyRow) {
-                    emptyRow.querySelector('.med-name').value = name;
-                    emptyRow.querySelector('.med-dosage').value = dosage;
-                    const select = emptyRow.querySelector('.med-freq');
-                    if (select) {
-                        Array.from(select.options).forEach(opt => {
-                            if (freq.includes('Twice') && opt.value.includes('Twice')) opt.selected = true;
-                            else if ((freq.includes('Morning') || freq.includes('Once')) && opt.value.includes('Morning')) opt.selected = true;
-                            else if (freq.includes('Night') && opt.value.includes('Night')) opt.selected = true;
-                            else if (freq.includes('Thrice') && opt.value.includes('Thrice')) opt.selected = true;
-                            else if ((freq.includes('SOS') || freq.includes('required') || freq.includes('needed')) && opt.value.includes('SOS')) opt.selected = true;
-                        });
-                    }
-                    emptyRow.querySelector('.med-duration').value = duration;
-                    emptyRow.querySelector('.med-instructions').value = instructions;
-                    targetRow = emptyRow;
-                } else {
-                    targetRow = createRow(name, dosage, freq, duration, instructions);
-                    tableBody.appendChild(targetRow);
-                }
-
-                // Highlight row animation
-                targetRow.classList.add('ring-2', 'ring-primary', 'bg-surface-container-high');
-                setTimeout(() => {
-                    targetRow.classList.remove('ring-2', 'ring-primary', 'bg-surface-container-high');
-                }, 800);
-
-                showToast(`Added ${name}`);
-            }
-
-            if (addBtn && tableBody) {
-                addBtn.addEventListener('click', () => {
-                    const newRow = createRow();
-                    tableBody.appendChild(newRow);
-                    const firstInput = newRow.querySelector('input');
-                    if (firstInput) firstInput.focus();
-                    showToast('Added new empty medication row');
-                });
-            }
-
-            if (tableBody) {
-                tableBody.addEventListener('click', (e) => {
-                    const removeBtn = e.target.closest('.remove-row-btn');
-                    if (removeBtn) {
-                        const rows = tableBody.querySelectorAll('.medicine-row');
-                        if (rows.length > 1) {
-                            const targetRow = removeBtn.closest('.medicine-row');
-                            if (targetRow) {
-                                const name = targetRow.querySelector('.med-name')?.value || 'Medication';
-                                targetRow.remove();
-                                showToast(`Removed ${name}`);
-                            }
-                        } else {
-                            const inputs = rows[0].querySelectorAll('input');
-                            inputs.forEach(i => i.value = '');
-                            showToast('Cleared medication row');
-                        }
-                    }
-                });
-            }
-
-            // Quick Add Pills
-            document.querySelectorAll('.template-chip').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const name = btn.dataset.name || btn.innerText.replace('add', '').trim();
-                    const dosage = btn.dataset.dosage || '';
-                    const freq = btn.dataset.freq || '1-0-1 (Twice daily)';
-                    const duration = btn.dataset.duration || '5 days';
-                    const instructions = btn.dataset.instructions || 'Take as advised';
-                    addOrPopulateMedicine(name, dosage, freq, duration, instructions);
-                });
-            });
-
-            // Suggested Formulations & Dosage Cards
-            document.querySelectorAll('.formulation-add-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const name = btn.dataset.name || '';
-                    const dosage = btn.dataset.dosage || '';
-                    const freq = btn.dataset.freq || '1-0-0 (Morning)';
-                    const duration = btn.dataset.duration || '5 days';
-                    const instructions = btn.dataset.instructions || '';
-                    addOrPopulateMedicine(name, dosage, freq, duration, instructions);
-                });
-            });
-        })();
-</script>
-
-
-
-<div class="container mt-4">
-
-    <h2 class="mb-4">
-        Create Prescription
-    </h2>
-
-    <div class="card mb-4">
-
-        <div class="card-header">
-            Appointment Details
-        </div>
-
-        <div class="card-body">
-
-            <p>
-                <strong>Appointment ID:</strong>
-                {{ appointment.appointment_id }}
-            </p>
-
-            <p>
-                <strong>Patient:</strong>
-                {{ appointment.patient.user.get_full_name }}
-            </p>
-
-            <p>
-                <strong>Doctor:</strong>
-                {{ appointment.doctor.user.get_full_name }}
-            </p>
-
-            <p>
-                <strong>Date:</strong>
-                {{ appointment.appointment_date }}
-            </p>
-
-            <p>
-                <strong>Time:</strong>
-                {{ appointment.appointment_time|time:"h:i A" }}
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <form method="post">
-
-        {% csrf_token %}
-        {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {{ form.non_field_errors }}
-                </div>
-            {% endif %}
-
-
-            {% if formset.non_form_errors %}
-                <div class="alert alert-danger">
-                    {% for error in formset.non_form_errors %}
-                        <div>
-                            {{ error }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-        
-        <div class="card mb-4">
-
-            <div class="card-header">
-                Prescription Details
-            </div>
-
-            <div class="card-body">
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Diagnosis
-                    </label>
-
-                    {{ form.diagnosis }}
-
-                    {% for error in form.diagnosis.errors %}
-
-                        <div class="text-danger">
-                            {{ error }}
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Remarks
-                    </label>
-
-                    {{ form.remarks }}
-
-                    {% for error in form.remarks.errors %}
-
-                        <div class="text-danger">
-                            {{ error }}
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="card mb-4">
-
-            <div class="card-header d-flex justify-content-between align-items-center">
-
-                <h5 class="mb-0">
-                    Medicines
-                </h5>
-
-                <button
-                    type="button"
-                    id="add-medicine"
-                    class="btn btn-sm btn-primary">
-
-                    + Add Medicine
-
-                </button>
-
-            </div>
-
-
-            <div class="card-body">
-
-                {{ formset.management_form }}
-
-                <div id="medicine-forms">
-
-                    {% for medicine_form in formset %}
-
-                        <div class="medicine-form border rounded p-3 mb-3">
-
-                            <div class="row">
-
-                                <div class="col-md-3 mb-3">
-
-                                    <label class="form-label">
-                                        Medicine Name
-                                    </label>
-
-                                    {{ medicine_form.medicine_name }}
-
-                                    {% for error in medicine_form.medicine_name.errors %}
-                                        <div class="text-danger">
-                                            {{ error }}
-                                        </div>
-                                    {% endfor %}
-
-                                </div>
-
-
-                                <div class="col-md-2 mb-3">
-
-                                    <label class="form-label">
-                                        Dosage
-                                    </label>
-
-                                    {{ medicine_form.dosage }}
-
-                                </div>
-
-
-                                <div class="col-md-2 mb-3">
-
-                                    <label class="form-label">
-                                        Frequency
-                                    </label>
-
-                                    {{ medicine_form.frequency }}
-
-                                </div>
-
-
-                                <div class="col-md-2 mb-3">
-
-                                    <label class="form-label">
-                                        Duration
-                                    </label>
-
-                                    {{ medicine_form.duration }}
-
-                                </div>
-
-
-                                <div class="col-md-2 mb-3">
-
-                                    <label class="form-label">
-                                        Instructions
-                                    </label>
-
-                                    {{ medicine_form.instructions }}
-
-                                </div>
-
-
-                                <div class="col-md-1 mb-3 d-flex align-items-end">
-
-                                    {{ medicine_form.DELETE.as_hidden }}
-
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-danger remove-medicine">
-
-                                        Remove
-
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-
-                <!-- Empty form template -->
-
-                <template id="empty-form">
-
-                    <div class="medicine-form border rounded p-3 mb-3">
-
-                        <div class="row">
-
-                            <div class="col-md-3 mb-3">
-
-                                <label class="form-label">
-                                    Medicine Name
-                                </label>
-
-                                {{ formset.empty_form.medicine_name }}
-
-                            </div>
-
-
-                            <div class="col-md-2 mb-3">
-
-                                <label class="form-label">
-                                    Dosage
-                                </label>
-
-                                {{ formset.empty_form.dosage }}
-
-                            </div>
-
-
-                            <div class="col-md-2 mb-3">
-
-                                <label class="form-label">
-                                    Frequency
-                                </label>
-
-                                {{ formset.empty_form.frequency }}
-
-                            </div>
-
-
-                            <div class="col-md-2 mb-3">
-
-                                <label class="form-label">
-                                    Duration
-                                </label>
-
-                                {{ formset.empty_form.duration }}
-
-                            </div>
-
-
-                            <div class="col-md-2 mb-3">
-
-                                <label class="form-label">
-                                    Instructions
-                                </label>
-
-                                {{ formset.empty_form.instructions }}
-
-                            </div>
-
-
-                            <div class="col-md-1 mb-3 d-flex align-items-end">
-
-                                {{ formset.empty_form.DELETE.as_hidden }}
-
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-danger remove-medicine">
-
-                                    Remove
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </template>
-
-            </div>
-
-        </div>       
-
-
-        <button
-            type="submit"
-            class="btn btn-primary">
-
-            Create Prescription
-
-        </button>
-
-
-        <a
-            href="{% url 'appointments:detail' appointment.pk %}"
-            class="btn btn-secondary">
-
-            Cancel
-
-        </a>
-
-    </form>
-
-</div>
-
-
-
-
-
-<script>
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const container = document.getElementById(
-        "medicine-forms"
-    );
-
-    const addButton = document.getElementById(
-        "add-medicine"
-    );
-
-    const totalForms = document.getElementById(
-        "id_medicines-TOTAL_FORMS"
-    );
-
-    const emptyFormTemplate = document.getElementById(
-        "empty-form"
-    );
-
-
-    addButton.addEventListener(
-        "click",
-        function () {
-
-            const formIndex = parseInt(
-                totalForms.value
-            );
-
-            let template = (
-                emptyFormTemplate.innerHTML
-            );
-
-            template = template.replace(
-                /__prefix__/g,
-                formIndex
-            );
-
-            container.insertAdjacentHTML(
-                "beforeend",
-                template
-            );
-
-            totalForms.value = formIndex + 1;
-
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function createRow(index) {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = emptyTemplate.innerHTML.replace(/__prefix__/g, `${formPrefix}-${index}`);
+        return wrapper.firstElementChild;
+    }
+
+    function addEmptyMedicineRow() {
+        const index = parseInt(totalForms.value, 10);
+        const row = createRow(index);
+        tableBody.appendChild(row);
+        totalForms.value = index + 1;
+
+        row.querySelector(".med-name")?.focus();
+        showToast("Added new medication row");
+    }
+
+    function setField(row, selector, value) {
+        const field = row.querySelector(selector);
+        if (field) field.value = value || "";
+    }
+
+    function addOrPopulateMedicine(name, dosage, frequency, duration, instructions) {
+        const rows = Array.from(tableBody.querySelectorAll(".medicine-row"));
+
+        // Reuse a completely empty row first.
+        let targetRow = rows.find(row => {
+            const nameField = row.querySelector(".med-name");
+            return nameField && !nameField.value.trim();
+        });
+
+        if (!targetRow) {
+            const index = parseInt(totalForms.value, 10);
+            targetRow = createRow(index);
+            tableBody.appendChild(targetRow);
+            totalForms.value = index + 1;
         }
-    );
 
+        setField(targetRow, ".med-name", name);
+        setField(targetRow, ".med-dosage", dosage);
+        setField(targetRow, ".med-frequency", frequency);
+        setField(targetRow, ".med-duration", duration);
+        setField(targetRow, ".med-instructions", instructions);
 
-    container.addEventListener(
-        "click",
-        function (event) {
+        const deleteField = targetRow.querySelector('input[name$="-DELETE"]');
+        if (deleteField) deleteField.checked = false;
 
-            if (
-                !event.target.classList.contains(
-                    "remove-medicine"
-                )
-            ) {
-                return;
-            }
+        targetRow.classList.add("ring-2", "ring-primary", "bg-surface-container-high");
+        setTimeout(() => {
+            targetRow.classList.remove("ring-2", "ring-primary", "bg-surface-container-high");
+        }, 800);
 
+        showToast(`Added ${name}`);
+    }
 
-            const medicineForm =
-                event.target.closest(
-                    ".medicine-form"
-                );
+    if (addBtn) {
+        addBtn.addEventListener("click", addEmptyMedicineRow);
+    }
 
+    tableBody.addEventListener("click", function (event) {
+        const removeBtn = event.target.closest(".remove-row-btn");
+        if (!removeBtn) return;
 
-            const deleteInput =
-                medicineForm.querySelector(
-                    'input[name$="-DELETE"]'
-                );
+        const row = removeBtn.closest(".medicine-row");
+        if (!row) return;
 
+        const name = row.querySelector(".med-name")?.value.trim() || "Medication";
+        const deleteField = row.querySelector('input[name$="-DELETE"]');
 
-            if (deleteInput) {
-
-                deleteInput.checked = true;
-
-            }
-
-
-            medicineForm.style.display = "none";
-
+        // Existing Django form: mark DELETE so formset handles it correctly.
+        // New form: marking DELETE also prevents validation of an intentionally removed row.
+        if (deleteField) {
+            deleteField.value = "on";
+            deleteField.checked = true;
         }
-    );
 
+        row.style.display = "none";
+        showToast(`Removed ${name}`);
+    });
+
+    document.querySelectorAll(".template-chip").forEach(button => {
+        button.addEventListener("click", function () {
+            addOrPopulateMedicine(
+                this.dataset.name || "",
+                this.dataset.dosage || "",
+                this.dataset.freq || "",
+                this.dataset.duration || "",
+                this.dataset.instructions || ""
+            );
+        });
+    });
+
+    // Prevent accidental double submission while keeping normal Django POST intact.
+    if (prescriptionForm && submitBtn) {
+        prescriptionForm.addEventListener("submit", function () {
+            submitBtn.disabled = true;
+            submitBtn.classList.add("opacity-70", "cursor-not-allowed");
+        });
+    }
 });
-
 </script>
+
+{% comment %}
+===============================================================================
+OLD PRESCRIPTION FORM / DESIGN — KEPT FOR REFERENCE
+===============================================================================
+
+Keep your existing old Bootstrap-based prescription form here unchanged if you
+want to preserve it for fallback/reference. It should remain inside this Django
+comment block so it does not render or submit a second form.
+
+The old form already contains the correct Django formset rendering pattern:
+    {{ formset.management_form }}
+    {{ medicine_form.medicine_name }}
+    {{ medicine_form.dosage }}
+    {{ medicine_form.frequency }}
+    {{ medicine_form.duration }}
+    {{ medicine_form.instructions }}
+    {{ medicine_form.DELETE.as_hidden }}
+
+Do NOT keep the old form as an active second <form> on the same page.
+
+===============================================================================
+{% endcomment %}
+
 {% endblock %}
