@@ -158,12 +158,19 @@ def appointment_list(request):
 )
 def appointment_detail(request, pk):
 
-    appointment = get_object_or_404(
-        Appointment.objects.select_related(
+    appointments = Appointment.objects.select_related(
             "patient__user",
             "doctor__user",
             "billing",
-        ),
+        )
+
+    if request.user.role == UserRole.DOCTOR:
+        appointments = appointments.filter(
+            doctor__user=request.user,
+        )
+
+    appointment = get_object_or_404(
+        appointments,
         pk=pk,
     )
 
@@ -251,11 +258,18 @@ def update_appointment(request, pk):
 )
 def cancel_appointment(request, pk):
 
-    appointment = get_object_or_404(
-        Appointment.objects.select_related(
+    appointments = Appointment.objects.select_related(
             "patient__user",
             "doctor__user",
-        ),
+        )
+
+    if request.user.role == UserRole.DOCTOR:
+        appointments = appointments.filter(
+            doctor__user=request.user,
+        )
+
+    appointment = get_object_or_404(
+        appointments,
         pk=pk,
     )
 

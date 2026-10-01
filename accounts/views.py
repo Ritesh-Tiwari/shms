@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
 
 def login_view(request):
@@ -43,7 +44,7 @@ def login_view(request):
         "accounts/login.html",
     )
 
-
+@require_POST
 def logout_view(request):
 
     logout(request)

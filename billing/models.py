@@ -1,3 +1,5 @@
+from decimal import Decimal
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from appointments.models import Appointment
@@ -143,6 +145,7 @@ class Payment(models.Model):
     amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.01"))]
     )
 
     payment_method = models.CharField(
@@ -173,6 +176,13 @@ class Payment(models.Model):
 
         verbose_name = "Payment"
         verbose_name_plural = "Payments"
+        
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(amount__gt=0),
+                name="payment_amount_gt_zero"
+            )
+        ]
 
     def __str__(self):
         return self.payment_id

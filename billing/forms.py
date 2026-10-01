@@ -1,5 +1,6 @@
 from django import forms
-
+from decimal import Decimal
+from django.core.exceptions import ValidationError
 from .models import Billing, Payment
 
 
@@ -74,3 +75,12 @@ class PaymentForm(forms.ModelForm):
                 }
             ),
         }
+        
+    def clean_amount(self):
+        amount = self.cleaned_data.get("amount")
+
+        # Server-side positive amount validation
+        if amount is None or amount <= Decimal("0"):
+            raise ValidationError("Payment amount must be greater than zero.")
+
+        return amount

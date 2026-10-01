@@ -318,12 +318,19 @@ def create_payment(request, billing_id):
 )
 def payment_receipt(request, payment_id):
 
+    payments = Payment.objects.select_related(
+        "billing__patient__user",
+        "billing__appointment__doctor__user",
+        "billing__appointment",
+    )
+
+    if request.user.role == UserRole.DOCTOR:
+        payments = payments.filter(
+            billing__appointment__doctor__user=request.user
+        )
+
     payment = get_object_or_404(
-        Payment.objects.select_related(
-            "billing__patient__user",
-            "billing__appointment__doctor__user",
-            "billing__appointment",
-        ),
+        payments,
         pk=payment_id,
     )
 
