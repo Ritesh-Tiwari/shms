@@ -7,6 +7,10 @@ from reportlab.pdfgen import canvas
 from appointments.models import Appointment, AppointmentStatus
 from core.decorators import role_required
 from accounts.choices import UserRole
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+
+from accounts.models import User
 
 from .forms import BillingForm, PaymentForm
 from .models import (
@@ -125,14 +129,21 @@ def create_bill(request, appointment_id):
 )
 def billing_detail(request, pk):
 
-    billing = get_object_or_404(
-        Billing.objects.select_related(
+    billings = Billing.objects.select_related(
             "appointment__patient__user",
             "appointment__doctor__user",
             "patient__user",
         ).prefetch_related(
             "payments",
-        ),
+        )
+    
+    if request.user.role == UserRole.DOCTOR:
+        billings = billings.filter(
+            appointment__doctor__user=request.user,
+        )
+
+    billing = get_object_or_404(
+        billings,
         pk=pk,
     )
 
@@ -345,19 +356,45 @@ def payment_receipt(request, payment_id):
     )
 
 
-
+@role_required(
+    UserRole.ADMIN,
+    UserRole.DOCTOR,
+    UserRole.PATIENT,
+    UserRole.RECEPTIONIST,
+)
 def payment_receipt_pdf(request, payment_id):
 
+    user = request.user
+
+    payments = Payment.objects.select_related(
+        "billing__patient__user",
+        "billing__appointment__doctor__user",
+        "billing__appointment",
+    )
+
+    # Patient → only own payments
+    if user.role == UserRole.PATIENT:
+        payments = payments.filter(
+            billing__patient__user=user
+        )
+
+    # Doctor → only payments related to their appointments
+    elif user.role == UserRole.DOCTOR:
+        payments = payments.filter(
+            billing__appointment__doctor__user=user
+        )
+
+    # Admin + Receptionist → all payments
+    # No additional filter required.
+
     payment = get_object_or_404(
-        Payment.objects.select_related(
-            "billing__patient__user",
-            "billing__appointment__doctor__user",
-            "billing__appointment",
-        ),
+        payments,
         pk=payment_id,
     )
 
     billing = payment.billing
+
+    # PDF generation...
 
     # Calculate cumulative paid amount up to this payment.
     previous_paid_amount = sum(

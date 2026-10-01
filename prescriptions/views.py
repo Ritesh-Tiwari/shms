@@ -130,14 +130,23 @@ def create_prescription(request, appointment_id):
     UserRole.DOCTOR,
 )
 def prescription_detail(request, pk):
+    # 1. Base QuerySet
+    prescriptions = Prescription.objects.select_related(
+        "appointment__patient__user",
+        "appointment__doctor__user",
+    ).prefetch_related(
+        "medicines",
+    )
 
+    # 2. Scope filtering: Doctor sirf apne appointment wale prescription dekh sake
+    if request.user.role == UserRole.DOCTOR:
+        prescriptions = prescriptions.filter(
+            appointment__doctor__user=request.user,
+        )
+
+    # 3. Fetch with 404 safety
     prescription = get_object_or_404(
-        Prescription.objects.select_related(
-            "appointment__patient__user",
-            "appointment__doctor__user",
-        ).prefetch_related(
-            "medicines",
-        ),
+        prescriptions,
         pk=pk,
     )
 

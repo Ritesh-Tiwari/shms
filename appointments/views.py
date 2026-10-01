@@ -81,6 +81,12 @@ def appointment_list(request):
         "doctor__user",
     )
 
+    # Doctor → only their own appointments
+    if request.user.role == UserRole.DOCTOR:
+        appointments = appointments.filter(
+            doctor__user=request.user,
+        )
+
     # Search
     if search:
 
@@ -298,11 +304,19 @@ def cancel_appointment(request, pk):
 )
 def update_appointment_status(request, pk):
 
+    appointments = Appointment.objects.select_related(
+        "patient__user",
+        "doctor__user",
+    )
+
+    # Doctor can update status only for their own appointments
+    if request.user.role == UserRole.DOCTOR:
+        appointments = appointments.filter(
+            doctor__user=request.user,
+        )
+
     appointment = get_object_or_404(
-        Appointment.objects.select_related(
-            "patient__user",
-            "doctor__user",
-        ),
+        appointments,
         pk=pk,
     )
 
