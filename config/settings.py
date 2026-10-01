@@ -30,7 +30,7 @@ DEBUG = config('DEBUG', cast=bool, default=False)
 
 VERCEL_URL = config("VERCEL_URL", default="")
 
-ALLOWED_HOSTS = ['shms.tiwariritesh.in','shms-3ki6cjzol-ritesh-tiwari.vercel.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['shms.tiwariritesh.in','.vercel.app', 'localhost', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = [
     "https://shms.tiwariritesh.in",
