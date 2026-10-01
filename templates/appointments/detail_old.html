@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% block title %}
+Appointment Details
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full p-lg gap-lg">
+    <!-- Top Navigation / Back -->
+    <div class="flex items-center">
+        <a href="{% url 'appointments:list' %}"
+            class="flex items-center gap-xs px-sm py-sm rounded-lg text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors -ml-sm">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            Back to Appointments
+    </a>
+    </div>
+    <!-- Header & Action Toolbar -->
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-lg pb-md">
+        <div class="flex flex-col gap-sm">
+            <div class="flex items-center gap-md">
+                <h1 class="text-headline-lg font-headline-lg text-on-surface m-0">
+                    Appointment Details
+                </h1>
+                <div
+                    class="px-sm py-xs bg-primary-fixed text-on-primary-fixed-variant rounded-full text-label-sm font-label-sm flex items-center gap-xs">
+                    <span class="material-symbols-outlined text-[14px]">event_available</span>
+                    {{ appointment.status}}
+                </div>
+            </div>
+            <p class="text-body-md font-body-md text-on-surface-variant m-0">
+                Review and manage appointment information for {{ appointment.appointment_id }}.
+            </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-sm">
+             {% if appointment.status != "CANCELLED" and appointment.status != "COMPLETED" %}
+            <a href="{% url 'appointments:cancel' appointment.pk %}" 
+                class="px-md py-2 rounded-lg bg-error-container text-on-error-container text-label-md font-label-md hover:bg-error hover:text-on-error shadow-sm transition-all flex items-center gap-sm">
+                <span class="material-symbols-outlined text-[18px]">cancel</span>
+                Cancel
+            </a>
+            <a href="{% url 'appointments:update' appointment.pk %}"
+                class="px-md py-2 rounded-lg bg-surface-container-highest text-on-surface text-label-md font-label-md hover:bg-surface-dim shadow-sm transition-all flex items-center gap-sm">
+                <span class="material-symbols-outlined text-[18px]">update</span>
+                Reschedule
+            </a>
+            {% endif %}
+
+             {% if appointment.status == "SCHEDULED" %}
+
+        <form method="post" action="{% url 'appointments:update_status' appointment.pk %}" class="d-inline">
+
+            {% csrf_token %}
+
+            <input type="hidden" name="status" value="CONFIRMED">
+
+            <button type="submit" class="px-md py-2 rounded-lg bg-primary text-on-primary text-label-md font-label-md hover:bg-primary-container hover:text-on-primary-container shadow-md transition-all flex items-center gap-sm">
+                <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                Confirm Appointment
+
+            </button>
+
+        </form>
+
+        {% elif appointment.status == "CONFIRMED" %}
+
+        <form method="post" action="{% url 'appointments:update_status' appointment.pk %}" class="d-inline">
+
+            {% csrf_token %}
+
+            <input type="hidden" name="status" value="COMPLETED">
+
+            <button type="submit" class="px-md py-2 rounded-lg bg-primary text-on-primary text-label-md font-label-md hover:bg-primary-container hover:text-on-primary-container shadow-md transition-all flex items-center gap-sm">
+                <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                Mark Completed
+
+            </button>
+
+        </form>
+
+        {% endif %}
+        
+        {% if appointment.status == "COMPLETED" %}
+
+        {% if appointment.doctor.user == request.user %}
+
+        {% if not appointment.prescription %}
+
+        <a href="{% url 'prescriptions:create' appointment.pk %}"
+            class="px-4 py-2 rounded-lg bg-teal-600 text-white text-label-md font-medium hover:bg-teal-700 shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">prescriptions</span>
+            Create Prescription
+        </a>
+        
+        {% else %}
+
+        <a href="{% url 'prescriptions:detail' appointment.prescription.pk %}"
+          class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 text-label-md font-medium shadow-sm transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">visibility</span>
+            View Prescription
+        </a>
+
+
+        {% endif %}
+
+        {% endif %}
+
+        {% endif %}
+
+
+
+
+            
+        </div>
+    </div>
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+        <!-- Left Column (Main Data & Billing) -->
+        <div class="col-span-1 lg:col-span-8 flex flex-col gap-lg">
+            <!-- Primary Data Card -->
+            <div class="bg-surface-container-lowest shadow-sm rounded-xl p-lg flex flex-col gap-lg">
+                <h2 class="text-title-md font-title-md text-on-surface flex items-center gap-sm m-0">
+                    <span class="material-symbols-outlined text-primary">info</span>
+                    General Information
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg bg-surface-container-low p-md rounded-lg">
+                    <div class="flex flex-col gap-xs">
+                        <span
+                            class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Appointment
+                            ID</span>
+                        <span class="text-body-md font-body-md text-on-surface font-semibold"> 
+                           {{ appointment.appointment_id }}</span>
+                    </div>
+                    <div class="flex flex-col gap-xs">
+                        <span
+                            class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Reason
+                            for Visit</span>
+                        <span class="text-body-md font-body-md text-on-surface"> {{ appointment.reason_for_visit }}
+                        </span>
+                    </div>
+                    <div class="flex flex-col gap-xs">
+                        <span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Date
+                            &amp; Time</span>
+                        <span class="text-body-md font-body-md text-on-surface flex items-center gap-xs">
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>
+                            {{ appointment.appointment_date }} at {{ appointment.appointment_time }}
+                        </span>
+                    </div>
+                    <div class="flex flex-col gap-xs">
+                        <span
+                            class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Created
+                            On</span>
+                        <span class="text-body-md font-body-md text-on-surface">{{ appointment.created_at }}
+                        </span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                    <!-- Patient Summary Link -->
+                    <div
+                        class="bg-surface p-md rounded-xl flex items-center gap-md hover:shadow-sm transition-shadow cursor-pointer group">
+                        <img class="w-12 h-12 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform"
+                            data-alt="A professional headshot of an Indian woman in her late 20s, warm natural lighting, soft blue background, corporate healthcare style."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiI55uemfQxoO0gaB0DqxU6fTY3LiGY-5Vop-u7ULEwjc83e05p-RtWGCzGvv_gny3OE26XrGT8rfRmNI-dCpK6vE-8nin8KRBj40kcM3wkq8noyU6FtXEysGeU6v-Ws0_jpRaJhxdUDAqQyBrSHX5sBLg3BW9SFOA88gZF6Ko1huZ0zFk7yGUtQdICiCWwnT8s8VMqqq6RSacd0lAXxgKJrMt9OO35DTXY6Jv7p8JmTpuMDf6yw-Y" />
+                        <div class="flex flex-col">
+                            <span class="text-label-sm font-label-sm text-on-surface-variant">Patient</span>
+                            <span
+                                class="text-body-md font-body-md text-primary font-semibold group-hover:text-primary-container transition-colors">
+                                {{ appointment.patient.patient_id }}
+                                - {{ appointment.patient.user.get_full_name }}</span>
+                        </div>
+                        <span
+                            class="material-symbols-outlined ml-auto text-on-surface-variant group-hover:text-primary transition-colors">arrow_forward_ios</span>
+                    </div>
+                    <!-- Doctor Summary Link -->
+                    <div
+                        class="bg-surface p-md rounded-xl flex items-center gap-md hover:shadow-sm transition-shadow cursor-pointer group">
+                        <img class="w-12 h-12 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform"
+                            data-alt="A professional headshot of a male Indian doctor in his 40s wearing a white coat and stethoscope, confident smile, clean clinic background."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBV-2QC1YP3PHsv_R2lyBJGpRAEVR62uwsjfdkloH9fL0cqBml3tkrCoS9Ixk6taMeChL2CrzvF1kT1yJtsjEJQrUFqSmtVZPksoGAUsK3iEURChTotgxrwzrTcnqgw4PckQaRIfwK2EakMK4su5qvRokLPWsar1HgI5Wz14xBjUQ-jjg9DEM7SqHe_Ow9KBtrODpw2deamUGXaIBmnlvltnw8wnaTo6ZTsQEvQki8v0SsRaqyYxgyZ" />
+                        <div class="flex flex-col">
+                            <span class="text-label-sm font-label-sm text-on-surface-variant">Attending
+                                Doctor</span>
+                            <span
+                                class="text-body-md font-body-md text-primary font-semibold group-hover:text-primary-container transition-colors">
+                                {{ appointment.doctor.doctor_id }}
+                                - Dr. {{ appointment.doctor.user.get_full_name }}</span>
+                        </div>
+                        <span
+                            class="material-symbols-outlined ml-auto text-on-surface-variant group-hover:text-primary transition-colors">arrow_forward_ios</span>
+                    </div>
+                </div>
+            </div>
+             <!-- Billing Section -->
+            <div
+                class="bg-surface-container shadow-sm rounded-xl p-lg flex flex-col justify-center items-center min-h-[200px] text-center gap-md">
+                <div
+                    class="w-16 h-16 bg-surface-container-highest rounded-full flex items-center justify-center shadow-inner">
+                    <span
+                        class="material-symbols-outlined text-[32px] text-on-surface-variant">receipt_long</span>
+                </div>
+                <div class="flex flex-col gap-xs max-w-sm">
+                    <h3 class="text-title-md font-title-md text-on-surface m-0">Billing &amp; Invoices</h3>
+                    <p class="text-body-sm font-body-sm text-on-surface-variant m-0 mb-md">Generate the
+                        billing statement for this appointment or view existing invoices.</p>
+                    <div class="flex items-center justify-center gap-sm"><a  href="{% url 'billing:create' appointment.pk %}"
+                            class="px-md py-2 rounded-lg bg-primary text-on-primary text-label-md font-label-md hover:bg-primary-container hover:text-on-primary-container shadow-md transition-all flex items-center gap-sm"><span
+                                class="material-symbols-outlined text-[18px]">add_card</span>Create
+                            Bill</a><button disabled=""
+                            class="px-md py-2 rounded-lg bg-surface-container-highest text-on-surface-variant opacity-50 cursor-not-allowed text-label-md font-label-md flex items-center gap-sm"><span
+                                class="material-symbols-outlined text-[18px]">visibility</span>View
+                            Invoice</button></div>
+                </div>
+            </div>
+        </div>
+        <!-- Right Column (Side Panel / Quick Actions) -->
+        <div class="col-span-1 lg:col-span-4 flex flex-col gap-lg">
+            <!-- Patient Quick History -->
+            <div
+                class="bg-surface-container-lowest shadow-sm rounded-xl p-lg flex flex-col gap-md relative overflow-hidden">
+                <!-- Decorative blurred background element -->
+                <div
+                    class="absolute -right-8 -top-8 w-32 h-32 bg-primary-fixed opacity-50 rounded-full blur-2xl pointer-events-none">
+                </div>
+                <h3 class="text-title-md font-title-md text-on-surface flex items-center gap-sm m-0 relative z-10">
+                    <span class="material-symbols-outlined text-secondary">history</span>
+                    Patient History
+                </h3>
+                <div class="flex flex-col gap-sm relative z-10">
+                    <div class="bg-surface flex items-center justify-between p-sm rounded-lg">
+                        <div class="flex items-center gap-sm">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[18px]">medical_services</span>
+                            <span class="text-body-sm font-body-sm text-on-surface">Last Visit</span>
+                        </div>
+                        <span class="text-label-sm font-label-sm text-on-surface-variant">Jul. 12,
+                            2026</span>
+                    </div>
+                    <div class="bg-surface flex items-center justify-between p-sm rounded-lg">
+                        <div class="flex items-center gap-sm">
+                            <span class="material-symbols-outlined text-on-surface-variant text-[18px]">vaccines</span>
+                            <span class="text-body-sm font-body-sm text-on-surface">Active
+                                Prescriptions</span>
+                        </div>
+                        <span
+                            class="px-sm py-xs bg-secondary-container text-on-secondary-container rounded-full text-label-sm font-label-sm">2
+                            items</span>
+                    </div>
+                    <div class="bg-surface flex items-center justify-between p-sm rounded-lg">
+                        <div class="flex items-center gap-sm">
+                            <span class="material-symbols-outlined text-on-surface-variant text-[18px]">warning</span>
+                            <span class="text-body-sm font-body-sm text-on-surface">Allergies</span>
+                        </div>
+                        <span class="text-label-sm font-label-sm text-error">Penicillin</span>
+                    </div>
+                </div>
+                <button
+                    class="w-full mt-sm py-2 bg-surface-container-high text-on-surface rounded-lg text-label-md font-label-md hover:bg-surface-variant transition-colors shadow-sm relative z-10">
+                    View Full Chart
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+<h3 class="mb-4">
+    Appointment Details
+</h3>
+
+<div class="card">
+
+    <div class="card-body">
+
+        <h5 class="card-title">
+            {{ appointment.appointment_id }}
+        </h5>
+
+        <hr>
+
+        <p>
+            <strong>Patient:</strong>
+            {{ appointment.patient.patient_id }}
+            -
+            {{ appointment.patient.user.get_full_name }}
+        </p>
+
+        <p>
+            <strong>Doctor:</strong>
+            {{ appointment.doctor.doctor_id }}
+            -
+            {{ appointment.doctor.user.get_full_name }}
+        </p>
+
+        <p>
+            <strong>Date:</strong>
+            {{ appointment.appointment_date }}
+        </p>
+
+        <p>
+            <strong>Time:</strong>
+            {{ appointment.appointment_time }}
+        </p>
+
+        <p>
+            <strong>Reason:</strong>
+            {{ appointment.reason_for_visit }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            {{ appointment.get_status_display }}
+        </p>
+
+        <p>
+            <strong>Created:</strong>
+            {{ appointment.created_at }}
+        </p>
+
+
+        <a href="{% url 'appointments:list' %}" class="btn btn-secondary">
+
+            Back to Appointments
+
+        </a>
+
+        {% if appointment.status != "CANCELLED" and appointment.status != "COMPLETED" %}
+
+        <a href="{% url 'appointments:update' appointment.pk %}" class="btn btn-primary">
+
+            Reschedule / Update
+
+        </a>
+
+        <a href="{% url 'appointments:cancel' appointment.pk %}" class="btn btn-danger">
+
+            Cancel Appointment
+
+        </a>
+
+        {% endif %}
+
+        {% if appointment.status == "SCHEDULED" %}
+
+        <form method="post" action="{% url 'appointments:update_status' appointment.pk %}" class="d-inline">
+
+            {% csrf_token %}
+
+            <input type="hidden" name="status" value="CONFIRMED">
+
+            <button type="submit" class="btn btn-success">
+
+                Confirm Appointment
+
+            </button>
+
+        </form>
+
+        {% elif appointment.status == "CONFIRMED" %}
+
+        <form method="post" action="{% url 'appointments:update_status' appointment.pk %}" class="d-inline">
+
+            {% csrf_token %}
+
+            <input type="hidden" name="status" value="COMPLETED">
+
+            <button type="submit" class="btn btn-success">
+
+                Mark Completed
+
+            </button>
+
+        </form>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+<div class="card mb-4 mt-4">
+    <div class="card-body">
+
+        <h5 class="card-title">Billing</h5>
+
+        {% if billing %}
+
+        <p>
+            <strong>Bill ID:</strong>
+            {{ billing.bill_id }}
+        </p>
+
+        <p>
+            <strong>Total Amount:</strong>
+            ₹{{ billing.total_amount }}
+        </p>
+
+        <p>
+            <strong>Payment Status:</strong>
+            {{ billing.get_payment_status_display }}
+        </p>
+
+        <a href="{% url 'billing:detail' billing.pk %}" class="btn btn-primary">
+            View Bill
+        </a>
+
+        {% elif appointment.status == "COMPLETED" %}
+
+        <p class="text-muted">
+            No bill has been created for this appointment.
+        </p>
+
+        <a href="{% url 'billing:create' appointment.pk %}" class="btn btn-primary">
+            Create Bill
+        </a>
+
+        {% else %}
+
+        <p class="text-muted">
+            Billing will be available after the appointment
+            is completed.
+        </p>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

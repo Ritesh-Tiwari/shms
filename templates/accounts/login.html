@@ -1,75 +1,170 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}
-Login
-{% endblock %}
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SHMS - Sign In</title>
 
-{% block content %}
+    <style>
+        @layer base {
 
-<div class="row justify-content-center">
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+            }
 
-    <div class="col-md-5">
+            body {
+                overscroll-behavior: none;
+            }
 
-        <div class="card shadow">
+            main>:first-child {
+                margin-top: 0 !important;
+            }
 
-            <div class="card-header">
+            main>:last-child {
+                margin-bottom: 0 !important;
+            }
+        }
 
-                <h3 class="mb-0">
-                    Login
-                </h3>
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+        id="tailwind-config">tailwind.config = { theme: { extend: { "colors": { "on-tertiary": "#ffffff", "tertiary-container": "#996100", "on-tertiary-fixed-variant": "#653e00", "on-error": "#ffffff", "surface-container-high": "#dce9ff", "surface-container-low": "#eff4ff", "on-primary-container": "#eeefff", "error": "#ba1a1a", "surface-container-highest": "#d3e4fe", "outline-variant": "#c3c6d7", "outline": "#737686", "surface-bright": "#f8f9ff", "tertiary": "#784b00", "on-secondary-fixed": "#002113", "secondary-fixed-dim": "#4edea3", "surface-tint": "#0053db", "on-secondary-fixed-variant": "#005236", "on-primary-fixed": "#00174b", "surface-dim": "#cbdbf5", "surface-container": "#e5eeff", "surface-variant": "#d3e4fe", "background": "#f8f9ff", "primary": "#004ac6", "on-secondary": "#ffffff", "inverse-primary": "#b4c5ff", "secondary-fixed": "#6ffbbe", "on-secondary-container": "#00714d", "on-primary": "#ffffff", "surface": "#f8f9ff", "inverse-surface": "#213145", "on-tertiary-container": "#ffeedd", "secondary": "#006c49", "error-container": "#ffdad6", "on-background": "#0b1c30", "secondary-container": "#6cf8bb", "tertiary-fixed-dim": "#ffb95f", "tertiary-fixed": "#ffddb8", "on-primary-fixed-variant": "#003ea8", "on-surface": "#0b1c30", "on-tertiary-fixed": "#2a1700", "primary-container": "#2563eb", "primary-fixed": "#dbe1ff", "on-error-container": "#93000a", "inverse-on-surface": "#eaf1ff", "surface-container-lowest": "#ffffff", "on-surface-variant": "#434655", "primary-fixed-dim": "#b4c5ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "lg": "24px", "gutter": "24px", "xl": "32px", "md": "16px", "sm": "8px", "xxl": "48px", "xs": "4px", "margin-mobile": "16px", "margin-desktop": "40px", "unit": "4px" }, "fontFamily": { "body-sm": ["Inter"], "headline-lg-mobile": ["Inter"], "label-md": ["Inter"], "title-md": ["Inter"], "display-lg": ["Inter"], "headline-lg": ["Inter"], "body-md": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }], "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }] } } } }</script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+</head>
 
-            </div>
-
-            <div class="card-body">
-
-                <form method="post">
-
-                    {% csrf_token %}
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Username
-                        </label>
-
-                        <input
-                            type="text"
-                            name="username"
-                            class="form-control"
-                            required>
-
+<body class="bg-background font-body-md text-on-surface">
+    <div class="">
+        <main class="relative min-h-screen bg-background">
+            <div class="flex flex-col w-full h-full min-h-[calc(100vh-64px)] min-h-screen">
+                <div class="flex flex-col lg:flex-row w-full h-full flex-grow">
+                    <!-- Left Column: Image -->
+                    <div class="hidden lg:flex lg:w-1/2 relative bg-surface-container">
+                        <div class="absolute inset-0 bg-cover bg-center w-full h-full"
+                            data-alt="High-quality cinematic photograph of a modern, bright hospital corridor or clinic reception. Shallow depth of field, natural sunlight streaming through large windows. Clean, professional environment. Subtle, calming blue and white color palette representing trust and healthcare excellence."
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCGDCivwJVdu8s6YPVvuoEv88I4Rdblest17Jghdq7yPuILQKccxI-MngHwMR5O_SnIPu_8SjJgVqJDJ2tzJXAevYIlFydsik9EoW4RPEKnM5ZVwTPzmGX3wtLgQEyhWAyUlWaIG0IOgaUw7KYGHuahjUk_c_mv4lPUu7fSHhkUamKVRbr7yMHuFdOLMoPQ0FK5yowZku_FXJARgOE7YkHyp7v1uUnIAmnQuAxvOj6jFGGUZT0uV5sh')">
+                        </div>
+                        <div class="absolute inset-0 bg-primary/20 backdrop-blur-[2px]"></div>
+                        <!-- Decorative Element -->
+                        <div class="absolute bottom-20 left-12 right-12 z-10">
+                            <div
+                                class="bg-surface/90 backdrop-blur-md p-lg rounded-xl shadow-xl border-l-4 border-primary">
+                                <p class="font-body-lg text-body-lg text-on-surface mb-sm">"Streamlining healthcare
+                                    management so you can focus on patient care."</p>
+                                <div class="flex items-center gap-md">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-label-md text-label-md text-on-surface">SHMS Clinical Excellence
+                                        </p>
+                                        <p class="font-body-sm text-body-sm text-on-surface-variant">Enterprise
+                                            Healthcare Network</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <!-- Right Column: Login Form -->
+                    <div class="flex w-full lg:w-1/2 flex-col justify-center items-center p-gutter md:p-xxl bg-surface">
+                        <div class="w-full max-w-md flex flex-col items-center">
+                            <!-- Header -->
+                            <div class="text-center mb-xl w-full">
+                                <div class="flex justify-center mb-md">
+                                    <img alt="SHMS Logo" class="h-12 w-auto object-contain"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBEjwzdTps4eCheVdjWMiHhmdkuSS0jcT0Mto_KMvKtpubshKMjB8m3134lbWLXNLrn-hUhGWC3ZLAPonNuVePsTf4iHL_Evmfk0Usm4I7RFHpqzsdwx_AuWVfLCX9-_BbVtwm-swfE7AWv9UcnjY_hxIiz8wcE_lyR8ldfj34I7woPLRo26YKGzwZETkVxQAbYDhXxMWR48mFmcJkgHpqHmOpmBSxqvWijq6hy55BwfFxflZZzVoW">
+                                </div>
+                                <h1 class="font-headline-lg text-headline-lg text-on-surface mb-sm">Welcome back</h1>
+                                <p class="font-body-md text-body-md text-on-surface-variant">Enter your credentials to
+                                    access your clinic dashboard.</p>
+                            </div>
+                            <!-- Form -->
+                            <form class="w-full flex flex-col gap-lg" method="post"
+                                onsubmit="document.getElementById('login-btn').classList.add('opacity-70'); document.getElementById('btn-text').innerText='Signing in...'; setTimeout(() =&gt; { document.getElementById('login-btn').classList.remove('opacity-70'); document.getElementById('btn-text').innerText='Sign In'; }, 1500);">
+                                {% csrf_token %}
 
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Password
-                        </label>
-
-                        <input
-                            type="password"
-                            name="password"
-                            class="form-control"
-                            required>
-
+                                <div class="flex flex-col gap-xs">
+                                    <label
+                                        class="font-label-sm text-label-sm text-on-surface uppercase tracking-widest opacity-80"
+                                        for="email">Email Address</label>
+                                    <div class="relative w-full">
+                                        <span
+                                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
+                                        <input name="username"
+                                            class="w-full h-[48px] bg-surface-container rounded-lg pl-11 pr-md font-body-md text-body-md text-on-surface border-none focus:ring-2 focus:ring-primary/40 focus:bg-surface transition-all outline-none"
+                                            id="email" placeholder="admin@shms.med" required="" type="email">
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-xs">
+                                    <label
+                                        class="font-label-sm text-label-sm text-on-surface uppercase tracking-widest opacity-80"
+                                        for="password">Password</label>
+                                    <div class="relative w-full">
+                                        <span
+                                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">lock</span>
+                                        <input
+                                            class="w-full h-[48px] bg-surface-container rounded-lg pl-11 pr-11 font-body-md text-body-md text-on-surface border-none focus:ring-2 focus:ring-primary/40 focus:bg-surface transition-all outline-none"
+                                            name="password"
+                                            id="password" placeholder="••••••••" required="" type="password">
+                                        <button
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors p-1"
+                                            onclick="const p = document.getElementById('password'); const i = this.querySelector('span'); if(p.type === 'password'){ p.type='text'; i.innerText='visibility_off'; } else { p.type='password'; i.innerText='visibility'; }"
+                                            type="button">
+                                            <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between mt-sm">
+                                    <label class="flex items-center gap-2 cursor-pointer group">
+                                        <input
+                                            class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/40 bg-surface-container"
+                                            type="checkbox">
+                                        <span
+                                            class="font-label-md text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors">Remember
+                                            me</span>
+                                    </label>
+                                    <a class="font-label-md text-label-md text-primary hover:text-primary-container transition-colors"
+                                        href="#">Forgot password?</a>
+                                </div>
+                                <button
+                                    class="w-full h-[48px] bg-primary text-on-primary rounded-lg font-label-md text-label-md flex items-center justify-center mt-md hover:bg-primary-container transition-all shadow-md active:scale-[0.98]"
+                                    id="login-btn" type="submit">
+                                    <span id="btn-text" class="">Sign In</span>
+                                </button>
+                            </form>
+                            <!-- Footer -->
+                            <div class="mt-xl text-center flex flex-col gap-sm w-full">
+                                <p class="font-body-sm text-body-sm text-on-surface-variant">
+                                    New to SHMS? <a class="text-primary font-medium hover:underline" href="#">Contact
+                                        your administrator</a> for access.
+                                </p>
+                                <div
+                                    class="flex items-center justify-center gap-md mt-lg pt-lg border-t border-outline-variant/30 w-full">
+                                    <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors"
+                                        href="#">Privacy Policy</a>
+                                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                    <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors"
+                                        href="#">Terms of Service</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary w-100">
-
-                        Login
-
-                    </button>
-
-                </form>
-
+                </div>
             </div>
-
-        </div>
-
+        </main>
     </div>
 
-</div>
+</body>
 
-{% endblock %}
+</html>

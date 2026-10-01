@@ -6,30 +6,152 @@ Update Patient
 
 {% block content %}
 
-<h2>Update Patient</h2>
 
-<form method="post">
+<div class="flex flex-col w-full">
+    <div class="px-gutter py-xl">
+        <div class="flex justify-between items-end mb-lg">
+            <div>
+                <h1 class="text-headline-lg font-headline-lg text-on-surface mb-xs">Edit Patient Profile
+                </h1>
+                <p class="text-body-md font-body-md text-on-surface-variant">Update personal and clinical
+                    details for {{ patient.user.get_full_name }}</p>
+            </div>
+            <div class="flex gap-md">
+                <a href="{% url 'patients:list' %}"
+                    class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant font-label-md hover:bg-surface-container-high transition-colors">Cancel</a>
+                <button type="submit" form="patient-update-form"
+                    class="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary/90 transition-colors shadow-sm">Save
+                    Changes</button>
+            </div>
+        </div>
+        <form class="space-y-xl" method="post" id="patient-update-form">
+            {% csrf_token %}
+            <!-- Account Information -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+                <div class="flex items-center gap-sm mb-lg">
+                    <div
+                        class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
+                    </div>
+                    <h2 class="text-title-md font-title-md text-on-surface">Account Information</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                    <div>
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">Username</label>
+                        {{ user_form.username }}
+                    </div>
+                    <div>
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">Password
+                            <span class="text-label-sm font-label-sm text-outline font-normal">(Leave blank
+                                to keep current)</span></label>
+                        {{ user_form.password }}
+                    </div>
+                    <div>
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">Email</label>
+                        {{ user_form.email}}
+                    </div>
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface-variant mb-xs">Phone
+                            Number</label>
+                        {{ user_form.phone_number }}
+                    </div>
+                </div>
+            </section>
+            <!-- Demographic Profile -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg relative overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 w-64 h-64 bg-secondary-container/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2">
+                </div>
+                <div class="flex items-center gap-sm mb-lg relative z-10">
+                    <div
+                        class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">person_outline</span>
+                    </div>
+                    <h2 class="text-title-md font-title-md text-on-surface">Demographic Profile</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg relative z-10">
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface-variant mb-xs">First
+                            Name</label>
+                        {{ user_form.first_name}}
+                    </div>
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface-variant mb-xs">Last
+                            Name</label>
+                        {{ user_form.last_name }}
+                    </div>
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface-variant mb-xs">Date
+                            of Birth</label>
+                        {{ patient_form.date_of_birth }}
+                    </div>
+                    <div>
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">Gender</label>
+                        {{ patient_form.gender }}
+                    </div>
+                    <div class="md:col-span-2">
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">Address</label>
+                        {{ patient_form.address}}
+                    </div>
+                    <div>
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">City</label>
+                        {{patient_form.city}}
+                    </div>
+                    <div>
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">State</label>
+                        {{ patient_form.state }}
+                    </div>
+                    <div>
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">Pincode</label>
+                        {{ patient_form.pincode }}
+                    </div>
+                    <div>
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">Emergency
+                            Contact</label>
+                        {{ patient_form.emergency_contact}}
+                    </div>
+                </div>
+            </section>
+            <!-- Clinical Information -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+                <div class="flex items-center gap-sm mb-lg">
+                    <div
+                        class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">medical_information</span>
+                    </div>
+                    <h2 class="text-title-md font-title-md text-on-surface">Clinical Information</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface-variant mb-xs">Blood
+                            Group</label>
+                        {{ patient_form.blood_group}}
+                    </div>
+                    <div>
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">Allergies</label>
+                        {{patient_form.allergies}}
+                    </div>
+                    <div class="md:col-span-2">
+                        <label
+                            class="block text-label-md font-label-md text-on-surface-variant mb-xs">Medical
+                            History</label>
+                       {{patient_form.medical_history}}
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+</div>
 
-    {% csrf_token %}
-
-    <h4>Account Information</h4>
-
-    {{ user_form.as_p }}
-
-    <hr>
-
-    <h4>Medical Information</h4>
-
-    {{ patient_form.as_p }}
-
-    <button
-        type="submit"
-        class="btn btn-success">
-
-        Update Patient
-
-    </button>
-
-</form>
 
 {% endblock %}

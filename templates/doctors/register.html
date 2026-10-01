@@ -5,7 +5,370 @@ Register Doctor
 {% endblock %}
 
 {% block content %}
+<!-- 
+{{ user_form.error}}
+{% if user_form.errors or doctor_form.errors %}
+    <div class="mb-6 rounded-lg bg-error/10 border border-error/20 p-4">
 
+        <p class="text-sm font-semibold text-error mb-2">
+            Please correct the following errors:
+        </p>
+
+        <ul class="list-disc pl-5 text-sm text-error">
+
+            {% for field in user_form %}
+                {% for error in field.errors %}
+                    <li>
+                        {{ field.label }}: {{ error }}
+                    </li>
+                {% endfor %}
+            {% endfor %}
+
+            {% for error in user_form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+
+
+            {% for field in doctor_form %}
+                {% for error in field.errors %}
+                    <li>
+                        {{ field.label }}: {{ error }}
+                    </li>
+                {% endfor %}
+            {% endfor %}
+
+            {% for error in doctor_form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+
+        </ul>
+    </div>
+{% endif %} -->
+
+<div class="flex flex-col w-full">
+    <div class="px-lg pb-lg max-w-5xl mx-auto w-full pt-12">
+        <div class="mb-xl">
+            <h1 class="text-display-lg font-display-lg text-on-surface mb-xs tracking-tight">Register New
+                Doctor</h1>
+            <p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl">Onboard a new medical
+                professional to the SHMS network. Ensure all credentials are verified before final
+                submission.</p>
+        </div>
+        <form class="space-y-xl" id="doctorRegistrationForm" method='POST'>
+            {% csrf_token %}
+
+            <!-- Account Information Section -->
+            <section class="bg-surface-container rounded-2xl p-lg shadow-sm">
+                <div class="flex items-center gap-md mb-lg border-b border-outline-variant/30 pb-md">
+                    <div
+                        class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+                        <span class="material-symbols-outlined">person_add</span>
+                    </div>
+                    <div>
+                        <h2 class="text-title-md font-title-md text-on-surface">Account Information</h2>
+                        <p class="text-body-sm font-body-sm text-on-surface-variant">Basic identification
+                            and login details.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                    <!-- Username -->
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs" for="username">Username
+                            <span class="text-error">* {% if user_form.username.errors %}{{ user_form.username.errors.0 }}{% endif %}</span></label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant select-none">badge</span>
+                            
+                                <input aria-describedby="username-helper"
+                                class="w-full bg-surface rounded-lg py-3 pl-11 pr-md border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none"
+                                id="username" name="username" required="" type="text" value="{{user_form.username.value|default:'' }}"/>
+                        </div>
+                        <p class="mt-1 text-label-sm font-label-sm text-on-surface-variant" id="username-helper">150
+                            characters or fewer. Letters, digits and @/./+/-/_
+                            only.</p>
+                    </div>
+                    <!-- First Name -->
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs" for="first_name">First
+                            Name</label>
+
+                        <span class="text-error"> {% if user_form.first_name.errors %}{{ user_form.first_name.errors.0 }}{% endif %}</span>
+
+                        <input
+                            class="w-full bg-surface rounded-lg py-3 px-md border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none"
+                            id="first_name" name="first_name" type="text" value ="{{ user_form.first_name.value|default:''}}" />
+                    </div> 
+                    <!-- Last Name -->
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs" for="last_name">Last
+                            Name</label>
+                        <span class="text-error"> {% if user_form.last_name.errors %}{{ user_form.last_name.errors.0 }}{% endif %}</span>
+
+                        <input
+                            class="w-full bg-surface rounded-lg py-3 px-md border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none"
+                            id="last_name" name="last_name" type="text" value ='{{ user_form.last_name.value |default:""}}' />
+                    </div>
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs" for="email">Email
+                            Address</label>
+                        <span class="text-error"> {% if user_form.email.errors %}{{ user_form.email.errors.0 }}{% endif %}</span>
+
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant select-none">mail</span>
+                            <input
+                                class="w-full bg-surface rounded-lg py-3 pl-11 pr-md border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none"
+                                id="email" name="email" type="email" value='{{ user_form.email.value|default:""}}' />
+                        </div>
+                    </div>
+                    <!-- Phone -->
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs" for="phone">Phone
+                            Number</label>
+                        <span class="text-error"> {% if user_form.phone_number.errors %}{{ user_form.phone_number.errors.0 }}{% endif %}</span>
+
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant select-none">call</span>
+                            <input
+                                class="w-full bg-surface rounded-lg py-3 pl-11 pr-md border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none"
+                                id="phone" name="phone_number" type="tel" value='{{user_form.phone_number.value|default:""}}' />
+                        </div>
+                    </div>
+                    <!-- Password -->
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs" for="password">Password
+                        <span class="text-error">* {% if user_form.password.errors %}{{ user_form.password.errors.0 }}{% endif %}</span></label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant select-none">lock</span>
+                            <input
+                                class="w-full bg-surface rounded-lg py-3 pl-11 pr-11 border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none"
+                                id="password" name="password" required="" type="password"  value='{{ user_form.password.value |default:""}}'/>
+                            <button aria-label="Toggle password visibility"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors focus:outline-none"
+                                onclick="togglePasswordVisibility('password')" type="button">
+                                <span class="material-symbols-outlined" id="password-toggle-icon">visibility_off</span>
+                            </button>
+                        </div>
+                        <p class="mt-1 text-label-sm font-label-sm text-on-surface-variant">Required for
+                            initial platform access.</p>
+                    </div>
+                </div>
+            </section>
+            <!-- Professional Information Section -->
+            <section class="bg-surface-container rounded-2xl p-lg shadow-sm">
+                <div class="flex items-center gap-md mb-lg border-b border-outline-variant/30 pb-md">
+                    <div
+                        class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center">
+                        <span class="material-symbols-outlined">medical_information</span>
+                    </div>
+                    <div>
+                        <h2 class="text-title-md font-title-md text-on-surface">Professional Information
+                        </h2>
+                        <p class="text-body-sm font-body-sm text-on-surface-variant">Clinical credentials
+                            and practice details.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                    <!-- Specialization -->
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs"
+                            for="specialization">Specialization 
+                            <span class="text-error">* {% if doctor_form.specialization.errors %}{{ doctor_form.specialization.errors.0 }}{% endif %}</span></label>
+                        <div class="relative">
+                            <select
+                                class="w-full appearance-none bg-surface rounded-lg py-3 pl-md pr-11 border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface transition-shadow outline-none cursor-pointer"
+                                id="specialization"
+                                name="specialization"
+                                required
+                            >
+                                <option value="" disabled
+                                    {% if not doctor_form.specialization.value %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Select specialization...
+                                </option>
+
+                                {% for value, label in doctor_form.fields.specialization.choices %}
+                                    <option
+                                        value="{{ value }}"
+                                        {% if doctor_form.specialization.value == value %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <span
+                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none select-none">expand_more</span>
+                        </div>
+                    </div>
+                    <!-- Qualification -->
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs"
+                            for="qualification">Qualification</label>
+                        <span class="text-error"> {% if doctor_form.qualification.errors %}{{ doctor_form.qualification.errors.0 }}{% endif %}</span>
+
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant select-none">school</span>
+                            <input
+                                class="w-full bg-surface rounded-lg py-3 pl-11 pr-md border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none"
+                                id="qualification" name="qualification" placeholder="e.g. MD, MBBS, FRCS" type="text" value='{{ doctor_form.qualification.value |default:""}}' />
+                        </div>
+                    </div>
+                    <!-- Experience -->
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs" for="experience">Years of
+                            Experience</label>
+                        <span class="text-error"> {% if doctor_form.experience.errors %}{{ doctor_form.experience.errors.0 }}{% endif %}</span>
+
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant select-none">history</span>
+                            <input
+                                class="w-full bg-surface rounded-lg py-3 pl-11 pr-md border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none"
+                                value='{{ doctor_form.experience.value | default:""}}' id="experience" min="0" name="experience" step="1" type="number" />
+                        </div>
+                    </div>
+                    <!-- Consultation Fee -->
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs" for="fee">Consultation
+                            Fee</label>
+                        <span class="text-error"> {% if doctor_form.consultation_fee.errors %}{{ doctor_form.consultation_fee.errors.0 }}{% endif %}</span>
+
+                            
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant select-none">payments</span>
+                            <input
+                                class="w-full bg-surface rounded-lg py-3 pl-11 pr-md border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none"
+                                value='{{ doctor_form.consultation_fee.value |default:""}}' id="fee" min="0" name="consultation_fee" placeholder="0.00" step="0.01" type="number" />
+                            <div
+                                class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-on-surface-variant font-label-md">
+                                Rs
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Availability -->
+                    <div>
+                        <label class="block text-label-md font-label-md text-on-surface mb-sm">
+                            Current Availability
+                        </label>
+
+                        <div class="flex flex-wrap gap-md">
+
+                            {% for value, label in doctor_form.fields.availability.choices %}
+
+                                <label class="relative flex cursor-pointer items-center gap-xs">
+                                <span class="text-error"> {% if doctor_form.availability.errors %}{{ doctor_form.availability.errors.0 }}{% endif %}</span>
+
+
+                                    <input
+                                        class="peer sr-only"
+                                        name="availability"
+                                        type="radio"
+                                        value="{{ value }}"
+                                        {% if doctor_form.availability.value == value %}
+                                            checked
+                                        {% endif %}
+                                    />
+
+                                    <div
+                                        class="h-5 w-5 rounded-full border-2 border-outline-variant peer-checked:border-primary flex items-center justify-center transition-colors"
+                                    >
+                                        <div
+                                            class="h-2.5 w-2.5 rounded-full bg-primary scale-0 peer-checked:scale-100 transition-transform"
+                                        ></div>
+                                    </div>
+
+                                    <span
+                                        class="text-body-md font-body-md text-on-surface-variant peer-checked:text-on-surface transition-colors"
+                                    >
+                                        {{ label }}
+                                    </span>
+
+                                </label>
+
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    <!-- Address -->
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-label-md font-label-md text-on-surface mb-xs" for="address">Practice
+                            Address / Clinic Info</label> 
+                        <span class="text-error"> {% if doctor_form.address.errors %}{{ doctor_form.address.errors.0 }}{% endif %}</span>
+
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-3 text-on-surface-variant select-none">location_on</span>
+                            <textarea
+                                class="w-full bg-surface rounded-lg py-3 pl-11 pr-md border-none ring-1 ring-outline-variant focus:ring-2 focus:ring-primary text-body-md text-on-surface placeholder:text-on-surface-variant/50 transition-shadow outline-none resize-y"
+                                value='{{ doctor_form.address.value |default:""}}' id="address" name="address" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Actions -->
+            <div
+                class="flex items-center justify-end gap-md pt-lg border-t border-outline-variant/30 sticky bottom-0 bg-background/80 backdrop-blur-md pb-lg z-10">
+                <a href='{% url "doctors:list" %}'
+                    class="px-xl py-3 rounded-lg text-body-md font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    type="button">
+                    Cancel
+                </a> 
+                <button
+                    form="doctorRegistrationForm"
+                    class="px-xl py-3 rounded-lg text-body-md font-label-md bg-primary text-on-primary hover:bg-primary/90 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background flex items-center gap-sm group"
+                    type="submit">
+                    Register Doctor
+                    <span
+                        class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function togglePasswordVisibility(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(inputId + '-toggle-icon');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility';
+        } else {
+            input.type = 'password';
+            icon.textContent = 'visibility_off';
+        }
+    }
+
+    // Prevent default form submission for demo purposes
+   document
+    .getElementById('doctorRegistrationForm')
+    .addEventListener('submit', function () {
+
+        const btn = this.querySelector('button[type="submit"]');
+
+        btn.innerHTML =
+            '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span> Registering...';
+
+        btn.classList.add(
+            'opacity-80',
+            'cursor-not-allowed'
+        );
+
+        btn.disabled = true;
+    });
+</script>
+
+
+{% comment %} 
 <h2 class="mb-4">
     Register Doctor
 </h2>
@@ -28,14 +391,12 @@ Register Doctor
 
     {{ doctor_form.errors }}
 
-    <button
-        type="submit"
-        class="btn btn-primary">
+    <button type="submit" class="btn btn-primary">
 
         Register Doctor
 
     </button>
 
-</form>
+</form> {% endcomment %}
 
 {% endblock %}

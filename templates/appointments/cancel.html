@@ -1,11 +1,133 @@
 {% extends "base.html" %}
-
-{% block title %}
-Cancel Appointment
-{% endblock %}
+{% block title %}Cancel Appointment{% endblock %}
 
 {% block content %}
 
+<div class="flex flex-col w-full">
+    <div class="p-lg md:p-xl space-y-lg max-w-5xl mx-auto w-full">
+        <div class="flex flex-col gap-xs">
+            <nav class="flex items-center gap-sm text-label-sm font-label-sm text-on-surface-variant">
+                <a class="hover:text-primary transition-colors" href="{% url 'appointments:list' %}">Appointments</a>
+                <span>/</span>
+                <a class="hover:text-primary transition-colors" href="{% url 'appointments:detail' appointment.pk %}">{{ appointment.appointment_id }}</a>
+                <span>/</span>
+                <span class="text-on-surface font-semibold">Cancel Appointment</span>
+            </nav>
+            <div class="pt-xs flex items-center justify-between">
+                <a class="inline-flex items-center gap-xs text-label-md font-label-md text-primary hover:text-on-primary-fixed-variant transition-colors group"
+                    href="{% url 'appointments:detail' appointment.pk %}">
+                    <span
+                        class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-1">arrow_back</span>
+                    <span>Back to Appointment ({{ appointment.appointment_id }})</span>
+                </a>
+            </div>
+        </div>
+        <div class="space-y-sm">
+            <h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">Cancel Appointment
+            </h1>
+            <p class="text-body-md font-body-md text-on-surface-variant">
+                Are you sure? You are about to cancel this appointment. This action will change the
+                appointment status to Cancelled.
+            </p>
+        </div>
+        <div
+            class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden">
+            <div class="divide-y divide-outline-variant/30">
+                <div class="py-md px-lg flex items-center justify-between">
+                    <span class="text-body-sm font-label-md text-on-surface-variant">Appointment</span>
+                    <span class="text-body-md font-medium text-on-surface">{{ appointment.appointment_id }}</span>
+                </div>
+                <div class="py-md px-lg flex items-center justify-between">
+                    <span class="text-body-sm font-label-md text-on-surface-variant">Patient</span>
+                    <span class="text-body-md font-medium text-on-surface">{{ appointment.patient.user.get_full_name }}</span>
+                </div>
+                <div class="py-md px-lg flex items-center justify-between">
+                    <span class="text-body-sm font-label-md text-on-surface-variant">Doctor</span>
+                    <span class="text-body-md font-medium text-on-surface">{{ appointment.doctor.user.get_full_name }}</span>
+                </div>
+                <div class="py-md px-lg flex items-center justify-between">
+                    <span class="text-body-sm font-label-md text-on-surface-variant">Date</span>
+                    <span class="text-body-md font-medium text-on-surface">{{ appointment.appointment_date }}</span>
+                </div>
+                <div class="py-md px-lg flex items-center justify-between">
+                    <span class="text-body-sm font-label-md text-on-surface-variant">Time</span>
+                    <span class="text-body-md font-medium text-on-surface">{{ appointment.appointment_time }}</span>
+                </div>
+                <div class="py-md px-lg flex items-center justify-between">
+                    <span class="text-body-sm font-label-md text-on-surface-variant">Status</span>
+                    <span
+                        class="inline-flex items-center gap-xs px-2.5 py-0.5 rounded-full bg-secondary-container/40 text-on-secondary-container text-label-sm font-semibold">
+                        <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                        {{ appointment.get_status_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+         <form method="post">
+            {% csrf_token %}
+        <div class="flex items-center justify-end gap-md pt-sm">
+           
+
+            <a class="px-lg py-2.5 rounded-lg text-center text-label-md font-medium text-on-surface bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low transition-colors"
+                href="{% url 'appointments:detail' appointment.pk %}">
+                No, Go Back
+            </a>
+            <button
+                class="px-lg py-2.5 rounded-lg text-center text-label-md font-semibold text-on-error bg-error hover:bg-on-error-container shadow-sm transition-all"
+                id="confirm-cancel-btn" type="submit">
+                Yes, Cancel Appointment
+            </button>
+            
+        </div>
+        </form>
+    </div>
+    <div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden items-center justify-center p-md"
+        id="modal-feedback">
+        <div
+            class="bg-surface-container-lowest max-w-sm w-full p-lg rounded-xl shadow-xl text-center space-y-md transform transition-transform">
+            <div
+                class="w-12 h-12 rounded-full bg-error-container text-error flex items-center justify-center mx-auto">
+                <span class="material-symbols-outlined text-[24px]">check_circle</span>
+            </div>
+            <div class="space-y-xs">
+                <h3 class="text-title-md font-title-md text-on-surface">Appointment Cancelled</h3>
+                <p class="text-body-sm font-body-sm text-on-surface-variant">
+                    Appointment {{ appointment.appointment_id }} for {{ appointment.patient.user.get_full_name }} has been marked as Cancelled.
+                </p>
+            </div>
+            <div class="pt-sm">
+                <a href="{% url 'dashboard:dashboard' %}"
+                    class="w-full py-2 rounded-lg bg-primary text-on-primary text-label-md font-label-md"
+                    id="modal-close-btn" type="button">
+                    Return to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        const cancelBtn = document.getElementById('confirm-cancel-btn');
+        const feedbackModal = document.getElementById('modal-feedback');
+        const closeBtn = document.getElementById('modal-close-btn');
+
+        if (cancelBtn && feedbackModal) {
+            cancelBtn.addEventListener('click', () => {
+                feedbackModal.classList.remove('hidden');
+                feedbackModal.classList.add('flex');
+            });
+        }
+
+        if (closeBtn && feedbackModal) {
+            closeBtn.addEventListener('click', () => {
+                feedbackModal.classList.add('hidden');
+                feedbackModal.classList.remove('flex');
+            });
+        }
+    </script>
+</div>
+
+
+{% comment %} Old page {% endcomment %}
+{% comment %} 
 <h3 class="mb-4">
     Cancel Appointment
 </h3>
@@ -84,6 +206,6 @@ Cancel Appointment
 
     </div>
 
-</div>
+</div> {% endcomment %}
 
 {% endblock %}

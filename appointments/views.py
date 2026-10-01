@@ -81,6 +81,12 @@ def appointment_list(request):
         "doctor__user",
     )
 
+    # Doctor → only their own appointments
+    if request.user.role == UserRole.DOCTOR:
+        appointments = appointments.filter(
+            doctor__user=request.user,
+        )
+
     # Search
     if search:
 
@@ -152,12 +158,26 @@ def appointment_list(request):
 )
 def appointment_detail(request, pk):
 
-    appointment = get_object_or_404(
-        Appointment.objects.select_related(
+    appointments = Appointment.objects.select_related(
             "patient__user",
             "doctor__user",
-        ),
+            "billing",
+        )
+
+    if request.user.role == UserRole.DOCTOR:
+        appointments = appointments.filter(
+            doctor__user=request.user,
+        )
+
+    appointment = get_object_or_404(
+        appointments,
         pk=pk,
+    )
+
+    billing = getattr(
+        appointment,
+        "billing",
+        None,
     )
 
     return render(
@@ -165,8 +185,11 @@ def appointment_detail(request, pk):
         "appointments/detail.html",
         {
             "appointment": appointment,
+            "billing": billing,
         },
     )
+
+
 
 @role_required(
     UserRole.ADMIN,
@@ -235,11 +258,18 @@ def update_appointment(request, pk):
 )
 def cancel_appointment(request, pk):
 
-    appointment = get_object_or_404(
-        Appointment.objects.select_related(
+    appointments = Appointment.objects.select_related(
             "patient__user",
             "doctor__user",
-        ),
+        )
+
+    if request.user.role == UserRole.DOCTOR:
+        appointments = appointments.filter(
+            doctor__user=request.user,
+        )
+
+    appointment = get_object_or_404(
+        appointments,
         pk=pk,
     )
 
@@ -288,11 +318,19 @@ def cancel_appointment(request, pk):
 )
 def update_appointment_status(request, pk):
 
+    appointments = Appointment.objects.select_related(
+        "patient__user",
+        "doctor__user",
+    )
+
+    # Doctor can update status only for their own appointments
+    if request.user.role == UserRole.DOCTOR:
+        appointments = appointments.filter(
+            doctor__user=request.user,
+        )
+
     appointment = get_object_or_404(
-        Appointment.objects.select_related(
-            "patient__user",
-            "doctor__user",
-        ),
+        appointments,
         pk=pk,
     )
 

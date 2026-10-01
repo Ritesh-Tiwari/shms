@@ -5,48 +5,36 @@ Delete Patient
 {% endblock %}
 
 {% block content %}
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-md" id="delete-modal">
+    <div class="relative bg-surface-container-lowest rounded-xl shadow-sm max-w-md w-full p-lg space-y-lg">
 
-<h2>Delete Patient</h2>
 
-<div class="alert alert-danger">
+        <form method="post">
 
-    <p>
-
-        Are you sure you want to delete
-
-        <strong>
-
-            {{ patient.user.first_name }}
-            {{ patient.user.last_name }}
-
-        </strong>
-
-        ?
-
-    </p>
-
+            {% csrf_token %}
+            <div class="flex items-center gap-sm text-error">
+                <span class="material-symbols-outlined text-[24px]">warning</span>
+                <h2 class="text-title-md font-title-md">Delete Patient Record?</h2>
+            </div>
+            <p class="text-body-md text-on-surface-variant">
+                Are you sure you want to delete the record for
+                <span class="font-semibold text-on-surface">
+                    {{ patient.user.first_name }}
+                    {{ patient.user.last_name }}
+                </span>? This action cannot be undone and all associated medical history will be permanently
+                removed.
+            </p>
+            <div class="flex gap-md justify-end pt-md">
+                <a href="{% url 'patients:detail' patient.id %}"
+                    class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant font-label-md hover:bg-surface-container-high transition-colors">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-md py-sm rounded-lg bg-error text-on-error font-label-md hover:opacity-90 transition-colors shadow-sm">
+                    Yes, Delete
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
-
-<form method="post">
-
-    {% csrf_token %}
-
-    <button
-        type="submit"
-        class="btn btn-danger">
-
-        Yes, Delete
-
-    </button>
-
-    <a
-        href="{% url 'patients:detail' patient.id %}"
-        class="btn btn-secondary">
-
-        Cancel
-
-    </a>
-
-</form>
-
 {% endblock %}

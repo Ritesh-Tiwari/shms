@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+{% block title %}Add Payment{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="flex flex-col w-full">
+    <div class="px-margin-mobile md:px-margin-desktop py-lg max-w-5xl mx-auto w-full space-y-lg">
+        <div class="flex flex-col gap-xs">
+            <nav class="flex items-center gap-xs text-body-sm font-body-sm text-on-surface-variant"><a
+                    class="hover:text-primary transition-colors flex items-center gap-xs"
+                    href="#"><span>Billing &amp; Payments</span></a><span>/</span><a
+                    class="hover:text-primary transition-colors" href="{% url 'billing:detail' billing.pk %}">Bill Details 
+                    ({{ billing.bill_id }})</a><span>/</span><span class="text-on-surface font-label-md">Add
+                    Payment</span></nav>
+            <div class="pt-sm"><a
+                    class="inline-flex items-center gap-xs text-primary text-body-sm font-label-md hover:underline mb-xs"
+                    href="{% url 'billing:detail' billing.pk %}"><span class="material-symbols-outlined text-[18px]">arrow_back</span>Back to
+                    Bill Details ({{ billing.bill_id }})</a>
+                <h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight mt-xs">Add
+                    Payment</h1>
+            </div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-lg">
+            <h2
+                class="text-title-md font-title-md text-on-surface pb-md mb-md border-b border-outline-variant/20">
+                Bill Summary</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-md">
+                <div class="flex flex-col p-sm rounded-lg bg-surface-container-low"><span
+                        class="text-label-sm font-label-sm text-on-surface-variant">Bill ID</span><span
+                        class="text-body-md font-label-md text-on-surface mt-xs">{{ billing.bill_id }}</span></div>
+                <div class="flex flex-col p-sm rounded-lg bg-surface-container-low"><span
+                        class="text-label-sm font-label-sm text-on-surface-variant">Patient</span><span
+                        class="text-body-md font-label-md text-on-surface mt-xs">{{ billing.patient.user.get_full_name }}</span></div>
+                <div class="flex flex-col p-sm rounded-lg bg-surface-container-low"><span
+                        class="text-label-sm font-label-sm text-on-surface-variant">Total Bill</span><span
+                        class="text-body-md font-label-md text-on-surface mt-xs">₹{{ billing.total_amount|floatformat:2 }}</span></div>
+                <div class="flex flex-col p-sm rounded-lg bg-surface-container-low"><span
+                        class="text-label-sm font-label-sm text-on-surface-variant">Already Paid</span><span
+                        class="text-body-md font-label-md text-on-surface mt-xs">₹{{ paid_amount|floatformat:2 }}</span></div>
+                <div class="flex flex-col p-sm rounded-lg bg-surface-container-low"><span
+                        class="text-label-sm font-label-sm text-on-surface-variant">Remaining
+                        Amount</span><span
+                        class="text-body-md font-label-md text-primary font-semibold mt-xs">₹{{ remaining_amount|floatformat:2 }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-lg">
+            <h2
+                class="text-title-md font-title-md text-on-surface pb-md mb-lg border-b border-outline-variant/20">
+                Payment Details</h2>
+            <form class="space-y-lg" id="paymentForm" method="post">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                    <div class="flex flex-col gap-xs md:col-span-2"><label
+                            class="text-label-md font-label-md text-on-surface"
+                            for="paymentAmount">Amount</label>
+                        <div class="relative flex items-center"><span
+                                class="absolute left-md text-on-surface-variant font-label-md select-none">₹</span><input
+                                class="w-full h-11 bg-surface-container-low rounded-lg pl-8 pr-md text-body-md font-label-md text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all"
+                                id="paymentAmount" name="amount" placeholder="500.00" required=""
+                                step="0.01" type="number" value="{{ remaining_amount|floatformat:2 }}" /></div>
+                    </div>
+                    <div class="flex flex-col gap-xs">
+                        <label {{ form.payment_method.id_for_label }}
+                            class="text-label-md font-label-md text-on-surface" for="paymentMethod">Payment
+                            Method</label>
+                        <div class="relative">
+                            
+                            <select
+                                class="w-full h-11 bg-surface-container-low rounded-lg px-md text-body-md font-body-md text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary appearance-none cursor-pointer transition-all"
+                                id="paymentMethod" name="{{ form.payment_method.html_name }}" required="">
+                                {% comment %} <option disabled="" value="" {% if not form.payment_method.value %}selected{% endif %}>---------</option> {% endcomment %}
+                               
+                               {% for value, label in form.fields.payment_method.choices %}
+                                <option value="{{ value }}" {% if form.payment_method.value == value %}selected{% endif %}>{{ label }}</option>
+                               {% endfor %}
+                            </select>
+                            <span
+                                class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[20px]">expand_more</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-xs"><label
+                            class="text-label-md font-label-md text-on-surface" for="paymentType">Payment
+                            Type</label>
+                        <div class="relative"><select
+                                class="w-full h-11 bg-surface-container-low rounded-lg px-md text-body-md font-body-md text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary appearance-none cursor-pointer transition-all"
+                                id="paymentType" name="{{ form.payment_type.html_name }}" required="">
+                                {% comment %} <option disabled="" value="" {% if not form.payment_type.value %}selected{% endif %}>---------</option> {% endcomment %}
+                                {% for value, label in form.fields.payment_type.choices %}
+                                <option value="{{ value }}" {% if form.payment_type.value == value %}selected{% endif %}>{{ label }}</option>
+                               {% endfor %}
+                              
+                            </select><span
+                                class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[20px]">expand_more</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-xs md:col-span-2"><label
+                            class="text-label-md font-label-md text-on-surface"
+                            for="{{ form.transaction_reference.html_name }}">Transaction Reference</label><input
+                            class="w-full h-11 bg-surface-container-low rounded-lg px-md text-body-md font-body-md text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all"
+                            id="transactionRef" name="{{ form.transaction_reference.html_name }}"
+                            placeholder="e.g., UPI Ref / Card Auth / Cheque No." type="text" /></div>
+                </div>
+                <div class="pt-md flex flex-col-reverse sm:flex-row items-center justify-end gap-md"><a
+                        class="w-full sm:w-auto px-lg py-2.5 rounded-lg text-body-md font-label-md text-on-surface-variant bg-surface-container hover:bg-surface-container-high transition-colors text-center"
+                        href="{% url 'billing:detail' billing.pk %}">Cancel</a>
+                        <button
+                        class="w-full sm:w-auto px-xl py-2.5 rounded-lg text-body-md font-label-md text-on-primary bg-primary hover:bg-primary-container shadow-sm active:scale-[0.99] transition-all flex items-center justify-center gap-xs cursor-pointer"
+                        id="submitPaymentBtn" type="submit">Record Payment</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+        {% comment %} (function () {
+            const amountInput = document.getElementById('paymentAmount');
+            const payFullBtn = document.getElementById('payFullBtn');
+            const feedbackText = document.getElementById('amountFeedback');
+            const paymentTypeSelect = document.getElementById('paymentType');
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+            const transactionRefInput = document.getElementById('transactionRef');
+            const form = document.getElementById('paymentForm');
+
+            const totalRemaining = 500.00;
+
+            function updateCalculations() {
+                const val = parseFloat(amountInput.value) || 0;
+                if (val >= totalRemaining) {
+                    feedbackText.textContent = "Covers full balance";
+                    feedbackText.className = "text-secondary font-medium";
+                    if (paymentTypeSelect) {
+                        paymentTypeSelect.value = "Final";
+                    }
+                } else if (val > 0 && val < totalRemaining) {
+                    const remainingAfter = (totalRemaining - val).toFixed(2);
+                    feedbackText.textContent = "Partial payment (₹" + remainingAfter + " remaining)";
+                    feedbackText.className = "text-tertiary-container font-medium";
+                    if (paymentTypeSelect) {
+                        paymentTypeSelect.value = "Partial";
+                    }
+                } else {
+                    feedbackText.textContent = "Enter valid amount";
+                    feedbackText.className = "text-error font-medium";
+                }
+            }
+
+            if (payFullBtn && amountInput) {
+                payFullBtn.addEventListener('click', function () {
+                    amountInput.value = totalRemaining.toFixed(2);
+                    updateCalculations();
+                    amountInput.focus();
+                });
+            }
+
+            if (amountInput) {
+                amountInput.addEventListener('input', updateCalculations);
+            }
+
+            if (paymentMethodSelect && transactionRefInput) {
+                paymentMethodSelect.addEventListener('change', function () {
+                    if (this.value === 'Cash') {
+                        transactionRefInput.placeholder = "Receipt memo / Counter reference (Optional for cash)";
+                    } else if (this.value === 'UPI') {
+                        transactionRefInput.placeholder = "e.g., 12-digit UPI UTR / Transaction ID";
+                    } else if (this.value === 'Card') {
+                        transactionRefInput.placeholder = "e.g., Card Last 4 digits / Auth Code / POS Ref";
+                    } else {
+                        transactionRefInput.placeholder = "e.g., Bank Ref / Payment Gateway ID";
+                    }
+                });
+            }
+
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const submitBtn = document.getElementById('submitPaymentBtn');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Processing...';
+                        setTimeout(() => {
+                            submitBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check_circle</span> Payment Recorded';
+                            submitBtn.classList.remove('bg-primary');
+                            submitBtn.classList.add('bg-secondary');
+                        }, 700);
+                    }
+                });
+            }
+        })(); {% endcomment %}
+</script>
+
+
+<div class="container mt-4">
+
+    <h2>Add Payment</h2>
+
+    <!-- Bill Summary -->
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <h5>Bill Summary</h5>
+
+            <p>
+                <strong>Bill ID:</strong>
+                {{ billing.bill_id }}
+            </p>
+
+            <p>
+                <strong>Patient:</strong>
+                {{ billing.patient.patient_id }}
+                -
+                {{ billing.patient.user.get_full_name }}
+            </p>
+
+            <p>
+                <strong>Total Bill:</strong>
+                ₹{{ billing.total_amount }}
+            </p>
+
+            <p>
+                <strong>Already Paid:</strong>
+                ₹{{ paid_amount }}
+            </p>
+
+            <p>
+                <strong>Remaining Amount:</strong>
+                ₹{{ remaining_amount }}
+            </p>
+
+        </div>
+    </div>
+
+
+    <!-- Payment Form -->
+    <div class="card">
+
+        <div class="card-body">
+
+            <h5>Payment Details</h5>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Record Payment
+                </button>
+
+                <a
+                    href="{% url 'billing:detail' billing.pk %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

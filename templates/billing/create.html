@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+{% block title %}Create Bill{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full">
+    <div class="w-full max-w-5xl mx-auto px-lg py-xl">
+        <!-- Breadcrumb & Nav -->
+        <div class="flex flex-col gap-xs mb-lg">
+            <nav class="flex items-center gap-xs text-body-sm font-body-sm text-on-surface-variant">
+                <a class="hover:text-primary transition-colors" href="{% url 'appointments:list' %}">Appointments</a>
+                <span class="text-outline-variant">/</span>
+                <a class="hover:text-primary transition-colors" href="{% url 'appointments:detail' appointment.pk %}">{{appointment.appointment_id}}</a>
+                <span class="text-outline-variant">/</span>
+                <span class="text-on-surface font-label-md">Create Bill</span>
+            </nav>
+            <div class="flex items-center justify-between mt-sm">
+                <div>
+                    <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Create Bill
+                    </h1>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Generate an official
+                        clinic invoice for this completed encounter</p>
+                </div>
+                <a class="inline-flex items-center gap-xs text-body-sm font-label-md text-on-surface-variant hover:text-primary transition-colors px-md py-sm rounded-lg hover:bg-surface-container"
+                    href="{% url 'appointments:detail' appointment.pk %}">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    <span>Back to Appointment ({{appointment.appointment_id}})</span>
+                </a>
+            </div>
+        </div>
+        <!-- Main Content Flow -->
+        <div class="flex flex-col gap-lg">
+            <!-- Section 1: Appointment Details (Read-only Summary Card) -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+                <div class="flex items-center justify-between mb-md">
+                    <div class="flex items-center gap-sm">
+                        <span
+                            class="material-symbols-outlined text-primary text-[22px]">calendar_today</span>
+                        <h2 class="font-title-md text-title-md text-on-surface">Appointment Details</h2>
+                    </div>
+                    <div
+                        class="inline-flex items-center gap-1.5 bg-secondary-container/40 text-on-secondary-container px-2.5 py-1 rounded-full text-label-sm font-label-sm">
+                        <span
+                            class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+                        <span>Verified Encounter</span>
+                    </div>
+                </div>
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-md pt-sm border-t border-outline-variant/20">
+                    <div class="p-sm rounded-lg bg-surface-container-low/50">
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Appointment
+                            ID</span>
+                        <span
+                            class="font-label-md text-label-md text-on-surface font-semibold">{{appointment.appointment_id}}</span>
+                    </div>
+                    <div class="p-sm rounded-lg bg-surface-container-low/50">
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Patient</span>
+                        <span class="font-label-md text-label-md text-on-surface font-semibold">{{appointment.patient.user.get_full_name}}</span>
+                            
+                    </div>
+                    <div class="p-sm rounded-lg bg-surface-container-low/50">
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Attending
+                            Doctor</span>
+                        <span class="font-label-md text-label-md text-on-surface font-semibold">
+                            Dr. {{appointment.doctor.user.get_full_name}}</span>
+                    </div>
+                    <div class="p-sm rounded-lg bg-surface-container-low/50">
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Consultation
+                            Fee</span>
+                        <span class="font-title-md text-title-md text-primary font-bold">₹ {{appointment.doctor.consultation_fee}}</span>
+                    </div>
+                </div>
+            </section>
+            <!-- Section 2: Billing Form -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+                <div class="flex items-center gap-sm mb-lg">
+                    <span class="material-symbols-outlined text-primary text-[22px]">receipt_long</span>
+                    <h2 class="font-title-md text-title-md text-on-surface">Billing Details</h2>
+                </div>
+                <form class="space-y-lg" id="billingForm" method="post">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                        <!-- Tax Type Selection -->
+                        <div>
+                            <label class="block font-label-md text-label-md text-on-surface mb-sm">
+                                Tax Type
+                            </label>
+                            <div class="grid grid-cols-3 gap-sm">
+
+                                {% for value, label in form.fields.tax_type.choices %}
+
+                                <label
+                                    class="relative flex items-center justify-center p-md rounded-lg bg-surface-container-low cursor-pointer transition-all hover:bg-surface-container has-[:checked]:bg-primary-container has-[:checked]:text-on-primary-container">
+                                    <input class="sr-only" name="{{form.tax_type.html_name}}"
+                                        onchange="updateTaxBehavior(this.value)" type="radio"
+                                        value="{{ value }}"
+                                         {% if form.tax_type.value == value %}
+                                            checked
+                                        {% endif %}
+                                        />
+                                    <span class="font-label-md text-label-md">{{ label }}</span>
+                                </label>
+                                {% comment %} <label
+                                    class="relative flex items-center justify-center p-md rounded-lg bg-surface-container-low cursor-pointer transition-all hover:bg-surface-container has-[:checked]:bg-primary-container has-[:checked]:text-on-primary-container">
+                                    <input class="sr-only" name="taxType"
+                                        onchange="updateTaxBehavior(this.value)" type="radio" value="GST" />
+                                    <span class="font-label-md text-label-md">GST (18%)</span>
+                                </label>
+                                <label
+                                    class="relative flex items-center justify-center p-md rounded-lg bg-surface-container-low cursor-pointer transition-all hover:bg-surface-container has-[:checked]:bg-primary-container has-[:checked]:text-on-primary-container">
+                                    <input class="sr-only" name="taxType"
+                                        onchange="updateTaxBehavior(this.value)" type="radio"
+                                        value="Other" />
+                                    <span class="font-label-md text-label-md">Other</span>
+                                </label> {% endcomment %}
+                                {% endfor %}
+
+                            </div>
+                            <p class="font-body-sm text-[12px] text-on-surface-variant/80 mt-2">Select
+                                applicable tax structure as per local medical billing regulations</p>
+                        </div>
+                        <!-- Tax Amount Input -->
+                        <div>
+                            <label class="block font-label-md text-label-md text-on-surface mb-sm"
+                                for="taxAmountInput">
+                                Tax Amount (₹)
+                            </label>
+                            <div class="relative flex items-center">
+                                <span
+                                    class="absolute left-md font-label-md text-label-md text-on-surface-variant">₹</span>
+                                <input name="{{form.tax_amount.html_name}}"
+                                    class="w-full h-10 pl-8 pr-md bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface outline-none focus:bg-surface-container transition-colors"
+                                    id="taxAmountInput" min="0" 
+                                    oninput="handleManualTaxInput(this.value)" placeholder="0.00"
+                                    step="0.01" type="number" value="0.00" />
+                            </div>
+                            <p class="font-body-sm text-[12px] text-on-surface-variant/80 mt-2"
+                                id="taxHelperText">Tax calculated automatically based on consultation fee
+                                and tax type</p>
+                        </div>
+                    </div>
+                    <!-- Billing Breakdown Preview / Summary Breakdown -->
+                    <div
+                        class="mt-xl p-lg rounded-xl bg-surface-container-low/70 border border-outline-variant/30">
+                        <h3 class="font-title-md text-body-lg font-semibold text-on-surface mb-md">Summary
+                            Breakdown</h3>
+                        <div class="space-y-sm">
+                            <div
+                                class="flex items-center justify-between text-body-sm text-on-surface-variant">
+                                <span>Consultation Fee</span>
+                                <span class="font-label-md font-medium text-on-surface" id="baseFee">₹{{appointment.doctor.consultation_fee|floatformat:"2"}}</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between text-body-sm text-on-surface-variant">
+                                <span id="taxLabel">Tax Amount (Exempt / 0%)</span>
+                                <span class="font-label-md font-medium text-on-surface"
+                                    id="taxDisplay">₹0.00</span>
+                            </div>
+                            <div class="my-sm border-t border-outline-variant/30"></div>
+                            <div class="flex items-center justify-between pt-1">
+                                <div class="flex items-center gap-sm">
+                                    <span
+                                        class="font-title-md text-title-md font-semibold text-on-surface">Total
+                                        Payable</span>
+                                    <span
+                                        class="px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wider bg-amber-100 text-amber-800">Unpaid</span>
+                                </div>
+                                <span class="font-title-md text-[24px] font-bold text-primary"
+                                    id="totalDisplay">₹{{appointment.doctor.consultation_fee|floatformat:"2"}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Footer Actions -->
+                    <div class="flex items-center justify-end gap-md pt-md">
+                        <a href="{% url 'appointments:detail' appointment.pk %}"
+                            class="px-lg py-2.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
+                            >
+                            Cancel
+                        </a>
+                        <button
+                            class="inline-flex items-center gap-sm bg-primary-container hover:bg-primary text-on-primary-container px-xl py-2.5 rounded-lg font-label-md text-label-md transition-all shadow-sm"
+                            id="submitBtn"  type="submit">
+                            <span class="material-symbols-outlined text-[18px]">check</span>
+                            <span>Create Bill</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+            <!-- Confirmation Banner (Hidden by default) -->
+            <div class="hidden bg-secondary-container/30 text-on-secondary-container p-md rounded-xl flex items-center justify-between"
+                id="successNotice">
+                <div class="flex items-center gap-md">
+                    <span class="material-symbols-outlined text-secondary">verified</span>
+                    <div>
+                        <div class="font-label-md text-label-md font-semibold">Bill generated successfully!
+                        </div>
+                        <div class="font-body-sm text-body-sm opacity-90">Invoice #INV-2023-0091 created for
+                            APT000002.</div>
+                    </div>
+                </div>
+                <a class="font-label-md text-label-md text-secondary underline hover:opacity-80"
+                    href="#">View Invoice</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const BASE_FEE = {{appointment.doctor.consultation_fee|floatformat:"2"}};
+    const taxInput = document.getElementById('taxAmountInput');
+    const taxLabel = document.getElementById('taxLabel');
+    const taxDisplay = document.getElementById('taxDisplay');
+    const totalDisplay = document.getElementById('totalDisplay');
+    const helperText = document.getElementById('taxHelperText');
+
+    function calculate(taxVal) {
+        const tax = isNaN(taxVal) ? 0 : Math.max(0, taxVal);
+        const total = BASE_FEE + tax;
+        taxDisplay.textContent = '₹' + tax.toFixed(2);
+        totalDisplay.textContent = '₹' + total.toFixed(2);
+    }
+
+    function updateTaxBehavior(type) {
+        if (type === 'EXEMPT') {
+            taxInput.value = '0.00';
+            taxInput.disabled = true;
+            taxLabel.textContent = 'Tax Amount (Exempt / 0%)';
+            helperText.textContent = 'Tax calculated automatically based on consultation fee and tax type';
+            calculate(0);
+        } else if (type === 'GST') {
+            const gstAmount = BASE_FEE * 0.18;
+            taxInput.value = gstAmount.toFixed(2);
+            taxInput.disabled = true;
+            taxLabel.textContent = 'Tax Amount (GST 18%)';
+            helperText.textContent = 'Tax calculated automatically based on consultation fee and tax type';
+            calculate(gstAmount);
+        } else if (type === 'OTHER') {
+            taxInput.disabled = false;
+            taxLabel.textContent = 'Tax Amount (Custom)';
+            helperText.textContent = 'Enter custom applicable surcharges or taxes manually';
+            taxInput.focus();
+            calculate(parseFloat(taxInput.value) || 0);
+        }
+    }
+
+    function handleManualTaxInput(val) {
+        const parsed = parseFloat(val);
+        calculate(parsed);
+    }
+
+   
+</script>
+
+<div class="container mt-4">
+
+    <h2>Create Bill</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <h5>Appointment Details</h5>
+
+            <p>
+                <strong>Appointment:</strong>
+                {{ appointment.appointment_id }}
+            </p>
+
+            <p>
+                <strong>Patient:</strong>
+                {{ appointment.patient.patient_id }}
+                -
+                {{ appointment.patient.user.get_full_name }}
+            </p>
+
+            <p>
+                <strong>Doctor:</strong>
+                {{ appointment.doctor.doctor_id }}
+                -
+                {{ appointment.doctor.user.get_full_name }}
+            </p>
+
+            <p>
+                <strong>Consultation Fee:</strong>
+                ₹{{ appointment.doctor.consultation_fee }}
+            </p>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <h5>Billing Details</h5>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Create Bill
+                </button>
+
+                <a
+                    href="{% url 'appointments:detail' appointment.pk %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
