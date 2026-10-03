@@ -11,21 +11,21 @@ Patients
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm">
         <div class="space-y-1">
             <div class="flex items-center gap-2.5 flex-wrap">
-                <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-on-surface">Good morning, Rahul
+                <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-on-surface">Good morning, {{patient.user.first_name}}
                 </h1>
                 <span
-                    class="px-2.5 py-0.5 rounded-full bg-blue-50 text-primary border border-blue-100 text-xs font-semibold">PAT000012</span>
+                    class="px-2.5 py-0.5 rounded-full bg-blue-50 text-primary border border-blue-100 text-xs font-semibold">{{patient.patient_id}}</span>
             </div>
             <p class="text-sm text-on-surface-variant">Here’s an overview of your health care and upcoming
                 consultations.</p>
         </div>
         <div class="flex items-center">
-            <button
+            <a href="#"
                 class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-container hover:bg-primary text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all"
                 type="button">
                 <span class="material-symbols-outlined text-[18px]">add_circle</span>
                 <span>Book Appointment</span>
-            </button>
+            </a>
         </div>
     </section>
     <!-- 2. FOUR CRISP METRIC SUMMARY CARDS (Adaptive Grid: 1 col mobile -> 2 col tablet -> 4 col laptop) -->
@@ -38,11 +38,17 @@ Patients
                     <span class="material-symbols-outlined text-[22px]">calendar_month</span>
                 </div>
                 <span
-                    class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Confirmed</span>
+                    class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">{{ next_appointment.status|title }}</span>
             </div>
             <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Upcoming Visit</p>
-            <h3 class="text-lg font-bold text-on-surface mt-1">Oct 12, 4:30 PM</h3>
-            <p class="text-xs text-on-surface-variant truncate mt-0.5">Dr. Ananya Sharma • Cardiology</p>
+            {% if next_appointment %}
+            <h3 class="text-lg font-bold text-on-surface mt-1">{{ next_appointment.appointment_date|date:"M j" }}, {{ next_appointment.appointment_time|time:"g:i A" }} </h3>
+            <p class="text-xs text-on-surface-variant truncate mt-0.5">Dr. {{ next_appointment.doctor.user.get_full_name }} • {{ next_appointment.doctor.specialization|title }}</p>
+            {% else %}
+            <h3 class="text-lg font-bold text-on-surface mt-1">No upcoming appointments</h3>
+            <p class="text-xs text-on-surface-variant truncate mt-0.5">You have no scheduled visits at the moment.</p>
+            {% endif %}
+
         </div>
         <!-- Card 2: Active Medicines -->
         <div
@@ -54,7 +60,7 @@ Patients
                 <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">Active</span>
             </div>
             <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Active Medicines</p>
-            <h3 class="text-lg font-bold text-on-surface mt-1">3 Prescribed</h3>
+            <h3 class="text-lg font-bold text-on-surface mt-1">{{ total_active_medicines }} Prescribed</h3>
             <p class="text-xs text-on-surface-variant mt-0.5">1 current medication plan</p>
         </div>
         <!-- Card 3: Medical Visits -->
@@ -67,8 +73,8 @@ Patients
                 <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Archived</span>
             </div>
             <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Medical Visits</p>
-            <h3 class="text-lg font-bold text-on-surface mt-1">3 Recorded</h3>
-            <p class="text-xs text-on-surface-variant truncate mt-0.5">Last visit: 05 Oct 2026</p>
+            <h3 class="text-lg font-bold text-on-surface mt-1">{{ total_visits }} Recorded</h3>
+            <p class="text-xs text-on-surface-variant truncate mt-0.5">Last visit: {{ last_visit_date|date:"M j, Y" }}</p>
         </div>
         <!-- Card 4: Outstanding Balance -->
         <div
@@ -81,11 +87,12 @@ Patients
                     in Full</span>
             </div>
             <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Balance Due</p>
-            <h3 class="text-lg font-bold text-on-surface mt-1">₹0.00</h3>
+            <h3 class="text-lg font-bold text-on-surface mt-1">₹{{ balance_due|floatformat:2 }}</h3>
             <p class="text-xs text-on-surface-variant mt-0.5">No pending patient charges</p>
         </div>
     </section>
     <!-- 3. NEXT APPOINTMENT ELEVATED CARD -->
+    {% if upcoming_appointments %}
     <section class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div class="flex items-center gap-2">
@@ -98,34 +105,35 @@ Patients
                 Confirmed
             </span>
         </div>
+
+        {% for appointment in upcoming_appointments %}
         <div
             class="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-surface-container-low/60 p-4 sm:p-5 rounded-xl border border-blue-50">
             <div class="flex items-start gap-4">
                 <div
                     class="w-12 h-12 rounded-xl bg-primary text-white font-bold flex items-center justify-center text-sm shadow-sm flex-shrink-0">
-                    AS
+                    DR
                 </div>
                 <div class="space-y-1.5">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="font-bold text-base text-on-surface">Dr. Ananya Sharma</span>
+                        <span class="font-bold text-base text-on-surface">Dr. {{ appointment.doctor.user.get_full_name }}</span>
                         <span
-                            class="px-2 py-0.5 rounded-md bg-blue-100/80 text-primary text-xs font-medium">Cardiology</span>
+                            class="px-2 py-0.5 rounded-md bg-blue-100/80 text-primary text-xs font-medium">{{ appointment.doctor.specialization }}</span>
                     </div>
-                    <p class="text-xs text-slate-500">MBBS, MD (Cardiovascular Sciences) • 8 yrs experience</p>
+                    <p class="text-xs text-slate-500">{{ appointment.doctor.qualification }} • {{ appointment.doctor.experience }} yrs experience</p>
                     <div
                         class="flex flex-wrap items-center gap-y-1.5 gap-x-4 pt-1 text-xs text-on-surface-variant font-medium">
                         <span class="inline-flex items-center gap-1 text-on-surface">
                             <span class="material-symbols-outlined text-primary text-[16px]">schedule</span>
-                            Monday, 12 Oct 2026 • 04:30 PM
+                             {{ appointment.appointment_date|date:"l, d M Y" }} • {{ appointment.appointment_time|time:"g:i A" }}
                         </span>
                         <span class="inline-flex items-center gap-1 text-slate-600">
                             <span class="material-symbols-outlined text-primary text-[16px]">location_on</span>
-                            Room 204, OPD Block B
+                             {{ appointment.doctor.address }}
                         </span>
                     </div>
                     <p class="text-xs text-slate-600 bg-white/80 px-2.5 py-1.5 rounded-md border border-slate-100 mt-2">
-                        <strong class="text-on-surface">Reason:</strong> Regular cardiac consultation &amp;
-                        follow-up evaluation.
+                        <strong class="text-on-surface">Reason:</strong> {{ appointment.reason_for_visit|truncatechars:100 }}
                     </p>
                 </div>
             </div>
@@ -136,15 +144,20 @@ Patients
                     type="button">
                     View Appointment
                 </button>
-                <span class="text-[11px] text-slate-400">Appointment ID: APT000005</span>
+                <span class="text-[11px] text-slate-400">Appointment ID: {{ appointment.appointment_id }}</span>
             </div>
         </div>
+        {% endfor %}
+        
     </section>
+    {% endif %}
+
     <!-- 4. MAIN 2-COLUMN SECTION (Left 8 cols, Right 4 cols on desktop; stacked on mobile/tablet) -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <!-- LEFT COLUMN (Recent Appointments + Current Prescriptions) -->
         <div class="lg:col-span-8 space-y-6">
             <!-- Recent Appointments -->
+           
             <div
                 class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
                 <div class="flex items-center justify-between">
@@ -157,6 +170,7 @@ Patients
                         View All History <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                     </a>
                 </div>
+                {% if recent_appointments %}
                 <!-- Responsive Table/Card layout -->
                 <div class="overflow-x-auto -mx-5 sm:mx-0">
                     <table class="w-full text-left text-sm border-collapse min-w-[500px]">
@@ -171,52 +185,29 @@ Patients
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-xs">
+                            {% for appointment in recent_appointments %}
                             <tr class="hover:bg-slate-50/70 transition-colors">
-                                <td class="py-3 px-5 sm:px-3 font-medium text-on-surface whitespace-nowrap">05
-                                    Oct 2026</td>
-                                <td class="py-3 px-3 font-semibold text-on-surface">Dr. Mohan Prashad</td>
-                                <td class="py-3 px-3 text-slate-600">Seasonal Fever &amp; Checkup</td>
+                                <td class="py-3 px-5 sm:px-3 font-medium text-on-surface whitespace-nowrap">{{ appointment.appointment_date|date:"d M Y" }}</td>
+                                <td class="py-3 px-3 font-semibold text-on-surface">Dr. {{ appointment.doctor.user.get_full_name }}</td>
+                                <td class="py-3 px-3 text-slate-600">{{ appointment.reason_for_visit|truncatechars:50 }}</td>
                                 <td class="py-3 px-3 text-center">
                                     <span
-                                        class="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">Completed</span>
+                                        class="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">{{ appointment.status }}</span>
                                 </td>
                                 <td class="py-3 px-5 sm:px-3 text-right">
                                     <button class="text-primary font-semibold hover:underline"
                                         type="button">Summary</button>
                                 </td>
                             </tr>
-                            <tr class="hover:bg-slate-50/70 transition-colors">
-                                <td class="py-3 px-5 sm:px-3 font-medium text-on-surface whitespace-nowrap">22
-                                    Sep 2026</td>
-                                <td class="py-3 px-3 font-semibold text-on-surface">Dr. Mohan Prashad</td>
-                                <td class="py-3 px-3 text-slate-600">Gastritis Consultation</td>
-                                <td class="py-3 px-3 text-center">
-                                    <span
-                                        class="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">Completed</span>
-                                </td>
-                                <td class="py-3 px-5 sm:px-3 text-right">
-                                    <button class="text-primary font-semibold hover:underline"
-                                        type="button">Summary</button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50/70 transition-colors">
-                                <td class="py-3 px-5 sm:px-3 font-medium text-on-surface whitespace-nowrap">10
-                                    Aug 2026</td>
-                                <td class="py-3 px-3 font-semibold text-on-surface">Dr. Rajesh Sharma</td>
-                                <td class="py-3 px-3 text-slate-600">Routine ECG Review</td>
-                                <td class="py-3 px-3 text-center">
-                                    <span
-                                        class="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">Completed</span>
-                                </td>
-                                <td class="py-3 px-5 sm:px-3 text-right">
-                                    <button class="text-primary font-semibold hover:underline"
-                                        type="button">Summary</button>
-                                </td>
-                            </tr>
+                            {% endfor %}                          
                         </tbody>
                     </table>
                 </div>
+                {% else %}
+                <p class="text-sm text-slate-500">No recent appointments found.</p>
+                {% endif %}
             </div>
+            {% if current_prescription %}
             <!-- Current Prescriptions -->
             <div
                 class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
@@ -226,8 +217,7 @@ Patients
                         <span class="material-symbols-outlined text-primary text-[20px]">pill</span>
                         <div>
                             <h2 class="text-base font-bold text-on-surface">Current Prescriptions</h2>
-                            <p class="text-xs text-slate-500">Regimen PRE000002 • Dr. Mohan Prashad (11 Aug
-                                2026)</p>
+                            <p class="text-xs text-slate-500">Regimen {{ current_prescription.prescription_id }} • Dr. {{ current_prescription.appointment.doctor.user.get_full_name }} ({{ current_prescription.appointment.appointment_date|date:"d M Y" }})</p>
                         </div>
                     </div>
                     <span
@@ -246,28 +236,18 @@ Patients
                                 <th class="py-2.5 px-4 rounded-r-lg">Instructions</th>
                             </tr>
                         </thead>
+
                         <tbody class="divide-y divide-slate-100">
+                            {% for medicine in current_prescription.medicines.all %}
                             <tr class="hover:bg-slate-50/50">
-                                <td class="py-3 px-4 font-semibold text-on-surface">Paracetamol 650mg</td>
-                                <td class="py-3 px-3 text-slate-600">1 tablet</td>
-                                <td class="py-3 px-3 text-slate-600">Twice daily (1-0-1)</td>
-                                <td class="py-3 px-3 text-slate-600">5 days</td>
-                                <td class="py-3 px-4 font-medium text-slate-700">After food</td>
+                                <td class="py-3 px-4 font-semibold text-on-surface">{{ medicine.medicine_name }}</td>
+                                <td class="py-3 px-3 text-slate-600">{{ medicine.dosage }}</td>
+                                <td class="py-3 px-3 text-slate-600">{{ medicine.frequency }}</td>
+                                <td class="py-3 px-3 text-slate-600">{{ medicine.duration }}</td>
+                                <td class="py-3 px-4 font-medium text-slate-700">{{ medicine.instructions }}</td>
                             </tr>
-                            <tr class="hover:bg-slate-50/50">
-                                <td class="py-3 px-4 font-semibold text-on-surface">Amoxicillin 500mg</td>
-                                <td class="py-3 px-3 text-slate-600">1 capsule</td>
-                                <td class="py-3 px-3 text-slate-600">Three times (1-1-1)</td>
-                                <td class="py-3 px-3 text-slate-600">7 days</td>
-                                <td class="py-3 px-4 font-medium text-slate-700">After food</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50/50">
-                                <td class="py-3 px-4 font-semibold text-on-surface">Cetirizine 10mg</td>
-                                <td class="py-3 px-3 text-slate-600">1 tablet</td>
-                                <td class="py-3 px-3 text-slate-600">Once at night (0-0-1)</td>
-                                <td class="py-3 px-3 text-slate-600">3 days</td>
-                                <td class="py-3 px-4 font-medium text-slate-700">Before bed</td>
-                            </tr>
+                            {% endfor %}
+                            
                         </tbody>
                     </table>
                 </div>
@@ -276,11 +256,12 @@ Patients
                     class="p-3 bg-blue-50/60 rounded-xl border border-blue-100/60 flex items-start gap-2.5 text-xs text-slate-600">
                     <span class="material-symbols-outlined text-primary text-[18px] flex-shrink-0 mt-0.5">info</span>
                     <div>
-                        <span class="font-semibold text-on-surface">Doctor's Remark:</span> Complete the full
-                        course of antibiotics. Maintain proper hydration and contact the clinic if fever recurs.
+                        <span class="font-semibold text-on-surface">Doctor's Remark:</span> {{ current_prescription.remarks|default:"No additional remarks provided." }}
                     </div>
                 </div>
             </div>
+            {% endif %}
+            
         </div>
         <!-- RIGHT COLUMN (Quick Health Profile + Billing Status) -->
         <div class="lg:col-span-4 space-y-6">
@@ -300,33 +281,33 @@ Patients
                         RV
                     </div>
                     <div class="leading-tight">
-                        <p class="font-bold text-sm text-on-surface">Rahul Verma</p>
-                        <p class="text-xs text-slate-500">38 yrs • Male • PAT000012</p>
+                        <p class="font-bold text-sm text-on-surface">{{ patient.user.get_full_name }}</p>
+                        <p class="text-xs text-slate-500">{{ patient.age }} yrs • {{ patient.gender|default:"Not specified" }} • {{ patient.patient_id }}</p>
                     </div>
                 </div>
                 <!-- Health Details List -->
                 <div class="space-y-2.5 text-xs">
                     <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
                         <span class="text-slate-500">Blood Group</span>
-                        <span class="font-bold text-primary px-2 py-0.5 rounded bg-blue-50">O+ Positive</span>
+                        <span class="font-bold text-primary px-2 py-0.5 rounded bg-blue-50">{{ patient.blood_group|default:"Not specified" }}</span>
                     </div>
                     <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
                         <span class="text-slate-500">Known Allergies</span>
-                        <span class="font-semibold text-amber-800 px-2 py-0.5 rounded bg-amber-50">Penicillin,
-                            Dust</span>
+                        <span class="font-semibold text-amber-800 px-2 py-0.5 rounded bg-amber-50">{{ patient.allergies|default:"None recorded" }}
                     </div>
                     <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
                         <span class="text-slate-500">Chronic Issues</span>
-                        <span class="font-medium text-on-surface">None recorded</span>
+                        <span class="font-medium text-on-surface">{{ patient.medical_history|default:"None recorded"|truncatechars:30 }}</span>
                     </div>
                     <div class="p-2.5 rounded-lg bg-slate-50 space-y-1">
                         <span class="text-[11px] font-semibold uppercase text-slate-400 tracking-wider">Emergency
                             Contact</span>
-                        <p class="font-semibold text-on-surface">Sunita Verma (Spouse)</p>
-                        <p class="text-slate-600 font-mono text-[11px]">+91 98765 43211</p>
+                        <!-- <p class="font-semibold text-on-surface">Sunita Verma (Spouse)</p> -->
+                        <p class="text-slate-600 font-semibold text-[11px]">+91 {{ patient.emergency_contact|default:"Not specified" }}</p>
                     </div>
                 </div>
             </div>
+
             <!-- Billing Status Card -->
             <div
                 class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
@@ -337,30 +318,32 @@ Patients
                     </div>
                     <a class="text-xs font-semibold text-primary hover:underline" href="#">All Invoices</a>
                 </div>
+                {% if latest_bill %}
                 <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-3 text-xs">
                     <div class="flex items-center justify-between">
-                        <span class="font-semibold text-on-surface">Bill #BILL000001</span>
+                        <span class="font-semibold text-on-surface">Bill #{latest_bill.bill_id}</span>
                         <span
-                            class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">Paid</span>
+                            class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">{{ latest_bill.payment_status }}</span>
                     </div>
-                    <p class="text-slate-500 text-[11px]">22 Sep 2026 • Linked to APT000004</p>
+                    <p class="text-slate-500 text-[11px]">{{ latest_bill.bill_date|date:"d M Y" }} • Linked to {{ latest_bill.appointment.appointment_id }} </p>
                     <div class="flex items-center justify-between border-t border-slate-200/60 pt-2 text-xs">
                         <div>
                             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Total
                                 Paid</span>
-                            <span class="font-bold text-sm text-on-surface">₹500.00</span>
+                            <span class="font-bold text-sm text-on-surface">₹{{  total_paid|floatformat:2 }}</span>
                         </div>
                         <div class="text-right">
                             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Balance
                                 Due</span>
-                            <span class="font-bold text-sm text-emerald-600">₹0.00</span>
+                            <span class="font-bold text-sm text-emerald-600">₹{{ balance_due|floatformat:2 }}</span>
                         </div>
                     </div>
+                    {% if latest_payment %}
                     <!-- Download receipt button -->
                     <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-200/60">
                         <span class="font-medium text-slate-700 text-[11px] flex items-center gap-1.5">
                             <span class="material-symbols-outlined text-emerald-600 text-[16px]">check_circle</span>
-                            Receipt PAY000003
+                            Receipt {{ latest_payment.payment_id }}
                         </span>
                         <button aria-label="Download receipt"
                             class="text-primary hover:text-blue-700 p-1 rounded hover:bg-blue-50 transition-colors"
@@ -368,7 +351,12 @@ Patients
                             <span class="material-symbols-outlined text-[18px]">download</span>
                         </button>
                     </div>
+                    {% endif %}
                 </div>
+                {% else %}
+                <p class="text-sm text-slate-500">No recent bills found.</p>
+                {% endif %}
+
                 <div class="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50/60 text-xs text-emerald-800">
                     <span class="material-symbols-outlined text-[16px] text-emerald-600">verified</span>
                     <span>All current invoices and hospital dues are clear.</span>
