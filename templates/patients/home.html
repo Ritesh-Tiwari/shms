@@ -5,9 +5,377 @@ Patients
 {% endblock %}
 
 {% block content %}
-
-<h1>Patients Module</h1>
-
-<p>SHMS is working successfully.</p>
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6 pb-24 lg:pb-12">
+    <!-- 1. TOP GREETING & ACTION HEADER -->
+    <section
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2.5 flex-wrap">
+                <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-on-surface">Good morning, Rahul
+                </h1>
+                <span
+                    class="px-2.5 py-0.5 rounded-full bg-blue-50 text-primary border border-blue-100 text-xs font-semibold">PAT000012</span>
+            </div>
+            <p class="text-sm text-on-surface-variant">Here’s an overview of your health care and upcoming
+                consultations.</p>
+        </div>
+        <div class="flex items-center">
+            <button
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-container hover:bg-primary text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all"
+                type="button">
+                <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                <span>Book Appointment</span>
+            </button>
+        </div>
+    </section>
+    <!-- 2. FOUR CRISP METRIC SUMMARY CARDS (Adaptive Grid: 1 col mobile -> 2 col tablet -> 4 col laptop) -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Next Appointment -->
+        <div
+            class="bg-surface-container-lowest p-5 rounded-2xl border border-slate-200/70 shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[22px]">calendar_month</span>
+                </div>
+                <span
+                    class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Confirmed</span>
+            </div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Upcoming Visit</p>
+            <h3 class="text-lg font-bold text-on-surface mt-1">Oct 12, 4:30 PM</h3>
+            <p class="text-xs text-on-surface-variant truncate mt-0.5">Dr. Ananya Sharma • Cardiology</p>
+        </div>
+        <!-- Card 2: Active Medicines -->
+        <div
+            class="bg-surface-container-lowest p-5 rounded-2xl border border-slate-200/70 shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[22px]">medication</span>
+                </div>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">Active</span>
+            </div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Active Medicines</p>
+            <h3 class="text-lg font-bold text-on-surface mt-1">3 Prescribed</h3>
+            <p class="text-xs text-on-surface-variant mt-0.5">1 current medication plan</p>
+        </div>
+        <!-- Card 3: Medical Visits -->
+        <div
+            class="bg-surface-container-lowest p-5 rounded-2xl border border-slate-200/70 shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[22px]">history</span>
+                </div>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Archived</span>
+            </div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Medical Visits</p>
+            <h3 class="text-lg font-bold text-on-surface mt-1">3 Recorded</h3>
+            <p class="text-xs text-on-surface-variant truncate mt-0.5">Last visit: 05 Oct 2026</p>
+        </div>
+        <!-- Card 4: Outstanding Balance -->
+        <div
+            class="bg-surface-container-lowest p-5 rounded-2xl border border-slate-200/70 shadow-sm hover:border-blue-200 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
+                </div>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Paid
+                    in Full</span>
+            </div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Balance Due</p>
+            <h3 class="text-lg font-bold text-on-surface mt-1">₹0.00</h3>
+            <p class="text-xs text-on-surface-variant mt-0.5">No pending patient charges</p>
+        </div>
+    </section>
+    <!-- 3. NEXT APPOINTMENT ELEVATED CARD -->
+    <section class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-[20px]">event_upcoming</span>
+                <h2 class="text-base font-bold text-on-surface">Upcoming Appointment</h2>
+            </div>
+            <span
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                Confirmed
+            </span>
+        </div>
+        <div
+            class="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-surface-container-low/60 p-4 sm:p-5 rounded-xl border border-blue-50">
+            <div class="flex items-start gap-4">
+                <div
+                    class="w-12 h-12 rounded-xl bg-primary text-white font-bold flex items-center justify-center text-sm shadow-sm flex-shrink-0">
+                    AS
+                </div>
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="font-bold text-base text-on-surface">Dr. Ananya Sharma</span>
+                        <span
+                            class="px-2 py-0.5 rounded-md bg-blue-100/80 text-primary text-xs font-medium">Cardiology</span>
+                    </div>
+                    <p class="text-xs text-slate-500">MBBS, MD (Cardiovascular Sciences) • 8 yrs experience</p>
+                    <div
+                        class="flex flex-wrap items-center gap-y-1.5 gap-x-4 pt-1 text-xs text-on-surface-variant font-medium">
+                        <span class="inline-flex items-center gap-1 text-on-surface">
+                            <span class="material-symbols-outlined text-primary text-[16px]">schedule</span>
+                            Monday, 12 Oct 2026 • 04:30 PM
+                        </span>
+                        <span class="inline-flex items-center gap-1 text-slate-600">
+                            <span class="material-symbols-outlined text-primary text-[16px]">location_on</span>
+                            Room 204, OPD Block B
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-600 bg-white/80 px-2.5 py-1.5 rounded-md border border-slate-100 mt-2">
+                        <strong class="text-on-surface">Reason:</strong> Regular cardiac consultation &amp;
+                        follow-up evaluation.
+                    </p>
+                </div>
+            </div>
+            <div
+                class="flex md:flex-col items-center md:items-end justify-between gap-2 border-t md:border-t-0 pt-3 md:pt-0 border-slate-200">
+                <button
+                    class="w-full sm:w-auto px-4 py-2 bg-primary-container hover:bg-primary text-white text-xs font-semibold rounded-lg shadow-sm transition-all whitespace-nowrap"
+                    type="button">
+                    View Appointment
+                </button>
+                <span class="text-[11px] text-slate-400">Appointment ID: APT000005</span>
+            </div>
+        </div>
+    </section>
+    <!-- 4. MAIN 2-COLUMN SECTION (Left 8 cols, Right 4 cols on desktop; stacked on mobile/tablet) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- LEFT COLUMN (Recent Appointments + Current Prescriptions) -->
+        <div class="lg:col-span-8 space-y-6">
+            <!-- Recent Appointments -->
+            <div
+                class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[20px]">history_edu</span>
+                        <h2 class="text-base font-bold text-on-surface">Recent Appointments</h2>
+                    </div>
+                    <a class="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-0.5"
+                        href="#">
+                        View All History <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                    </a>
+                </div>
+                <!-- Responsive Table/Card layout -->
+                <div class="overflow-x-auto -mx-5 sm:mx-0">
+                    <table class="w-full text-left text-sm border-collapse min-w-[500px]">
+                        <thead>
+                            <tr
+                                class="border-b border-slate-100 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                <th class="pb-3 px-5 sm:px-3 font-medium">Date</th>
+                                <th class="pb-3 px-3 font-medium">Doctor</th>
+                                <th class="pb-3 px-3 font-medium">Reason</th>
+                                <th class="pb-3 px-3 font-medium text-center">Status</th>
+                                <th class="pb-3 px-5 sm:px-3 font-medium text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-xs">
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                <td class="py-3 px-5 sm:px-3 font-medium text-on-surface whitespace-nowrap">05
+                                    Oct 2026</td>
+                                <td class="py-3 px-3 font-semibold text-on-surface">Dr. Mohan Prashad</td>
+                                <td class="py-3 px-3 text-slate-600">Seasonal Fever &amp; Checkup</td>
+                                <td class="py-3 px-3 text-center">
+                                    <span
+                                        class="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">Completed</span>
+                                </td>
+                                <td class="py-3 px-5 sm:px-3 text-right">
+                                    <button class="text-primary font-semibold hover:underline"
+                                        type="button">Summary</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                <td class="py-3 px-5 sm:px-3 font-medium text-on-surface whitespace-nowrap">22
+                                    Sep 2026</td>
+                                <td class="py-3 px-3 font-semibold text-on-surface">Dr. Mohan Prashad</td>
+                                <td class="py-3 px-3 text-slate-600">Gastritis Consultation</td>
+                                <td class="py-3 px-3 text-center">
+                                    <span
+                                        class="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">Completed</span>
+                                </td>
+                                <td class="py-3 px-5 sm:px-3 text-right">
+                                    <button class="text-primary font-semibold hover:underline"
+                                        type="button">Summary</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                <td class="py-3 px-5 sm:px-3 font-medium text-on-surface whitespace-nowrap">10
+                                    Aug 2026</td>
+                                <td class="py-3 px-3 font-semibold text-on-surface">Dr. Rajesh Sharma</td>
+                                <td class="py-3 px-3 text-slate-600">Routine ECG Review</td>
+                                <td class="py-3 px-3 text-center">
+                                    <span
+                                        class="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">Completed</span>
+                                </td>
+                                <td class="py-3 px-5 sm:px-3 text-right">
+                                    <button class="text-primary font-semibold hover:underline"
+                                        type="button">Summary</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Current Prescriptions -->
+            <div
+                class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[20px]">pill</span>
+                        <div>
+                            <h2 class="text-base font-bold text-on-surface">Current Prescriptions</h2>
+                            <p class="text-xs text-slate-500">Regimen PRE000002 • Dr. Mohan Prashad (11 Aug
+                                2026)</p>
+                        </div>
+                    </div>
+                    <span
+                        class="self-start sm:self-auto px-2 py-0.5 rounded bg-blue-50 text-primary text-xs font-semibold">Active
+                        Plan</span>
+                </div>
+                <!-- Medicines Table -->
+                <div class="overflow-x-auto -mx-5 sm:mx-0">
+                    <table class="w-full text-left text-xs border-collapse min-w-[500px]">
+                        <thead>
+                            <tr class="bg-slate-50/80 text-slate-500 font-semibold uppercase tracking-wider">
+                                <th class="py-2.5 px-4 rounded-l-lg">Medicine</th>
+                                <th class="py-2.5 px-3">Dosage</th>
+                                <th class="py-2.5 px-3">Frequency</th>
+                                <th class="py-2.5 px-3">Duration</th>
+                                <th class="py-2.5 px-4 rounded-r-lg">Instructions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="py-3 px-4 font-semibold text-on-surface">Paracetamol 650mg</td>
+                                <td class="py-3 px-3 text-slate-600">1 tablet</td>
+                                <td class="py-3 px-3 text-slate-600">Twice daily (1-0-1)</td>
+                                <td class="py-3 px-3 text-slate-600">5 days</td>
+                                <td class="py-3 px-4 font-medium text-slate-700">After food</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="py-3 px-4 font-semibold text-on-surface">Amoxicillin 500mg</td>
+                                <td class="py-3 px-3 text-slate-600">1 capsule</td>
+                                <td class="py-3 px-3 text-slate-600">Three times (1-1-1)</td>
+                                <td class="py-3 px-3 text-slate-600">7 days</td>
+                                <td class="py-3 px-4 font-medium text-slate-700">After food</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="py-3 px-4 font-semibold text-on-surface">Cetirizine 10mg</td>
+                                <td class="py-3 px-3 text-slate-600">1 tablet</td>
+                                <td class="py-3 px-3 text-slate-600">Once at night (0-0-1)</td>
+                                <td class="py-3 px-3 text-slate-600">3 days</td>
+                                <td class="py-3 px-4 font-medium text-slate-700">Before bed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Doctor's note -->
+                <div
+                    class="p-3 bg-blue-50/60 rounded-xl border border-blue-100/60 flex items-start gap-2.5 text-xs text-slate-600">
+                    <span class="material-symbols-outlined text-primary text-[18px] flex-shrink-0 mt-0.5">info</span>
+                    <div>
+                        <span class="font-semibold text-on-surface">Doctor's Remark:</span> Complete the full
+                        course of antibiotics. Maintain proper hydration and contact the clinic if fever recurs.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- RIGHT COLUMN (Quick Health Profile + Billing Status) -->
+        <div class="lg:col-span-4 space-y-6">
+            <!-- Patient Health Summary Card -->
+            <div
+                class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[20px]">health_and_safety</span>
+                        <h2 class="text-base font-bold text-on-surface">Health Profile</h2>
+                    </div>
+                    <a class="text-xs font-semibold text-primary hover:underline" href="#">Edit</a>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/70">
+                    <div
+                        class="w-10 h-10 rounded-full bg-primary-container text-white font-bold flex items-center justify-center text-xs">
+                        RV
+                    </div>
+                    <div class="leading-tight">
+                        <p class="font-bold text-sm text-on-surface">Rahul Verma</p>
+                        <p class="text-xs text-slate-500">38 yrs • Male • PAT000012</p>
+                    </div>
+                </div>
+                <!-- Health Details List -->
+                <div class="space-y-2.5 text-xs">
+                    <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
+                        <span class="text-slate-500">Blood Group</span>
+                        <span class="font-bold text-primary px-2 py-0.5 rounded bg-blue-50">O+ Positive</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
+                        <span class="text-slate-500">Known Allergies</span>
+                        <span class="font-semibold text-amber-800 px-2 py-0.5 rounded bg-amber-50">Penicillin,
+                            Dust</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
+                        <span class="text-slate-500">Chronic Issues</span>
+                        <span class="font-medium text-on-surface">None recorded</span>
+                    </div>
+                    <div class="p-2.5 rounded-lg bg-slate-50 space-y-1">
+                        <span class="text-[11px] font-semibold uppercase text-slate-400 tracking-wider">Emergency
+                            Contact</span>
+                        <p class="font-semibold text-on-surface">Sunita Verma (Spouse)</p>
+                        <p class="text-slate-600 font-mono text-[11px]">+91 98765 43211</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Billing Status Card -->
+            <div
+                class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[20px]">receipt_long</span>
+                        <h2 class="text-base font-bold text-on-surface">Billing &amp; Payments</h2>
+                    </div>
+                    <a class="text-xs font-semibold text-primary hover:underline" href="#">All Invoices</a>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-3 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold text-on-surface">Bill #BILL000001</span>
+                        <span
+                            class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-[11px]">Paid</span>
+                    </div>
+                    <p class="text-slate-500 text-[11px]">22 Sep 2026 • Linked to APT000004</p>
+                    <div class="flex items-center justify-between border-t border-slate-200/60 pt-2 text-xs">
+                        <div>
+                            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Total
+                                Paid</span>
+                            <span class="font-bold text-sm text-on-surface">₹500.00</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Balance
+                                Due</span>
+                            <span class="font-bold text-sm text-emerald-600">₹0.00</span>
+                        </div>
+                    </div>
+                    <!-- Download receipt button -->
+                    <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border border-slate-200/60">
+                        <span class="font-medium text-slate-700 text-[11px] flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-emerald-600 text-[16px]">check_circle</span>
+                            Receipt PAY000003
+                        </span>
+                        <button aria-label="Download receipt"
+                            class="text-primary hover:text-blue-700 p-1 rounded hover:bg-blue-50 transition-colors"
+                            type="button">
+                            <span class="material-symbols-outlined text-[18px]">download</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50/60 text-xs text-emerald-800">
+                    <span class="material-symbols-outlined text-[16px] text-emerald-600">verified</span>
+                    <span>All current invoices and hospital dues are clear.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
 
 {% endblock %}

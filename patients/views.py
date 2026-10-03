@@ -1,9 +1,11 @@
+# $env:DATABASE_URL="postgresql://neondb_owner:npg_RfqBla24FLOI@ep-autumn-base-b3a6778u-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Q, Prefetch
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 from appointments.models import Appointment
 from .models import Patient
@@ -12,10 +14,44 @@ from .forms import PatientForm
 from .services import PatientService
 from core.decorators import role_required
 from accounts.choices import UserRole
+from prescriptions.models import Prescription
 
 
+@role_required(UserRole.PATIENT)
 def home(request):
-    return render(request, "patients/home.html")
+    patient = get_object_or_404(
+        Patient.objects.select_related("user"),
+        user=request.user,
+    )
+
+    upcoming_appointments = (
+        patient.appointments
+        .filter(appointment_date__gte=timezone.localdate())
+        .exclude(status="CANCELLED")
+        .select_related("doctor__user")
+        .order_by("appointment_date", "appointment_time")[:5]
+    )
+
+    prescriptions = (
+        Prescription.objects
+        .filter(appointment__patient=patient)
+        .select_related("appointment__doctor__user")
+        .prefetch_related("medicines")
+    )
+
+    bills = patient.bills.order_by("-bill_date")[:5]
+
+    return render(
+        request,
+        "patients/home.html",
+        {
+            "patient": patient,
+            "upcoming_appointments": upcoming_appointments,
+            "prescriptions": prescriptions,
+            "bills": bills,
+        },
+    )
+
 
 @role_required(
     UserRole.ADMIN,
