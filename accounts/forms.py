@@ -77,8 +77,32 @@ class UserRegistrationForm(forms.ModelForm):
                     "placeholder": "+91 XXXXX XXXXX",
                     "maxlength": "15",
                     "id": "phone",
-
                 },
             ),
-            
+        }
+
+
+class PatientOwnAccountForm(forms.ModelForm):
+    """
+    Patient self-service account form.
+
+    Intentionally exposes only phone_number. Username, email, role,
+    password and other account/security fields remain staff-managed
+    or are handled by dedicated account flows.
+    """
+
+    class Meta:
+        model = User
+        fields = ["phone_number"]
+        widgets = {
+            "phone_number": forms.TextInput(
+                attrs={
+                    "class": "w-full bg-surface h-12 px-md rounded-lg text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all",
+                    "placeholder": "+91 XXXXX XXXXX",
+                    "maxlength": "15",
+                    "id": "phone",
+                    "type": "tel",
+                    "autocomplete": "tel",
+                },
+            ),
         }
