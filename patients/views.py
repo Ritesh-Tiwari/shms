@@ -1,10 +1,11 @@
+import logging
+
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
 from django.db import transaction
 from django.db.models import Q, Prefetch
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
 
 from appointments.models import Appointment
 from .models import Patient
@@ -13,6 +14,9 @@ from .forms import PatientForm, PatientOwnProfileForm
 from .services import PatientService
 from core.decorators import role_required
 from accounts.choices import UserRole
+
+
+logger = logging.getLogger(__name__)
 
 
 def home(request):
@@ -238,7 +242,6 @@ def delete_patient(request, pk):
     )
 
 
-@login_required
 @role_required(UserRole.PATIENT)
 def my_profile(request):
     """
@@ -263,7 +266,6 @@ def my_profile(request):
     )
 
 
-@login_required
 @role_required(UserRole.PATIENT)
 def edit_my_profile(request):
     """
@@ -308,9 +310,13 @@ def edit_my_profile(request):
                 return redirect("patients:my-profile")
 
             except Exception:
+                logger.exception(
+                    "Patient self-profile update failed for user_id=%s",
+                    request.user.pk,
+                )
                 messages.error(
                     request,
-                    "Profile update failed due to a server error. Please try again.",
+                    "Profile update failed due to a server error. Please try again. If the problem continues, contact an administrator.",
                 )
         else:
             messages.error(
