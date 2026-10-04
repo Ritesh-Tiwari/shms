@@ -1,14 +1,15 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse
+from django.db import transaction
 from django.db.models import Q, Prefetch
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 
 from appointments.models import Appointment
 from .models import Patient
-from accounts.forms import UserRegistrationForm
-from .forms import PatientForm
+from accounts.forms import UserRegistrationForm, PatientOwnAccountForm
+from .forms import PatientForm, PatientOwnProfileForm
 from .services import PatientService
 from core.decorators import role_required
 from accounts.choices import UserRole
@@ -16,6 +17,7 @@ from accounts.choices import UserRole
 
 def home(request):
     return render(request, "patients/home.html")
+
 
 @role_required(
     UserRole.ADMIN,
@@ -25,17 +27,13 @@ def register_patient(request):
     if request.method == "POST":
 
         user_form = UserRegistrationForm(request.POST)
-
         patient_form = PatientForm(request.POST)
 
         if user_form.is_valid() and patient_form.is_valid():
 
             PatientService.create_patient(
-
                 user_data=user_form.cleaned_data,
-
                 patient_data=patient_form.cleaned_data,
-
             )
 
             messages.success(
@@ -48,24 +46,18 @@ def register_patient(request):
     else:
 
         user_form = UserRegistrationForm()
-
         patient_form = PatientForm()
 
     context = {
-
         "user_form": user_form,
-
         "patient_form": patient_form,
-
     }
 
     return render(
         request,
         "patients/register.html",
         context,
-
     )
-
 
 
 @role_required(UserRole.ADMIN)
@@ -177,15 +169,10 @@ def update_patient(request, pk):
         if user_form.is_valid() and patient_form.is_valid():
 
             PatientService.update_patient(
-
                 user=patient.user,
-
                 patient=patient,
-
                 user_data=user_form.cleaned_data,
-
                 patient_data=patient_form.cleaned_data,
-
             )
 
             messages.success(
@@ -218,6 +205,7 @@ def update_patient(request, pk):
         },
     )
 
+
 @role_required(
     UserRole.ADMIN,
 )
@@ -246,5 +234,104 @@ def delete_patient(request, pk):
         "patients/delete.html",
         {
             "patient": patient,
+        },
+    )
+
+
+@login_required
+@role_required(UserRole.PATIENT)
+def my_profile(request):
+    """
+    Show the currently authenticated patient's own profile.
+
+    The patient is resolved from request.user rather than a URL id,
+    preventing one patient from requesting another patient's profile.
+    """
+    try:
+        patient = request.user.patient_profile
+    except Patient.DoesNotExist:
+        messages.error(
+            request,
+            "Your patient profile could not be found. Please contact an administrator.",
+        )
+        return redirect("dashboard:dashboard")
+
+    return render(
+        request,
+        "patients/my_profile.html",
+        {"patient": patient},
+    )
+
+
+@login_required
+@role_required(UserRole.PATIENT)
+def edit_my_profile(request):
+    """
+    Allow a patient to edit only their own contact/address fields.
+
+    Clinical information is deliberately excluded from the forms.
+    Both model saves happen inside one transaction so a partial update
+    cannot leave the profile in an inconsistent state.
+    """
+    try:
+        patient = request.user.patient_profile
+    except Patient.DoesNotExist:
+        messages.error(
+            request,
+            "Your patient profile could not be found. Please contact an administrator.",
+        )
+        return redirect("dashboard:dashboard")
+
+    if request.method == "POST":
+        user_form = PatientOwnAccountForm(
+            request.POST,
+            instance=request.user,
+        )
+        patient_form = PatientOwnProfileForm(
+            request.POST,
+            instance=patient,
+        )
+
+        user_valid = user_form.is_valid()
+        patient_valid = patient_form.is_valid()
+
+        if user_valid and patient_valid:
+            try:
+                with transaction.atomic():
+                    user_form.save()
+                    patient_form.save()
+
+                messages.success(
+                    request,
+                    "Your profile has been updated successfully.",
+                )
+                return redirect("patients:my-profile")
+
+            except Exception:
+                messages.error(
+                    request,
+                    "Profile update failed due to a server error. Please try again.",
+                )
+        else:
+            messages.error(
+                request,
+                "Profile was not saved. Please correct the highlighted errors below.",
+            )
+
+    else:
+        user_form = PatientOwnAccountForm(
+            instance=request.user,
+        )
+        patient_form = PatientOwnProfileForm(
+            instance=patient,
+        )
+
+    return render(
+        request,
+        "patients/edit_my_profile.html",
+        {
+            "patient": patient,
+            "user_form": user_form,
+            "patient_form": patient_form,
         },
     )
