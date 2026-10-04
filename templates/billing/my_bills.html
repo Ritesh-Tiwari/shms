@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Bills
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full">
+
+    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
+
+        <div class="mb-lg">
+
+            <h1 class="text-headline-lg font-headline-lg text-on-surface">
+                My Bills
+            </h1>
+
+            <p class="text-body-md text-on-surface-variant mt-xs">
+                View your consultation bills and payment status.
+            </p>
+
+        </div>
+
+
+        {% if billings %}
+
+            <div class="space-y-md">
+
+                {% for billing in billings %}
+
+                    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+
+                        <div class="flex justify-between items-start gap-md">
+
+                            <div>
+
+                                <h2 class="text-title-md font-title-md text-on-surface">
+                                    {{ billing.bill_id }}
+                                </h2>
+
+                                <p class="text-body-sm text-on-surface-variant mt-xs">
+                                    Appointment:
+                                    {{ billing.appointment.appointment_id }}
+                                </p>
+
+                                <p class="text-body-sm text-on-surface-variant mt-xs">
+                                    Dr.
+                                    {{ billing.appointment.doctor.user.get_full_name }}
+                                </p>
+
+                                <p class="text-body-sm text-on-surface-variant mt-xs">
+                                    Bill Date:
+                                    {{ billing.bill_date|date:"d M Y" }}
+                                </p>
+
+                            </div>
+
+
+                            <div class="text-right">
+
+                                <p class="text-title-md font-title-md text-on-surface">
+                                    ₹{{ billing.total_amount }}
+                                </p>
+
+                                <p class="text-body-sm text-on-surface-variant mt-xs">
+                                    {{ billing.get_payment_status_display }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mt-lg">
+
+                            <a
+                                href="{% url 'billing:my-bill-detail' billing.pk %}"
+                                class="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary/90 transition-colors"
+                            >
+                                View Bill
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="bg-surface-container-lowest rounded-xl shadow-sm p-xl text-center">
+
+                <h2 class="text-title-md font-title-md text-on-surface">
+                    No bills found
+                </h2>
+
+                <p class="text-body-sm text-on-surface-variant mt-xs">
+                    You do not have any bills yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -2,11 +2,12 @@ from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.db import IntegrityError
 
 from core.decorators import role_required
 from accounts.choices import UserRole
 from .models import Appointment, AppointmentStatus
-from .forms import AppointmentForm, AppointmentUpdateForm
+from .forms import AppointmentForm, AppointmentUpdateForm, PatientAppointmentForm
 from .services import AppointmentService
 
 
@@ -52,6 +53,43 @@ def create_appointment(request):
         "appointments/create.html",
         {
             "form": form,
+        },
+    )
+
+@role_required(
+    UserRole.PATIENT,
+)
+def my_appointments(request):
+
+    appointments = (
+        Appointment.objects
+        .select_related(
+            "patient__user",
+            "doctor__user",
+        )
+        .filter(
+            patient__user=request.user,
+        )
+    )
+
+    paginator = Paginator(
+        appointments,
+        10,
+    )
+
+    page_number = request.GET.get(
+        "page",
+    )
+
+    page_obj = paginator.get_page(
+        page_number,
+    )
+
+    return render(
+        request,
+        "appointments/my_appointments.html",
+        {
+            "page_obj": page_obj,
         },
     )
 
@@ -189,6 +227,34 @@ def appointment_detail(request, pk):
         },
     )
 
+@role_required(
+    UserRole.PATIENT,
+)
+def my_appointment_detail(request, pk):
+
+    appointments = (
+        Appointment.objects
+        .select_related(
+            "patient__user",
+            "doctor__user",
+        )
+        .filter(
+            patient__user=request.user,
+        )
+    )
+
+    appointment = get_object_or_404(
+        appointments,
+        pk=pk,
+    )
+
+    return render(
+        request,
+        "appointments/my_detail.html",
+        {
+            "appointment": appointment,
+        },
+    )
 
 
 @role_required(
@@ -360,4 +426,140 @@ def update_appointment_status(request, pk):
     return redirect(
         "appointments:detail",
         pk=appointment.pk,
+    )
+
+
+@role_required(
+    UserRole.PATIENT,
+)
+def book_appointment(request):
+
+    patient = getattr(
+        request.user,
+        "patient_profile",
+        None,
+    )
+
+    if patient is None:
+
+        messages.error(
+            request,
+            "Patient profile not found.",
+        )
+
+        return redirect(
+            "dashboard:dashboard",
+        )
+
+    if request.method == "POST":
+
+        form = PatientAppointmentForm(
+            request.POST,
+        )
+
+        if form.is_valid():
+
+            try:
+
+                AppointmentService.create_appointment(
+                    appointment_data={
+                        "patient": patient,
+                        "doctor": form.cleaned_data["doctor"],
+                        "appointment_date": form.cleaned_data[
+                            "appointment_date"
+                        ],
+                        "appointment_time": form.cleaned_data[
+                            "appointment_time"
+                        ],
+                        "reason_for_visit": form.cleaned_data[
+                            "reason_for_visit"
+                        ],
+                    },
+                )
+
+                messages.success(
+                    request,
+                    "Appointment request submitted successfully.",
+                )
+
+                return redirect(
+                    "appointments:my-appointments",
+                )
+
+            except ValueError as error:
+
+                form.add_error(
+                    None,
+                    str(error),
+                )
+
+            except IntegrityError:
+
+                form.add_error(
+                    None,
+                    "The selected appointment slot is no longer available.",
+                )
+
+    else:
+
+        form = PatientAppointmentForm()
+
+    return render(
+        request,
+        "appointments/book.html",
+        {
+            "form": form,
+        },
+    )
+
+
+
+@role_required(
+    UserRole.PATIENT,
+)
+def my_cancel_appointment(request, pk):
+
+    appointments = (
+        Appointment.objects
+        .filter(
+            patient__user=request.user,
+        )
+    )
+
+    appointment = get_object_or_404(
+        appointments,
+        pk=pk,
+    )
+
+    if request.method == "POST":
+
+        try:
+
+            AppointmentService.cancel_appointment(
+                appointment=appointment,
+            )
+
+            messages.success(
+                request,
+                "Appointment cancelled successfully.",
+            )
+
+        except ValueError as error:
+
+            messages.error(
+                request,
+                str(error),
+            )
+
+        return redirect(
+            "appointments:my-appointment-detail",
+            pk=appointment.pk,
+        )
+
+    return render(
+        request,
+        "appointments/my_cancel.html",
+        {
+            "appointment": appointment,
+        },
     )

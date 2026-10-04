@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.paginator import Paginator
 
 from accounts.choices import UserRole
 from appointments.models import Appointment, AppointmentStatus
@@ -233,6 +234,82 @@ def update_prescription(request, pk):
         {
             "form": form,
             "formset": formset,
+            "prescription": prescription,
+        },
+    )
+
+@role_required(
+    UserRole.PATIENT,
+)
+def my_prescriptions(request):
+
+    prescriptions = (
+        Prescription.objects
+        .select_related(
+            "appointment__patient__user",
+            "appointment__doctor__user",
+        )
+        .prefetch_related(
+            "medicines",
+        )
+        .filter(
+            appointment__patient__user=request.user,
+        )
+        .order_by(
+            "-created_at",
+        )
+    )
+
+    paginator = Paginator(
+        prescriptions,
+        10,
+    )
+
+    page_number = request.GET.get(
+        "page",
+    )
+
+    page_obj = paginator.get_page(
+        page_number,
+    )
+
+    return render(
+        request,
+        "prescriptions/my_prescriptions.html",
+        {
+            "page_obj": page_obj,
+        },
+    )
+
+
+@role_required(
+    UserRole.PATIENT,
+)
+def my_prescription_detail(request, pk):
+
+    prescriptions = (
+        Prescription.objects
+        .select_related(
+            "appointment__patient__user",
+            "appointment__doctor__user",
+        )
+        .prefetch_related(
+            "medicines",
+        )
+        .filter(
+            appointment__patient__user=request.user,
+        )
+    )
+
+    prescription = get_object_or_404(
+        prescriptions,
+        pk=pk,
+    )
+
+    return render(
+        request,
+        "prescriptions/my_detail.html",
+        {
             "prescription": prescription,
         },
     )

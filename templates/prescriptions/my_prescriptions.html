@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Prescriptions
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full">
+
+    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
+
+        <div class="flex justify-between items-end mb-lg">
+
+            <div>
+                <h1 class="text-headline-lg font-headline-lg text-on-surface">
+                    My Prescriptions
+                </h1>
+
+                <p class="text-body-md text-on-surface-variant mt-xs">
+                    View prescriptions issued by your doctors.
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if page_obj.object_list %}
+
+            <div class="space-y-md">
+
+                {% for prescription in page_obj %}
+
+                    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+
+                        <div class="flex justify-between items-start gap-md">
+
+                            <div>
+
+                                <h2 class="text-title-md font-title-md text-on-surface">
+                                    {{ prescription.prescription_id }}
+                                </h2>
+
+                                <p class="text-body-sm text-on-surface-variant mt-xs">
+                                    Dr.
+                                    {{ prescription.appointment.doctor.user.get_full_name }}
+                                </p>
+
+                                <p class="text-body-sm text-on-surface-variant mt-xs">
+                                    Appointment:
+                                    {{ prescription.appointment.appointment_id }}
+                                </p>
+
+                                <p class="text-body-sm text-on-surface-variant mt-xs">
+                                    {{ prescription.created_at|date:"d M Y" }}
+                                </p>
+
+                            </div>
+
+
+                            <a
+                                href="{% url 'prescriptions:my-prescription-detail' prescription.pk %}"
+                                class="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary/90 transition-colors"
+                            >
+                                View Prescription
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="flex justify-center items-center gap-md mt-xl">
+
+                {% if page_obj.has_previous %}
+
+                    <a
+                        href="?page={{ page_obj.previous_page_number }}"
+                        class="px-md py-sm rounded-lg border border-outline-variant"
+                    >
+                        Previous
+                    </a>
+
+                {% endif %}
+
+
+                <span class="text-body-sm text-on-surface-variant">
+                    Page {{ page_obj.number }}
+                    of {{ page_obj.paginator.num_pages }}
+                </span>
+
+
+                {% if page_obj.has_next %}
+
+                    <a
+                        href="?page={{ page_obj.next_page_number }}"
+                        class="px-md py-sm rounded-lg border border-outline-variant"
+                    >
+                        Next
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% else %}
+
+            <div class="bg-surface-container-lowest rounded-xl shadow-sm p-xl text-center">
+
+                <span class="material-symbols-outlined text-4xl text-on-surface-variant">
+                    medication
+                </span>
+
+                <h2 class="text-title-md font-title-md text-on-surface mt-md">
+                    No prescriptions found
+                </h2>
+
+                <p class="text-body-sm text-on-surface-variant mt-xs">
+                    You do not have any prescriptions yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}
+Bill Details
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full">
+
+    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
+
+        <div class="flex justify-between items-start mb-lg">
+
+            <div>
+
+                <h1 class="text-headline-lg font-headline-lg text-on-surface">
+                    Bill Details
+                </h1>
+
+                <p class="text-body-md text-on-surface-variant mt-xs">
+                    {{ billing.bill_id }}
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'billing:my-bills' %}"
+                class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant"
+            >
+                Back
+            </a>
+
+        </div>
+
+
+        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
+
+            <h2 class="text-title-md font-title-md text-on-surface mb-lg">
+                Billing Information
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Bill ID
+                    </p>
+
+                    <p class="text-body-md text-on-surface mt-xs">
+                        {{ billing.bill_id }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Appointment
+                    </p>
+
+                    <p class="text-body-md text-on-surface mt-xs">
+                        {{ billing.appointment.appointment_id }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Doctor
+                    </p>
+
+                    <p class="text-body-md text-on-surface mt-xs">
+                        Dr.
+                        {{ billing.appointment.doctor.user.get_full_name }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Bill Date
+                    </p>
+
+                    <p class="text-body-md text-on-surface mt-xs">
+                        {{ billing.bill_date|date:"d M Y" }}
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+
+            <h2 class="text-title-md font-title-md text-on-surface mb-lg">
+                Payment Summary
+            </h2>
+
+            <div class="space-y-md">
+
+                <div class="flex justify-between">
+                    <span>Consultation Amount</span>
+                    <span>₹{{ billing.amount }}</span>
+                </div>
+
+
+                <div class="flex justify-between">
+                    <span>Tax</span>
+                    <span>₹{{ billing.tax_amount }}</span>
+                </div>
+
+
+                <div class="flex justify-between font-semibold">
+                    <span>Total Bill</span>
+                    <span>₹{{ billing.total_amount }}</span>
+                </div>
+
+
+                <div class="flex justify-between">
+                    <span>Total Paid</span>
+                    <span>₹{{ paid_amount }}</span>
+                </div>
+
+
+                <div class="flex justify-between font-semibold">
+                    <span>Remaining Due</span>
+                    <span>₹{{ remaining_amount }}</span>
+                </div>
+
+
+                <div class="flex justify-between">
+                    <span>Status</span>
+                    <span>
+                        {{ billing.get_payment_status_display }}
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {% if billing.payments.all %}
+
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mt-lg">
+
+                <h2 class="text-title-md font-title-md text-on-surface mb-lg">
+                    Payments
+                </h2>
+
+                <div class="space-y-md">
+
+                    {% for payment in billing.payments.all %}
+
+                        <div class="border border-outline-variant rounded-lg p-md">
+
+                            <div class="flex justify-between">
+
+                                <div>
+
+                                    <p class="text-title-sm font-title-sm">
+                                        {{ payment.payment_id }}
+                                    </p>
+
+                                    <p class="text-body-sm text-on-surface-variant mt-xs">
+                                        {{ payment.payment_date|date:"d M Y, h:i A" }}
+                                    </p>
+
+                                </div>
+
+
+                                <div class="text-right">
+
+                                    <p class="font-semibold">
+                                        ₹{{ payment.amount }}
+                                    </p>
+
+                                    <a
+                                        href="{% url 'billing:my-receipt' payment.pk %}"
+                                        class="text-primary text-sm"
+                                    >
+                                        View Receipt
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

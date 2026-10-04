@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit My Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full">
+    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
+
+        <div class="flex justify-between items-end mb-lg">
+            <div>
+                <h1 class="text-headline-lg font-headline-lg text-on-surface">
+                    Edit My Profile
+                </h1>
+                <p class="text-body-md text-on-surface-variant mt-xs">
+                    Update your contact and address information.
+                </p>
+            </div>
+
+            <a
+                href="{% url 'patients:my-profile' %}"
+                class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors">
+                Cancel
+            </a>
+        </div>
+
+        {% if user_form.non_field_errors or patient_form.non_field_errors %}
+            <section class="bg-error-container rounded-xl p-lg mb-lg">
+                <div class="flex gap-md">
+                    <span class="material-symbols-outlined text-error">error</span>
+                    <div>
+                        <h3 class="text-label-md font-semibold text-on-error-container">
+                            Please correct the errors below
+                        </h3>
+
+                        {% for error in user_form.non_field_errors %}
+                            <p class="text-body-sm text-on-error-container mt-xs">{{ error }}</p>
+                        {% endfor %}
+
+                        {% for error in patient_form.non_field_errors %}
+                            <p class="text-body-sm text-on-error-container mt-xs">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+        <form method="post" class="space-y-lg" novalidate>
+            {% csrf_token %}
+
+            <!-- Contact -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+
+                <div class="flex items-center gap-sm mb-lg">
+                    <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">contact_phone</span>
+                    </div>
+
+                    <h2 class="text-title-md font-title-md text-on-surface">
+                        Contact Information
+                    </h2>
+                </div>
+
+                <div>
+                    <label for="{{ user_form.phone_number.id_for_label }}"
+                           class="block text-label-md text-on-surface-variant mb-xs">
+                        Phone Number
+                    </label>
+
+                    {{ user_form.phone_number }}
+
+                    {% for error in user_form.phone_number.errors %}
+                        <p class="text-sm text-error mt-xs">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                
+                <div>
+                    <label for="{{ user_form.email.id_for_label }}"
+                           class="block text-label-md text-on-surface-variant mb-xs">
+                        email 
+                    </label>
+
+                    {{ user_form.email }}
+
+                    {% for error in user_form.email.errors %}
+                        <p class="text-sm text-error mt-xs">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Address -->
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+
+                <div class="flex items-center gap-sm mb-lg">
+                    <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">location_on</span>
+                    </div>
+
+                    <h2 class="text-title-md font-title-md text-on-surface">
+                        Address Information
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+
+                    <div class="md:col-span-2">
+                        <label for="{{ patient_form.address.id_for_label }}"
+                               class="block text-label-md text-on-surface-variant mb-xs">
+                            Address
+                        </label>
+
+                        {{ patient_form.address }}
+
+                        {% for error in patient_form.address.errors %}
+                            <p class="text-sm text-error mt-xs">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <div>
+                        <label for="{{ patient_form.city.id_for_label }}"
+                               class="block text-label-md text-on-surface-variant mb-xs">
+                            City
+                        </label>
+
+                        {{ patient_form.city }}
+
+                        {% for error in patient_form.city.errors %}
+                            <p class="text-sm text-error mt-xs">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <div>
+                        <label for="{{ patient_form.state.id_for_label }}"
+                               class="block text-label-md text-on-surface-variant mb-xs">
+                            State
+                        </label>
+
+                        {{ patient_form.state }}
+
+                        {% for error in patient_form.state.errors %}
+                            <p class="text-sm text-error mt-xs">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <div>
+                        <label for="{{ patient_form.pincode.id_for_label }}"
+                               class="block text-label-md text-on-surface-variant mb-xs">
+                            Pincode
+                        </label>
+
+                        {{ patient_form.pincode }}
+
+                        {% for error in patient_form.pincode.errors %}
+                            <p class="text-sm text-error mt-xs">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <div>
+                        <label for="{{ patient_form.emergency_contact.id_for_label }}"
+                               class="block text-label-md text-on-surface-variant mb-xs">
+                            Emergency Contact
+                        </label>
+
+                        {{ patient_form.emergency_contact }}
+
+                        {% for error in patient_form.emergency_contact.errors %}
+                            <p class="text-sm text-error mt-xs">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Read-only notice -->
+            <section class="bg-surface-container rounded-xl p-lg">
+                <div class="flex gap-md">
+                    <span class="material-symbols-outlined text-primary">info</span>
+
+                    <div>
+                        <h3 class="text-label-md font-semibold text-on-surface">
+                            Clinical information is protected
+                        </h3>
+
+                        <p class="text-body-sm text-on-surface-variant mt-xs">
+                            Date of birth, gender, blood group, allergies and
+                            medical history can only be managed by authorized healthcare staff.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="flex justify-end gap-md">
+                <a
+                    href="{% url 'patients:my-profile' %}"
+                    class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant">
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary/90 transition-colors">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

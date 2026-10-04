@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment Details{% endblock %}
+
+{% block content %}
+
+<main class="relative min-h-screen bg-background">
+    <div class="flex flex-col w-full h-full max-w-[1600px] mx-auto p-lg">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div>
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+
+            <div>
+                <label>Doctor</label>
+
+                {{ form.doctor }}
+
+                {% for error in form.doctor.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+
+
+            <div>
+                <label>Appointment Date</label>
+
+                {{ form.appointment_date }}
+
+                {% for error in form.appointment_date.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+
+
+            <div>
+                <label>Appointment Time</label>
+
+                {{ form.appointment_time }}
+
+                {% for error in form.appointment_time.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+
+
+            <div>
+                <label>Reason for Visit</label>
+
+                {{ form.reason_for_visit }}
+
+                {% for error in form.reason_for_visit.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+
+
+            <button type="submit">
+                Request Appointment
+            </button>
+
+        </form>
+    </div>
+
+</main>
+
+{% endblock %}

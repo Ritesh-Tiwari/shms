@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}
+Prescription Details
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full">
+
+    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
+
+        <div class="flex justify-between items-start mb-lg">
+
+            <div>
+
+                <h1 class="text-headline-lg font-headline-lg text-on-surface">
+                    Prescription
+                </h1>
+
+                <p class="text-body-md text-on-surface-variant mt-xs">
+                    {{ prescription.prescription_id }}
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'prescriptions:my-prescriptions' %}"
+                class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant"
+            >
+                Back
+            </a>
+
+        </div>
+
+
+        <!-- Doctor / Appointment -->
+
+        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
+
+            <h2 class="text-title-md font-title-md text-on-surface mb-lg">
+                Prescription Information
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Prescription ID
+                    </p>
+
+                    <p class="text-body-md text-on-surface mt-xs">
+                        {{ prescription.prescription_id }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Date
+                    </p>
+
+                    <p class="text-body-md text-on-surface mt-xs">
+                        {{ prescription.created_at|date:"d M Y" }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Doctor
+                    </p>
+
+                    <p class="text-body-md text-on-surface mt-xs">
+                        Dr.
+                        {{ prescription.appointment.doctor.user.get_full_name }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Appointment
+                    </p>
+
+                    <p class="text-body-md text-on-surface mt-xs">
+                        {{ prescription.appointment.appointment_id }}
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Diagnosis -->
+
+        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
+
+            <h2 class="text-title-md font-title-md text-on-surface mb-md">
+                Diagnosis
+            </h2>
+
+            <p class="text-body-md text-on-surface">
+                {{ prescription.diagnosis }}
+            </p>
+
+        </section>
+
+
+        <!-- Medicines -->
+
+        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
+
+            <h2 class="text-title-md font-title-md text-on-surface mb-lg">
+                Medicines
+            </h2>
+
+
+            {% if prescription.medicines.all %}
+
+                <div class="space-y-md">
+
+                    {% for medicine in prescription.medicines.all %}
+
+                        <div class="border border-outline-variant rounded-lg p-md">
+
+                            <h3 class="text-title-sm font-title-sm text-on-surface">
+                                {{ medicine.medicine_name }}
+                            </h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-md mt-md">
+
+                                <div>
+                                    <p class="text-label-md text-on-surface-variant">
+                                        Dosage
+                                    </p>
+
+                                    <p class="text-body-sm text-on-surface mt-xs">
+                                        {{ medicine.dosage }}
+                                    </p>
+                                </div>
+
+
+                                <div>
+                                    <p class="text-label-md text-on-surface-variant">
+                                        Frequency
+                                    </p>
+
+                                    <p class="text-body-sm text-on-surface mt-xs">
+                                        {{ medicine.frequency }}
+                                    </p>
+                                </div>
+
+
+                                <div>
+                                    <p class="text-label-md text-on-surface-variant">
+                                        Duration
+                                    </p>
+
+                                    <p class="text-body-sm text-on-surface mt-xs">
+                                        {{ medicine.duration }}
+                                    </p>
+                                </div>
+
+
+                                <div>
+                                    <p class="text-label-md text-on-surface-variant">
+                                        Instructions
+                                    </p>
+
+                                    <p class="text-body-sm text-on-surface mt-xs">
+                                        {{ medicine.instructions }}
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <p class="text-body-sm text-on-surface-variant">
+                    No medicines recorded.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- Remarks -->
+
+        {% if prescription.remarks %}
+
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+
+                <h2 class="text-title-md font-title-md text-on-surface mb-md">
+                    Remarks
+                </h2>
+
+                <p class="text-body-md text-on-surface">
+                    {{ prescription.remarks }}
+                </p>
+
+            </section>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

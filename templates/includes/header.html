@@ -1,4 +1,54 @@
+<!-- Top App Bar -->
 <header
+    class="sticky top-0 z-30 h-16 bg-surface-container-lowest/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3 flex-1 max-w-xl">
+        <button aria-label="Toggle navigation menu"
+            class="lg:hidden p-2 -ml-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"
+            onclick="toggleSidebar()">
+            <span class="material-symbols-outlined text-[22px]">menu</span>
+        </button>
+        <!-- Search bar -->
+        <div class="relative w-full max-w-xl hidden sm:block">
+            <span
+                class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px] pointer-events-none">search</span>
+            <input
+                class="w-full pl-9 pr-4 py-2 bg-surface-container-low/70 border border-slate-200/60 rounded-lg text-sm text-on-surface placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                placeholder="Search appointments, medications, bills..." type="text" />
+        </div>
+    </div>
+    <!-- Header Right Utilities -->
+    <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Quick mobile search icon -->
+        <button aria-label="Search"
+            class="sm:hidden p-2 rounded-lg text-slate-500 hover:bg-surface-container-low transition-colors">
+            <span class="material-symbols-outlined text-[20px]">search</span>
+        </button>
+        <!-- Notification button -->
+        <button aria-label="Notifications"
+            class="relative p-2 rounded-lg text-slate-600 hover:bg-surface-container-low hover:text-on-surface transition-colors">
+            <span class="material-symbols-outlined text-[20px]">notifications</span>
+            <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary ring-2 ring-white"></span>
+        </button>
+        <div class="h-6 w-px bg-slate-200"></div>
+        <!-- User profile summary -->
+        <div class="flex items-center gap-2.5 pl-1">
+            <div
+                class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-semibold text-xs tracking-wider shadow-sm">
+                RV
+            </div>
+            <div class="hidden sm:flex flex-col text-left leading-tight">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-sm font-semibold text-on-surface">{{ user.get_full_name|default:user.username }}</span>
+                    <span
+                        class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">{{ user.get_role }}</span>
+                </div>
+                <span class="text-[11px] text-slate-400">{{ user.patient_id }}</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- <header
     class="fixed top-0 left-72 right-0 h-16 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 z-40 flex items-center px-lg justify-between">
     <div class="flex-1 max-w-xl relative"><span
             class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span><input
@@ -26,4 +76,4 @@
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBweYBQL3QciAVNAsZSKcwOJhJMDYfZctX3eWhDn05lyCVXybhh888-lttAqWwuXBXaGTQ8Eux5Toh7soOgtpZb9-sax86W5OtsWJdQD6Nc2V-F8XswhZCVu4IPalakaT_mevcaVH_7zKYXGvkK8Ei2vv7uVch-UnithaY_AdsHf2c_61OfqR--2AnLynP0Xr2tRBfauJ_GlMy0q--bwWsQsWk1GfzgNlgytPnFrOAii2GX_Ajo1n0Q" />
         </div>
     </div>
-</header>
+</header> -->

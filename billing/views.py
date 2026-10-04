@@ -599,3 +599,159 @@ def payment_receipt_pdf(request, payment_id):
     pdf.save()
 
     return response
+
+
+
+
+@role_required(
+    UserRole.PATIENT,
+)
+def my_bills(request):
+
+    billings = (
+        Billing.objects
+        .select_related(
+            "patient__user",
+            "appointment__doctor__user",
+        )
+        .prefetch_related(
+            "payments",
+        )
+        .filter(
+            patient__user=request.user,
+        )
+        .order_by(
+            "-bill_date",
+        )
+    )
+
+    return render(
+        request,
+        "billing/my_bills.html",
+        {
+            "billings": billings,
+        },
+    )
+
+
+@role_required(
+    UserRole.PATIENT,
+)
+def my_bill_detail(request, pk):
+
+    billings = (
+        Billing.objects
+        .select_related(
+            "patient__user",
+            "appointment__doctor__user",
+        )
+        .prefetch_related(
+            "payments",
+        )
+        .filter(
+            patient__user=request.user,
+        )
+    )
+
+    billing = get_object_or_404(
+        billings,
+        pk=pk,
+    )
+
+    paid_amount = sum(
+        payment.amount
+        for payment in billing.payments.all()
+    )
+
+    remaining_amount = (
+        billing.total_amount - paid_amount
+    )
+
+    return render(
+        request,
+        "billing/my_detail.html",
+        {
+            "billing": billing,
+            "paid_amount": paid_amount,
+            "remaining_amount": remaining_amount,
+        },
+    )
+
+
+@role_required(
+    UserRole.PATIENT,
+)
+def my_payment_receipts(request):
+
+    payments = (
+        Payment.objects
+        .select_related(
+            "billing__patient__user",
+            "billing__appointment__doctor__user",
+            "billing__appointment",
+        )
+        .filter(
+            billing__patient__user=request.user,
+        )
+        .order_by(
+            "-payment_date",
+        )
+    )
+
+    return render(
+        request,
+        "billing/my_receipts.html",
+        {
+            "payments": payments,
+        },
+    )
+
+
+@role_required(
+    UserRole.PATIENT,
+)
+def my_payment_receipt(request, payment_id):
+
+    payments = (
+        Payment.objects
+        .select_related(
+            "billing__patient__user",
+            "billing__appointment__doctor__user",
+            "billing__appointment",
+        )
+        .filter(
+            billing__patient__user=request.user,
+        )
+    )
+
+    payment = get_object_or_404(
+        payments,
+        pk=payment_id,
+    )
+
+    billing = payment.billing
+
+    previous_paid_amount = sum(
+        item.amount
+        for item in billing.payments.all()
+        if item.payment_date < payment.payment_date
+        or (
+            item.payment_date == payment.payment_date
+            and item.pk <= payment.pk
+        )
+    )
+
+    remaining_amount = (
+        billing.total_amount - previous_paid_amount
+    )
+
+    return render(
+        request,
+        "billing/my_receipt.html",
+        {
+            "payment": payment,
+            "billing": billing,
+            "total_paid": previous_paid_amount,
+            "remaining_amount": remaining_amount,
+        },
+    )

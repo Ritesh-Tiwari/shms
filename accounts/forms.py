@@ -82,3 +82,32 @@ class UserRegistrationForm(forms.ModelForm):
             ),
             
         }
+
+
+
+class PatientOwnAccountForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = [
+            'email',
+            "phone_number",
+        ]
+
+        widgets = {
+            "phone_number": forms.TextInput(
+                attrs={
+                    "class": "w-full bg-surface h-12 px-md rounded-lg text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all",
+                    "placeholder": "+91 XXXXX XXXXX",
+                    "maxlength": "15",
+                    "type": "tel",
+                },
+            ),
+            "email": forms.EmailInput(
+                attrs={
+                    "class": "w-full bg-surface h-12 px-md rounded-lg text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all",
+                    "placeholder": "user@example.com",
+                    "type": "email",
+                },
+            ),
+        }

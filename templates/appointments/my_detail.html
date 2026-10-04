@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}
+Appointment Details
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <h1>
+        Appointment Details
+    </h1>
+
+    <p>
+        Appointment ID:
+        {{ appointment.appointment_id }}
+    </p>
+
+    <p>
+        Doctor:
+        Dr. {{ appointment.doctor.user.get_full_name }}
+    </p>
+
+    <p>
+        Date:
+        {{ appointment.appointment_date }}
+    </p>
+
+    <p>
+        Time:
+        {{ appointment.appointment_time }}
+    </p>
+
+    <p>
+        Reason:
+        {{ appointment.reason_for_visit }}
+    </p>
+
+    <p>
+        Status:
+        {{ appointment.get_status_display }}
+    </p>
+
+
+    {% if appointment.status == "SCHEDULED" or appointment.status == "CONFIRMED" %}
+
+        <a
+            href="{% url 'appointments:my-cancel' appointment.pk %}"
+        >
+            Cancel Appointment
+        </a>
+
+    {% endif %}
+
+
+    <a href="{% url 'appointments:my-appointments' %}">
+        Back to My Appointments
+    </a>
+
+</div>
+
+{% endblock %}

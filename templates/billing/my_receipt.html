@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}
+Payment Receipt
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full">
+
+    <div class="px-gutter py-xl max-w-[900px] mx-auto w-full">
+
+        <div class="flex justify-between items-start mb-lg">
+
+            <div>
+
+                <h1 class="text-headline-lg font-headline-lg text-on-surface">
+                    Payment Receipt
+                </h1>
+
+                <p class="text-body-md text-on-surface-variant mt-xs">
+                    {{ payment.payment_id }}
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'billing:my-bill-detail' billing.pk %}"
+                class="px-md py-sm rounded-lg border border-outline-variant"
+            >
+                Back to Bill
+            </a>
+
+        </div>
+
+
+        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Payment ID
+                    </p>
+
+                    <p class="text-body-md mt-xs">
+                        {{ payment.payment_id }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Bill ID
+                    </p>
+
+                    <p class="text-body-md mt-xs">
+                        {{ billing.bill_id }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Amount
+                    </p>
+
+                    <p class="text-body-md mt-xs">
+                        ₹{{ payment.amount }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Payment Type
+                    </p>
+
+                    <p class="text-body-md mt-xs">
+                        {{ payment.get_payment_type_display }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Payment Method
+                    </p>
+
+                    <p class="text-body-md mt-xs">
+                        {{ payment.get_payment_method_display }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Payment Date
+                    </p>
+
+                    <p class="text-body-md mt-xs">
+                        {{ payment.payment_date|date:"d M Y, h:i A" }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Total Paid
+                    </p>
+
+                    <p class="text-body-md mt-xs">
+                        ₹{{ total_paid }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-label-md text-on-surface-variant">
+                        Remaining Due
+                    </p>
+
+                    <p class="text-body-md mt-xs">
+                        ₹{{ remaining_amount }}
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="flex justify-end mt-lg">
+
+                <a
+                    href="{% url 'billing:payment_receipt_pdf' payment.pk %}"
+                    class="px-md py-sm rounded-lg bg-primary text-on-primary"
+                >
+                    Download Receipt
+                </a>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+{% endblock %}

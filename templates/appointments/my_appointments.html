@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Appointments
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <div>
+        <h1>My Appointments</h1>
+
+        <a href="{% url 'appointments:book' %}">
+            Book Appointment
+        </a>
+    </div>
+
+
+    {% if page_obj.object_list %}
+
+        {% for appointment in page_obj %}
+
+            <div>
+
+                <h3>
+                    {{ appointment.appointment_id }}
+                </h3>
+
+                <p>
+                    Dr.
+                    {{ appointment.doctor.user.get_full_name }}
+                </p>
+
+                <p>
+                    {{ appointment.appointment_date }}
+                    {{ appointment.appointment_time }}
+                </p>
+
+                <p>
+                    {{ appointment.get_status_display }}
+                </p>
+
+                <a
+                    href="{% url 'appointments:my-appointment-detail' appointment.pk %}"
+                >
+                    View Details
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">
+                Previous
+            </a>
+        {% endif %}
+
+
+        <span>
+            Page {{ page_obj.number }}
+            of {{ page_obj.paginator.num_pages }}
+        </span>
+
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">
+                Next
+            </a>
+        {% endif %}
+
+    {% else %}
+
+        <p>
+            You don't have any appointments yet.
+        </p>
+
+        <a href="{% url 'appointments:book' %}">
+            Book Your First Appointment
+        </a>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

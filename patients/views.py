@@ -8,8 +8,8 @@ from decimal import Decimal
 
 from appointments.models import Appointment
 from .models import Patient
-from accounts.forms import UserRegistrationForm
-from .forms import PatientForm
+from accounts.forms import UserRegistrationForm, PatientOwnAccountForm
+from .forms import PatientForm, PatientOwnProfileForm
 from .services import PatientService
 from core.decorators import role_required
 from accounts.choices import UserRole
@@ -93,6 +93,67 @@ def home(request):
         },
     )
 
+@role_required(UserRole.PATIENT)
+def my_profile(request):
+
+    patient = request.user.patient_profile
+
+    return render(
+        request,
+        "patients/my_profile.html",
+        {
+            "patient": patient,
+        },
+    )
+
+@role_required(UserRole.PATIENT)
+def edit_my_profile(request):
+
+    patient = request.user.patient_profile
+
+    if request.method == "POST":
+
+        user_form = PatientOwnAccountForm(
+            request.POST,
+            instance=request.user,
+        )
+
+        patient_form = PatientOwnProfileForm(
+            request.POST,
+            instance=patient,
+        )
+
+        if user_form.is_valid() and patient_form.is_valid():
+
+            user_form.save()
+            patient_form.save()
+
+            messages.success(
+                request,
+                "Your profile has been updated successfully.",
+            )
+
+            return redirect("patients:my-profile")
+
+    else:
+
+        user_form = PatientOwnAccountForm(
+            instance=request.user,
+        )
+
+        patient_form = PatientOwnProfileForm(
+            instance=patient,
+        )
+
+    return render(
+        request,
+        "patients/edit_my_profile.html",
+        {
+            "patient": patient,
+            "user_form": user_form,
+            "patient_form": patient_form,
+        },
+    )
 
 @role_required(
     UserRole.ADMIN,

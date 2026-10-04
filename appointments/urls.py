@@ -5,7 +5,41 @@ from . import views
 
 app_name = "appointments"
 
+
 urlpatterns = [
+
+    # -------------------------
+    # Patient
+    # -------------------------
+
+    path(
+        "my/",
+        views.my_appointments,
+        name="my-appointments",
+    ),
+
+    path(
+        "my/book/",
+        views.book_appointment,
+        name="book",
+    ),
+
+    path(
+        "my/<int:pk>/",
+        views.my_appointment_detail,
+        name="my-appointment-detail",
+    ),
+
+    path(
+        "my/<int:pk>/cancel/",
+        views.my_cancel_appointment,
+        name="my-cancel",
+    ),
+
+
+    # -------------------------
+    # Staff
+    # -------------------------
 
     path(
         "",
@@ -38,8 +72,8 @@ urlpatterns = [
     ),
 
     path(
-    "<int:pk>/status/",
-    views.update_appointment_status,
-    name="update_status",
-),
+        "<int:pk>/status/",
+        views.update_appointment_status,
+        name="update_status",
+    ),
 ]
