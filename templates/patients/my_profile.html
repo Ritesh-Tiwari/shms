@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full">
+    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
+
+        <div class="flex justify-between items-end mb-lg">
+            <div>
+                <h1 class="text-headline-lg font-headline-lg text-on-surface">
+                    My Profile
+                </h1>
+                <p class="text-body-md text-on-surface-variant mt-xs">
+                    View your personal and clinical information.
+                </p>
+            </div>
+
+            <a
+                href="{% url 'patients:edit-my-profile' %}"
+                class="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary/90 transition-colors">
+                Edit Profile
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+                <h2 class="text-title-md font-title-md text-on-surface mb-lg">
+                    Personal Information
+                </h2>
+
+                <div class="space-y-md text-body-md">
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Patient ID</p>
+                        <p class="text-on-surface mt-xs">{{ patient.patient_id }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Name</p>
+                        <p class="text-on-surface mt-xs">{{ patient.user.get_full_name|default:patient.user.username }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Email</p>
+                        <p class="text-on-surface mt-xs">{{ patient.user.email }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Phone</p>
+                        <p class="text-on-surface mt-xs">{{ patient.user.phone_number|default:"Not provided" }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Date of Birth</p>
+                        <p class="text-on-surface mt-xs">{{ patient.date_of_birth }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Gender</p>
+                        <p class="text-on-surface mt-xs">{{ patient.get_gender_display }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+                <h2 class="text-title-md font-title-md text-on-surface mb-lg">
+                    Contact & Address
+                </h2>
+
+                <div class="space-y-md text-body-md">
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Emergency Contact</p>
+                        <p class="text-on-surface mt-xs">{{ patient.emergency_contact|default:"Not provided" }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Address</p>
+                        <p class="text-on-surface mt-xs">{{ patient.address|default:"Not provided" }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">City</p>
+                        <p class="text-on-surface mt-xs">{{ patient.city|default:"Not provided" }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">State</p>
+                        <p class="text-on-surface mt-xs">{{ patient.state|default:"Not provided" }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Pincode</p>
+                        <p class="text-on-surface mt-xs">{{ patient.pincode|default:"Not provided" }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="lg:col-span-2 bg-surface-container-lowest rounded-xl shadow-sm p-lg">
+                <h2 class="text-title-md font-title-md text-on-surface mb-lg">
+                    Clinical Information
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Blood Group</p>
+                        <p class="text-on-surface mt-xs">{{ patient.get_blood_group_display }}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-label-md text-on-surface-variant">Allergies</p>
+                        <p class="text-on-surface mt-xs whitespace-pre-line">{{ patient.allergies|default:"Not provided" }}</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <p class="text-label-md text-on-surface-variant">Medical History</p>
+                        <p class="text-on-surface mt-xs whitespace-pre-line">{{ patient.medical_history|default:"Not provided" }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-lg bg-surface-container rounded-xl p-lg">
+                    <div class="flex gap-md">
+                        <span class="material-symbols-outlined text-primary">info</span>
+                        <p class="text-body-sm text-on-surface-variant">
+                            Clinical information is read-only for patients and is managed by authorized healthcare staff.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
