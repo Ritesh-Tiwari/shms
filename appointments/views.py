@@ -509,6 +509,7 @@ def book_appointment(request):
         "appointments/book.html",
         {
             "form": form,
+            "patient": patient,
         },
     )
 

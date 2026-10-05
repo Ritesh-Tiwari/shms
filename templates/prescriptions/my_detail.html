@@ -5,215 +5,144 @@ Prescription Details
 {% endblock %}
 
 {% block content %}
-
-<div class="flex flex-col w-full">
-
-    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
-
-        <div class="flex justify-between items-start mb-lg">
-
-            <div>
-
-                <h1 class="text-headline-lg font-headline-lg text-on-surface">
-                    Prescription
-                </h1>
-
-                <p class="text-body-md text-on-surface-variant mt-xs">
-                    {{ prescription.prescription_id }}
-                </p>
-
+  <!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3"><a
+                    class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors"
+                    href="{% url 'prescriptions:my-prescriptions' %}"><span class="material-symbols-outlined text-[20px]">arrow_back</span></a>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+                            Prescription {{ prescription.prescription_id }}</h1><span
+                            class="px-2.5 py-0.5 rounded-full bg-secondary-container/30 text-secondary font-label-sm text-label-sm font-bold">Active</span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Issued by Dr. {{ prescription.appointment.doctor.user.get_full_name }} on
+                        {{ prescription.created_at|date:"d M Y" }}</p>
+                </div>
             </div>
-
-
-            <a
-                href="{% url 'prescriptions:my-prescriptions' %}"
-                class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant"
-            >
-                Back
-            </a>
-
+            <div class="flex items-center gap-2.5"><button
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-lowest border border-slate-200/80 hover:bg-surface-container-low text-on-surface font-label-md text-label-md transition-colors"><span
+                        class="material-symbols-outlined text-[18px]">print</span><span>Print</span></button><button
+                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container shadow-sm font-label-md text-label-md transition-all"><span
+                        class="material-symbols-outlined text-[18px]">download</span><span>Download
+                        PDF</span></button></div>
         </div>
-
-
-        <!-- Doctor / Appointment -->
-
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
-
-            <h2 class="text-title-md font-title-md text-on-surface mb-lg">
-                Prescription Information
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Prescription ID
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ prescription.prescription_id }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Date
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ prescription.created_at|date:"d M Y" }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Doctor
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        Dr.
-                        {{ prescription.appointment.doctor.user.get_full_name }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Appointment
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ prescription.appointment.appointment_id }}
-                    </p>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- Diagnosis -->
-
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
-
-            <h2 class="text-title-md font-title-md text-on-surface mb-md">
-                Diagnosis
-            </h2>
-
-            <p class="text-body-md text-on-surface">
-                {{ prescription.diagnosis }}
-            </p>
-
-        </section>
-
-
-        <!-- Medicines -->
-
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
-
-            <h2 class="text-title-md font-title-md text-on-surface mb-lg">
-                Medicines
-            </h2>
-
-
-            {% if prescription.medicines.all %}
-
-                <div class="space-y-md">
-
-                    {% for medicine in prescription.medicines.all %}
-
-                        <div class="border border-outline-variant rounded-lg p-md">
-
-                            <h3 class="text-title-sm font-title-sm text-on-surface">
-                                {{ medicine.medicine_name }}
-                            </h3>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-md mt-md">
-
-                                <div>
-                                    <p class="text-label-md text-on-surface-variant">
-                                        Dosage
-                                    </p>
-
-                                    <p class="text-body-sm text-on-surface mt-xs">
-                                        {{ medicine.dosage }}
-                                    </p>
-                                </div>
-
-
-                                <div>
-                                    <p class="text-label-md text-on-surface-variant">
-                                        Frequency
-                                    </p>
-
-                                    <p class="text-body-sm text-on-surface mt-xs">
-                                        {{ medicine.frequency }}
-                                    </p>
-                                </div>
-
-
-                                <div>
-                                    <p class="text-label-md text-on-surface-variant">
-                                        Duration
-                                    </p>
-
-                                    <p class="text-body-sm text-on-surface mt-xs">
-                                        {{ medicine.duration }}
-                                    </p>
-                                </div>
-
-
-                                <div>
-                                    <p class="text-label-md text-on-surface-variant">
-                                        Instructions
-                                    </p>
-
-                                    <p class="text-body-sm text-on-surface mt-xs">
-                                        {{ medicine.instructions }}
-                                    </p>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            {% else %}
-
-                <p class="text-body-sm text-on-surface-variant">
-                    No medicines recorded.
-                </p>
-
-            {% endif %}
-
-        </section>
-
-
-        <!-- Remarks -->
-
-        {% if prescription.remarks %}
-
-            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
-
-                <h2 class="text-title-md font-title-md text-on-surface mb-md">
-                    Remarks
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-slate-100 p-5 sm:p-6">
+            <div class="flex items-center gap-2 pb-4 mb-5 border-b border-surface-container"><span
+                    class="material-symbols-outlined text-primary text-[22px]">info</span>
+                <h2 class="font-title-md text-title-md text-on-surface font-semibold">Prescription Information
                 </h2>
-
-                <p class="text-body-md text-on-surface">
-                    {{ prescription.remarks }}
-                </p>
-
-            </section>
-
-        {% endif %}
-
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="flex flex-col gap-1"><span
+                        class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Prescription
+                        ID</span>
+                    <div class="flex items-center gap-2"><span
+                            class="font-semibold text-body-md text-on-surface">{{ prescription.prescription_id }}</span><span
+                            class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">Official</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1"><span
+                        class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Prescription
+                        Date</span><span class="font-semibold text-body-md text-on-surface">{{ prescription.created_at|date:"d M Y" }}</span>
+                </div>
+                <div class="flex flex-col gap-1"><span
+                        class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Prescribing
+                        Doctor</span>
+                    <div class="flex items-center gap-1.5"><span
+                            class="font-semibold text-body-md text-on-surface">Dr. {{ prescription.appointment.doctor.user.get_full_name }}</span><span
+                            class="text-outline-variant">•</span><span
+                            class="font-body-sm text-body-sm text-on-surface-variant">Internal Medicine</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1"><span
+                        class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Linked
+                        Appointment</span>
+                    <div><a class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container text-primary hover:bg-surface-container-high font-semibold text-sm transition-colors"
+                            href="{% url 'appointments:my-appointment-detail' prescription.appointment.pk %}"><span
+                                class="material-symbols-outlined text-[16px]">link</span><span>{{ prescription.appointment.appointment_id }}</span></a>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1 sm:col-span-2"><span
+                        class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Diagnosis</span><span
+                        class="font-semibold text-body-md text-on-surface">{{ prescription.diagnosis }}</span></div>
+            </div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-slate-100 p-5 sm:p-6">
+            <div class="flex items-center justify-between pb-4 mb-5 border-b border-surface-container">
+                <div class="flex items-center gap-2"><span
+                        class="material-symbols-outlined text-primary text-[22px]">medication</span>
+                    <h2 class="font-title-md text-title-md text-on-surface font-semibold">Medicines</h2>
+                </div><span
+                    class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-bold">{{ no_of_medicines }}
+                    Prescribed</span>
+            </div>
+            <div class="overflow-x-auto rounded-lg bg-surface-container-low/40 p-1">
+                {% if prescription.medicines.all %}
+                <table class="w-full text-left border-collapse">
+                    <thead class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                        <tr class="border-b border-surface-container">
+                            <th class="py-3 px-4 font-semibold">Medicine Name</th>
+                            <th class="py-3 px-4 font-semibold">Dosage</th>
+                            <th class="py-3 px-4 font-semibold">Frequency</th>
+                            <th class="py-3 px-4 font-semibold">Duration</th>
+                            <th class="py-3 px-4 font-semibold">Instructions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-container font-body-sm text-body-sm">
+                        {% for medicine in prescription.medicines.all %}
+                        <tr class="hover:bg-surface-container-lowest transition-colors">
+                            <td class="py-4 px-4">
+                                <div class="font-semibold text-on-surface">{{ medicine.medicine_name }}</div><span
+                                    class="block font-normal text-on-surface-variant text-[12px]">{{ medicine.form }}</span>
+                            </td>
+                            <td class="py-4 px-4 font-medium text-on-surface">{{ medicine.dosage }}</td>
+                            <td class="py-4 px-4">
+                                <div class="font-semibold text-on-surface">{{ medicine.frequency }}</div><span
+                                    class="block font-normal text-on-surface-variant text-[12px]">{{ medicine.frequency_description }}</span>
+                            </td>
+                            <td class="py-4 px-4 font-medium text-on-surface">{{ medicine.duration }}</td>
+                            <td class="py-4 px-4"><span
+                                    class="inline-flex items-center px-2.5 py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-medium">Take
+                                    after food</span></td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="hover:bg-surface-container-lowest transition-colors">
+                            <td class="py-4 px-4">
+                                <div class="font-semibold text-on-surface">Cetirizine 10mg</div><span
+                                    class="block font-normal text-on-surface-variant text-[12px]">Oral
+                                    Tablet</span>
+                            </td>
+                            <td class="py-4 px-4 font-medium text-on-surface">10mg</td>
+                            <td class="py-4 px-4">
+                                <div class="font-semibold text-on-surface">0-0-1</div><span
+                                    class="block font-normal text-on-surface-variant text-[12px]">Night</span>
+                            </td>
+                            <td class="py-4 px-4 font-medium text-on-surface">10 days</td>
+                            <td class="py-4 px-4"><span
+                                    class="inline-flex items-center px-2.5 py-1 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">Take
+                                    at bedtime</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-body-sm font-body-sm text-on-surface">No medicines prescribed.</p>
+                {% endif %} 
+            </div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-slate-100 p-5 sm:p-6">
+            <div class="flex items-center gap-2 pb-4 mb-4 border-b border-surface-container"><span
+                    class="material-symbols-outlined text-primary text-[22px]">notes</span>
+                <h2 class="font-title-md text-title-md text-on-surface font-semibold">Remarks</h2>
+            </div>
+            <div class="p-4 rounded-lg bg-surface-container-low/50 border border-slate-100">
+                <p class="text-body-sm font-body-sm text-on-surface">{{ prescription.remarks|default:"No remarks available." }}</p>
+            </div>
+        </div>
     </div>
+</main>
 
-</div>
 
 {% endblock %}

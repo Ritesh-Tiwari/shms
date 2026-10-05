@@ -6,6 +6,95 @@ Appointment Details
 
 {% block content %}
 
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="max-w-4xl mx-auto flex flex-col gap-6">
+        <div class="flex items-center justify-between"><a
+                class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors group font-label-md text-label-md"
+                href="{% url 'appointments:my-appointments' %}"><span
+                    class="material-symbols-outlined text-[20px] transition-transform group-hover:-translate-x-1">arrow_back</span><span
+                    class="">Back to My Appointments</span></a></div>
+        <div class="bg-surface-container-lowest rounded-xl p-6 sm:p-8 shadow-sm flex flex-col gap-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-surface-container-low text-primary flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[28px]"
+                            style="font-variation-settings: 'FILL' 1;">calendar_month</span></div>
+                    <div>
+                        <div class="flex items-center gap-2.5 flex-wrap">
+                            <h1 class="font-headline-mg text-headline-mg text-on-surface tracking-tight">Appointment
+                                Details</h1><span
+                                class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-surface-container text-primary font-semibold tracking-wide">{{ appointment.appointment_id }}</span>
+                        </div>
+                    </div>
+                </div><span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-label-md text-label-md bg-secondary-fixed text-on-secondary-fixed-variant"><span
+                        class="w-2 h-2 rounded-full bg-secondary"></span><span class="">{{ appointment.status|title }}</span></span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-1"><span
+                        class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Appointment
+                        ID</span><span
+                        class="font-title-sm text-title-sm text-on-surface font-semibold mt-0.5">{{ appointment.appointment_id }}</span></div>
+                <div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-1"><span
+                        class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Doctor</span><span
+                        class="font-title-sm text-title-sm text-on-surface font-semibold mt-0.5">Dr. 
+                        {{ appointment.doctor.user.get_full_name }}</span></div>
+                <div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-1"><span
+                        class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Date</span><span
+                        class="font-title-sm text-title-sm text-on-surface font-semibold mt-0.5">{{ appointment.appointment_date|date:"M. j, Y" }}</span>
+                </div>
+                <div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-1"><span
+                        class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Time</span><span
+                        class="font-title-sm text-title-sm text-on-surface font-semibold mt-0.5">{{ appointment.appointment_time|date:"g:i A" }}</span></div>
+                <div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-1 sm:col-span-2"><span
+                        class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Reason</span><span
+                        class="font-title-sm text-title-sm text-on-surface font-semibold mt-0.5 capitalize"> {{ appointment.reason_for_visit }}</span>
+                </div>
+                <div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-1 sm:col-span-2"><span
+                        class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Status</span>
+                    <div class="flex items-center gap-2 mt-1"><span
+                            class="w-2.5 h-2.5 rounded-full bg-secondary"></span><span
+                            class="font-title-sm text-title-sm text-on-secondary-container font-semibold">{{ appointment.status }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-100">
+                <div class="flex items-center gap-2"><span
+                        class="material-symbols-outlined text-[20px] text-slate-400">link</span><span
+                        class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Linked
+                        Records</span></div>
+                <div class="flex flex-wrap items-center gap-2.5">
+                    {% if appointment.prescription %}
+
+                    <a
+                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container hover:text-primary transition-all font-label-md text-label-md font-medium border border-slate-200/60"
+                        href="{% url 'prescriptions:my-prescription-detail' appointment.prescription.pk %}"><span class="material-symbols-outlined text-[18px]">prescriptions</span><span
+                            class="">View Prescription ({{ appointment.prescription.prescription_id }})</span>
+                    </a>
+                    {% else %}
+                    <a
+                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container hover:text-primary transition-all font-label-md text-label-md font-medium border border-slate-200/60"
+                        href="#"><span class="material-symbols-outlined text-[18px]">prescriptions</span><span
+                            class="">View Prescription ( No Prescription )</span>
+                    {% endif %}
+                    <a
+                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container hover:text-primary transition-all font-label-md text-label-md font-medium border border-slate-200/60"
+                        href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span
+                            class="">View Bill ( BILL000001)</span>
+                    </a>
+                </div>
+            </div>
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between"><a
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md"
+                    href="{% url 'appointments:my-appointments' %}"><span class="material-symbols-outlined text-[18px]">arrow_back</span><span class="">Back to
+                        My Appointments</span></a></div>
+        </div>
+    </div>
+</main>
+
+
+
 <div>
 
     <h1>
@@ -45,11 +134,9 @@ Appointment Details
 
     {% if appointment.status == "SCHEDULED" or appointment.status == "CONFIRMED" %}
 
-        <a
-            href="{% url 'appointments:my-cancel' appointment.pk %}"
-        >
-            Cancel Appointment
-        </a>
+    <a href="{% url 'appointments:my-cancel' appointment.pk %}">
+        Cancel Appointment
+    </a>
 
     {% endif %}
 

@@ -4,6 +4,204 @@
 
 {% block content %}
 
+
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full">
+        <!-- Breadcrumb Navigation Bar -->
+        <div class="flex items-center justify-between mb-6">
+            <a class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md"
+                href="{% url 'appointments:my-appointments' %}">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                <span>Back to My Appointments</span>
+            </a>
+           
+        </div>
+        <!-- Main Container Card: Minimalist Clinical Layout -->
+        <div class="w-full max-w-3xl mx-auto bg-surface-container-lowest rounded-xl shadow-sm p-6 sm:p-10 space-y-8">
+            <!-- Title and Purpose Statement -->
+            <div class="space-y-1.5 border-b pb-6 border-surface-container">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-[24px]">event_available</span>
+                    <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Create Appointment</h1>
+                </div>
+                
+            </div>
+            <!-- Booking Form -->
+            <form class="space-y-6" id="appointmentForm" method="post">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="rounded-lg border border-error/30 bg-error/5 p-4 text-error" role="alert">
+                    {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <!-- Patient Information Summary Pill (Read-only Context) -->
+                <div
+                    class="p-4 rounded-lg bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-on-surface">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-semibold font-label-md text-label-md">
+                            RV
+                        </div>
+                        <div>
+                            <p class="font-label-md text-label-md text-on-surface">{{ patient.user.get_full_name }}</p>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Patient ID: {{ patient.patient_id }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant">
+                        <span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+                        <span>Verified OPD Registered</span>
+                    </div>
+                </div>
+                <!-- 1. Doctor Select Field -->
+                <div class="space-y-2">
+                    <label class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant"
+                        for="doctorSelect">
+                        Doctor
+                    </label>
+                    <div class="relative">
+                        <select
+                            class="w-full h-11 pl-4 pr-10 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer"
+                            id="{{ form.doctor.id_for_label }}" name="{{ form.doctor.html_name }}"  required="">
+                          
+                            <option value="" disabled {% if not form.doctor.value %}selected{% endif %}>
+                                Select your Doctor or Department Specialist
+                            </option>
+
+                            {% for doctor in form.doctor.field.queryset %}
+                            <option value="{{ doctor.pk }}" {% if
+                                form.doctor.value|stringformat:"s"==doctor.pk|stringformat:"s" %}selected{%
+                                endif %}>
+                                Dr. {{ doctor.user.get_full_name }} - {{ doctor.specialization }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-outline">
+                            <span class="material-symbols-outlined text-[20px]">expand_more</span>
+                        </div>
+                    </div>
+                    {% for error in form.doctor.errors %}
+                    <p class="font-body-sm text-body-sm text-error">{{ error }}</p>
+                    {% endfor %}
+                    
+                </div>
+                <!-- 2 & 3. Date & Time Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <!-- Appointment Date -->
+                    <div class="space-y-2">
+                        <label
+                            class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant"
+                            for="appointmentDate">
+                            Appointment Date <span class="text-error">*</span>
+                        </label>
+                        <div class="relative">
+                            <input
+                                class="w-full h-11 px-4 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                id="appointmentDate"  name="{{ form.appointment_date.html_name }}" type="date"
+                                    value="{{ form.appointment_date.value|default:'' }}" required />
+                        </div>
+                        {% for error in form.appointment_date.errors %}
+                        <p class="font-body-sm text-body-sm text-error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    <!-- Appointment Time -->
+                    <div class="space-y-2">
+                        <label
+                            class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant"
+                            for="appointmentTime">
+                            Appointment Time <span class="text-error">*</span>
+                        </label>
+                        <div class="relative">
+                            <input
+                                class="w-full h-11 pl-4 pr-10 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer"
+                                id="appointmentTime"  name="{{ form.appointment_time.html_name }}" type="time"
+                                    value="{{ form.appointment_time.value|default:'' }}" required>
+                               
+                            </input>
+                            
+                        </div>
+                        {% for error in form.appointment_time.errors %}
+                        <p class="font-body-sm text-body-sm text-error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- 4. Reason for Visit -->
+                <div class="space-y-2">
+                    <label class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant"
+                        for="visitReason">
+                        Reason for Visit <span class="text-error">*</span>
+                    </label>
+                    <textarea
+                        class="w-full p-4 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-y"
+                        id="visitReason" name="{{ form.reason_for_visit.html_name }}"
+                        placeholder="Briefly describe your symptoms or reason for visit (e.g. Fever, persistent headache, medication follow-up...)"
+                        maxlength="255" required rows="4">{{ form.reason_for_visit.value|default:'' }}</textarea>
+                    {% for error in form.reason_for_visit.errors %}
+                    <p class="font-body-sm text-body-sm text-error">{{ error }}</p>
+                    {% endfor %}
+                    <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm">
+                        <span>Include any relevant changes since your previous visit.</span>
+                        <span class="font-label-sm text-label-sm text-outline" id="charCounter">0 / 255</span>
+                    </div>
+                </div>
+                <!-- 5. Action Buttons -->
+                <div
+                    class="pt-4 flex flex-col-reverse sm:flex-row items-center justify-end gap-3 border-t border-surface-container">
+                    <a class="w-full sm:w-auto px-6 py-2.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-center transition-colors"
+                        href="{% url 'appointments:my-appointments' %}">
+                        Cancel
+                    </a>
+                    <button
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md shadow-sm transition-all focus:ring-2 focus:ring-primary/30"
+                        type="submit">
+                        <span class="material-symbols-outlined text-[18px]">send</span>
+                        <span>Request Appointment</span>
+                    </button>
+                </div>
+            </form>
+            
+            </div>
+        </div>
+    </div>
+    <script>
+        // Set default minimum date to today
+        (function initDateConstraint() {
+            const dateInput = document.getElementById('appointmentDate');
+            if (dateInput) {
+                const now = new Date();
+                const today = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .split('T')[0];
+                dateInput.min = today;
+                if (!dateInput.value) {
+                    dateInput.value = today;
+                }
+            }
+        })();
+
+        // Character counter for Reason field
+        const reasonInput = document.getElementById('visitReason');
+        const counterEl = document.getElementById('charCounter');
+        if (reasonInput && counterEl) {
+            const updateReasonCount = function () {
+                const len = this.value.length;
+                counterEl.textContent = `${len} / 255`;
+                if (len > 255) {
+                    counterEl.classList.add('text-error');
+                } else {
+                    counterEl.classList.remove('text-error');
+                }
+            };
+            updateReasonCount.call(reasonInput);
+            reasonInput.addEventListener('input', updateReasonCount);
+        }
+
+    </script>
+</main>
+
+{% comment %} 
 <main class="relative min-h-screen bg-background">
     <div class="flex flex-col w-full h-full max-w-[1600px] mx-auto p-lg">
 
@@ -12,11 +210,11 @@
             {% csrf_token %}
 
             {% if form.non_field_errors %}
-                <div>
-                    {% for error in form.non_field_errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
+            <div>
+                {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
             {% endif %}
 
 
@@ -26,7 +224,7 @@
                 {{ form.doctor }}
 
                 {% for error in form.doctor.errors %}
-                    <p>{{ error }}</p>
+                <p>{{ error }}</p>
                 {% endfor %}
             </div>
 
@@ -37,7 +235,7 @@
                 {{ form.appointment_date }}
 
                 {% for error in form.appointment_date.errors %}
-                    <p>{{ error }}</p>
+                <p>{{ error }}</p>
                 {% endfor %}
             </div>
 
@@ -48,7 +246,7 @@
                 {{ form.appointment_time }}
 
                 {% for error in form.appointment_time.errors %}
-                    <p>{{ error }}</p>
+                <p>{{ error }}</p>
                 {% endfor %}
             </div>
 
@@ -59,7 +257,7 @@
                 {{ form.reason_for_visit }}
 
                 {% for error in form.reason_for_visit.errors %}
-                    <p>{{ error }}</p>
+                <p>{{ error }}</p>
                 {% endfor %}
             </div>
 
@@ -71,6 +269,6 @@
         </form>
     </div>
 
-</main>
+</main> {% endcomment %}
 
 {% endblock %}

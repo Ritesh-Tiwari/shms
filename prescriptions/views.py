@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.db.models.aggregates import Count
+from django.db.models.aggregates import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 
@@ -259,6 +261,7 @@ def my_prescriptions(request):
             "-created_at",
         )
     )
+    current_prescription = prescriptions.first()  # Get the most recent prescription
 
     paginator = Paginator(
         prescriptions,
@@ -278,6 +281,7 @@ def my_prescriptions(request):
         "prescriptions/my_prescriptions.html",
         {
             "page_obj": page_obj,
+            "current_prescription": current_prescription,
         },
     )
 
@@ -299,7 +303,12 @@ def my_prescription_detail(request, pk):
         .filter(
             appointment__patient__user=request.user,
         )
+        .annotate(
+        no_of_medicines=Count("medicines")
     )
+    )
+
+    
 
     prescription = get_object_or_404(
         prescriptions,
@@ -311,5 +320,6 @@ def my_prescription_detail(request, pk):
         "prescriptions/my_detail.html",
         {
             "prescription": prescription,
+            "no_of_medicines": prescription.no_of_medicines,
         },
     )

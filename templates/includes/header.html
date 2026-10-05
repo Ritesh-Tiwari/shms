@@ -40,7 +40,7 @@
                 <div class="flex items-center gap-1.5">
                     <span class="text-sm font-semibold text-on-surface">{{ user.get_full_name|default:user.username }}</span>
                     <span
-                        class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">{{ user.get_role }}</span>
+                        class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">{{ user.role|default:"User" }}</span>
                 </div>
                 <span class="text-[11px] text-slate-400">{{ user.patient_id }}</span>
             </div>

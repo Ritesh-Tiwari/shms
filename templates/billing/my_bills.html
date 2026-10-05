@@ -6,107 +6,192 @@ My Bills
 
 {% block content %}
 
-<div class="flex flex-col w-full">
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full space-y-8">
+        <!-- Interactive View Switcher & Notification Banner -->
 
-    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
-
-        <div class="mb-lg">
-
-            <h1 class="text-headline-lg font-headline-lg text-on-surface">
-                My Bills
-            </h1>
-
-            <p class="text-body-md text-on-surface-variant mt-xs">
-                View your consultation bills and payment status.
-            </p>
-
-        </div>
-
-
-        {% if billings %}
-
-            <div class="space-y-md">
-
-                {% for billing in billings %}
-
-                    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
-
-                        <div class="flex justify-between items-start gap-md">
-
-                            <div>
-
-                                <h2 class="text-title-md font-title-md text-on-surface">
-                                    {{ billing.bill_id }}
-                                </h2>
-
-                                <p class="text-body-sm text-on-surface-variant mt-xs">
-                                    Appointment:
-                                    {{ billing.appointment.appointment_id }}
-                                </p>
-
-                                <p class="text-body-sm text-on-surface-variant mt-xs">
-                                    Dr.
-                                    {{ billing.appointment.doctor.user.get_full_name }}
-                                </p>
-
-                                <p class="text-body-sm text-on-surface-variant mt-xs">
-                                    Bill Date:
-                                    {{ billing.bill_date|date:"d M Y" }}
-                                </p>
-
-                            </div>
-
-
-                            <div class="text-right">
-
-                                <p class="text-title-md font-title-md text-on-surface">
-                                    ₹{{ billing.total_amount }}
-                                </p>
-
-                                <p class="text-body-sm text-on-surface-variant mt-xs">
-                                    {{ billing.get_payment_status_display }}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="mt-lg">
-
-                            <a
-                                href="{% url 'billing:my-bill-detail' billing.pk %}"
-                                class="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary/90 transition-colors"
-                            >
-                                View Bill
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                {% endfor %}
-
-            </div>
-
-        {% else %}
-
-            <div class="bg-surface-container-lowest rounded-xl shadow-sm p-xl text-center">
-
-                <h2 class="text-title-md font-title-md text-on-surface">
-                    No bills found
-                </h2>
-
-                <p class="text-body-sm text-on-surface-variant mt-xs">
-                    You do not have any bills yet.
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="font-headline-lg font-semibold text-on-surface tracking-tight">My Bills</h1>
+                <p class="font-body-md text-on-surface-variant mt-1">View your consultation bills and payment status.
                 </p>
+            </div>
+        </div>
+        <!-- Main Dynamic Billing View Container -->
+        <div class="w-full">
+            {% if billings %}
+            <!-- Active State: Bills List & Visual Analytics -->
+            <div class="space-y-6" id="active-bills-container">
+                <!-- Search, Filter & Quick Export toolbar -->
+                <div class="relative w-full max-w-md">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+                    <input
+                        class="w-full pl-9 pr-4 py-2 bg-surface-container-lowest border border-slate-200/80 rounded-lg font-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                        id="bill-search-input" onkeyup="filterBills()"
+                        placeholder="Search bill ID, doctor, or visit ID..." type="text">
+                </div>
+                <!-- Desktop Table / Mobile Card Hybrid View -->
+                <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+                    <!-- Desktop Table Header (Visible on Desktop >= lg) -->
+                    <div
+                        class="hidden lg:grid grid-cols-12 gap-4 px-6 py-3.5 bg-surface-container-low font-label-sm text-on-surface-variant uppercase tracking-wider">
+                        <div class="col-span-2">Bill ID &amp; Ref</div>
+                        <div class="col-span-3">Consulting Doctor</div>
+                        <div class="col-span-2">Date &amp; Time</div>
+                        <div class="col-span-2 text-right">Amount</div>
+                        <div class="col-span-1 text-center">Status</div>
+                        <div class="col-span-2 text-right">Action</div>
+                    </div>
+                    <!-- Bill Row  -->
+                     {% for billing in billings %}
+                    <div class="bill-record p-5 lg:px-6 lg:py-4 transition-colors hover:bg-surface-container-low/50"
+                        data-search=" {{ billing.bill_id }} {{ billing.appointment.appointment_id }} {{ billing.doctor.user.get_full_name }} {{ billing.appointment.appointment_date }} {{ billing.amount }}">
+                        <div class="flex flex-col lg:grid lg:grid-cols-12 lg:items-center gap-4">
+                            <!-- Bill ID & Appointment Ref -->
+                            <div class="lg:col-span-2 flex items-center justify-between lg:block">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-label-md font-semibold text-primary">{{ billing.bill_id }}</span>
+                                        <span
+                                            class="lg:hidden px-2 py-0.5 rounded-full font-label-sm bg-secondary/10 text-secondary font-medium">Paid</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 mt-0.5 text-on-surface-variant font-body-sm">
+                                        <span
+                                            class="material-symbols-outlined text-[15px] text-outline">event_available</span>
+                                        <span class="">{{ billing.appointment.appointment_id }}</span>
+                                    </div>
+                                </div>
+                                <div class="lg:hidden text-right">
+                                    <span class="font-title-md text-on-surface font-semibold">₹{{ billing.amount }} </span>
+                                </div>
+                            </div>
+                            <!-- Doctor Information -->
+                            <div class="lg:col-span-3 flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-semibold font-label-md shrink-0">
+                                    MP
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-label-md text-on-surface font-medium truncate">Dr. {{ billing.appointment.doctor.user.get_full_name }}</p>
+                                    <p class="font-body-sm text-on-surface-variant truncate">{{ billing.appointment.doctor.specialization|title }} 
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Bill Date -->
+                            <div
+                                class="lg:col-span-2 flex lg:flex-col justify-between items-center lg:items-start text-on-surface-variant font-body-sm">
+                                <span class="lg:hidden font-label-sm text-outline">Billing Date:</span>
+                                <div>
+                                    <span class="text-on-surface font-medium block">{{ billing.appointment.appointment_date|date:"d M Y" }}</span>
+                                    <span class="text-xs text-outline">{{ billing.appointment.appointment_time|time:"H:i" }}</span>
+                                </div>
+                            </div>
+                            <!-- Amount (Desktop View) -->
+                            <div class="hidden lg:block lg:col-span-2 text-right">
+                                <span class="font-title-md text-on-surface font-semibold">₹{{ billing.amount }}</span>
+                                <span class="block text-xs text-outline font-body-sm">Cash / UPI</span>
+                            </div>
+                            <!-- Status Badge (Desktop View) -->
+                            <div class="hidden lg:flex lg:col-span-1 justify-center">
+                                <span
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-label-sm bg-secondary/10 text-secondary font-medium">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                    {{ billing.get_payment_status_display }}
+                                </span>
+                            </div>
+                            <!-- Actions -->
+                            <div class="lg:col-span-2 flex items-center justify-end gap-2 pt-3 lg:pt-0">
+                                <a  href="{% url 'billing:my-bill-detail' billing.pk %}"
+                                    class="flex-1 lg:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md transition-all"
+                                  >
+                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                    <span class="">View Bill</span>
+                                </a>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="h-px bg-surface-container-high/60 mx-6"></div>
+                    {% endfor %}                    
+                                       
+                </div>
+                <!-- Financial Insight Cards & Hospital Assistance -->
 
             </div>
-
-        {% endif %}
-
+            {% else %}
+            <!-- Empty State Section ("No Invoices" state) -->
+            <div class="mt-8 pt-8 border-t border-slate-200/80" id="empty-state-section">
+                <div
+                    class="bg-surface-container-lowest rounded-2xl border border-slate-200/60 p-8 sm:p-12 flex flex-col items-center justify-center text-center max-w-xl mx-auto shadow-sm">
+                    <div
+                        class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center text-primary mb-4">
+                        <span class="material-symbols-outlined text-[32px]">receipt_long</span>
+                    </div>
+                    <h2 class="font-title-md text-on-surface font-semibold">No Invoices Yet</h2>
+                    <p class="font-body-sm text-on-surface-variant mt-2 max-w-md">
+                        You don't have any billing records or outstanding invoices at this time. Consultation and
+                        pharmacy bills will appear here once issued by the clinic.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center gap-3 mt-6 w-full sm:w-auto">
+                        <a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md font-medium transition-all"
+                            href="#">
+                            <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            <span class="">View Appointments</span>
+                        </a>
+                        <a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md font-medium transition-all shadow-sm"
+                            href="#">
+                            <span class="material-symbols-outlined text-[18px]">add</span>
+                            <span class="">+ Book an Appointment</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
     </div>
+    <script>
+        function switchBillingState(state) {
+            const activeCont = document.getElementById('active-bills-container');
+            const emptyCont = document.getElementById('empty-bills-container');
+            const btnActive = document.getElementById('btn-show-active');
+            const btnEmpty = document.getElementById('btn-show-empty');
 
-</div>
+            if (state === 'active') {
+                activeCont.classList.remove('hidden');
+                emptyCont.classList.add('hidden');
+
+                btnActive.className = "px-3.5 py-1.5 rounded-md font-label-sm transition-all bg-surface-container-lowest text-primary shadow-sm";
+                btnEmpty.className = "px-3.5 py-1.5 rounded-md font-label-sm transition-all text-on-surface-variant hover:text-on-surface";
+            } else {
+                activeCont.classList.add('hidden');
+                emptyCont.classList.remove('hidden');
+
+                btnEmpty.className = "px-3.5 py-1.5 rounded-md font-label-sm transition-all bg-surface-container-lowest text-primary shadow-sm";
+                btnActive.className = "px-3.5 py-1.5 rounded-md font-label-sm transition-all text-on-surface-variant hover:text-on-surface";
+            }
+        }
+
+        function filterBills() {
+            const query = document.getElementById('bill-search-input').value.toLowerCase();
+            const rows = document.querySelectorAll('.bill-record');
+
+            rows.forEach(row => {
+                const searchTarget = (row.getAttribute('data-search') || '').toLowerCase();
+                if (searchTarget.includes(query)) {
+                    row.style.display = 'block';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+
+    </script>
+</main>
+
 
 {% endblock %}
