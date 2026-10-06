@@ -11,7 +11,8 @@ Patients
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm">
         <div class="space-y-1">
             <div class="flex items-center gap-2.5 flex-wrap">
-                <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-on-surface">Good morning, {{patient.user.first_name}}
+               <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-on-surface">
+                    <span id="greeting-text">Good morning</span>, {{ patient.user.first_name }}
                 </h1>
                 <span
                     class="px-2.5 py-0.5 rounded-full bg-blue-50 text-primary border border-blue-100 text-xs font-semibold">{{patient.patient_id}}</span>
@@ -74,7 +75,9 @@ Patients
             </div>
             <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Medical Visits</p>
             <h3 class="text-lg font-bold text-on-surface mt-1">{{ total_visits }} Recorded</h3>
+            {% if last_visit_date %}
             <p class="text-xs text-on-surface-variant truncate mt-0.5">Last visit: {{ last_visit_date|date:"M j, Y" }}</p>
+            {% endif %}
         </div>
         <!-- Card 4: Outstanding Balance -->
         <div
@@ -99,11 +102,7 @@ Patients
                 <span class="material-symbols-outlined text-primary text-[20px]">event_upcoming</span>
                 <h2 class="text-base font-bold text-on-surface">Upcoming Appointment</h2>
             </div>
-            <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                Confirmed
-            </span>
+            
         </div>
 
         {% for appointment in upcoming_appointments %}
@@ -119,6 +118,10 @@ Patients
                         <span class="font-bold text-base text-on-surface">Dr. {{ appointment.doctor.user.get_full_name }}</span>
                         <span
                             class="px-2 py-0.5 rounded-md bg-blue-100/80 text-primary text-xs font-medium">{{ appointment.doctor.specialization }}</span>
+                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full {{ appointment.status_color_classes.bg }} {{ appointment.status_color_classes.text }} text-xs font-semibold">
+                            <span class="w-1.5 h-1.5 rounded-full {{ appointment.status_color_classes.dot }}"></span>
+                            {{ appointment.get_status_display }}
+                        </span>
                     </div>
                     <p class="text-xs text-slate-500">{{ appointment.doctor.qualification }} • {{ appointment.doctor.experience }} yrs experience</p>
                     <div
@@ -279,7 +282,7 @@ Patients
                 <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/70">
                     <div
                         class="w-10 h-10 rounded-full bg-primary-container text-white font-bold flex items-center justify-center text-xs">
-                        RV
+                        {{ patient.user.first_name|slice:":1"}}{{ patient.user.last_name|slice:":1"}}
                     </div>
                     <div class="leading-tight">
                         <p class="font-bold text-sm text-on-surface">{{ patient.user.get_full_name }}</p>
@@ -346,11 +349,11 @@ Patients
                             <span class="material-symbols-outlined text-emerald-600 text-[16px]">check_circle</span>
                             Receipt {{ latest_payment.payment_id }}
                         </span>
-                        <button aria-label="Download receipt"
+                        <a href="{% url 'billing:payment_receipt_pdf' latest_payment.pk %}" aria-label="Download receipt"
                             class="text-primary hover:text-blue-700 p-1 rounded hover:bg-blue-50 transition-colors"
                             type="button">
                             <span class="material-symbols-outlined text-[18px]">download</span>
-                        </button>
+                        </a>
                     </div>
                     {% endif %}
                 </div>
@@ -366,5 +369,17 @@ Patients
         </div>
     </section>
 </main>
+<script>
+const hour = new Date().getHours();
+let greeting = "Good morning";
+
+if (hour >= 12 && hour < 17) {
+    greeting = "Good afternoon";
+} else if (hour >= 17) {
+    greeting = "Good evening";
+}
+
+document.getElementById("greeting-text").textContent = greeting;
+</script>
 
 {% endblock %}

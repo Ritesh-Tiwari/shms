@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db import IntegrityError
-
+from datetime import date
 from core.decorators import role_required
 from accounts.choices import UserRole
 from .models import Appointment, AppointmentStatus
@@ -70,8 +70,21 @@ def my_appointments(request):
         .filter(
             patient__user=request.user,
         )
+        .order_by(
+            "-appointment_date",
+        )
     )
+    # Target counts according to status or date
+    upcoming_count = appointments.filter(
+        status__in=['SCHEDULED', 'CONFIRMED', 'PENDING'],
+        appointment_date__gte=date.today()
+    ).count()
 
+    past_count = appointments.filter(
+        status__in=['COMPLETED', 'CANCELLED']
+    ).count() # ya appointment_date__lt=timezone.now().date()
+    
+    all_count = appointments.count()
     paginator = Paginator(
         appointments,
         10,
@@ -90,6 +103,9 @@ def my_appointments(request):
         "appointments/my_appointments.html",
         {
             "page_obj": page_obj,
+            'upcoming_count': upcoming_count,
+            'past_count': past_count,
+            'all_count': all_count,
         },
     )
 

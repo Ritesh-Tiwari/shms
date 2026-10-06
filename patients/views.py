@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
+from django.db import transaction
 from django.db.models import Q, Prefetch, Sum
 from django.core.paginator import Paginator
 from django.utils import timezone
@@ -123,10 +124,13 @@ def edit_my_profile(request):
             instance=patient,
         )
 
-        if user_form.is_valid() and patient_form.is_valid():
+        user_form_is_valid = user_form.is_valid()
+        patient_form_is_valid = patient_form.is_valid()
 
-            user_form.save()
-            patient_form.save()
+        if user_form_is_valid and patient_form_is_valid:
+            with transaction.atomic():
+                user_form.save()
+                patient_form.save()
 
             messages.success(
                 request,

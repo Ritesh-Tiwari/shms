@@ -46,6 +46,13 @@ class Prescription(models.Model):
     def __str__(self):
 
         return self.prescription_id
+    @property
+    def is_active(self):
+        return self.appointment.status in ['SCHEDULED', 'CONFIRMED']
+
+    @property
+    def status_label(self):
+        return "Active" if self.is_active else "Completed"
 
     def save(self, *args, **kwargs):
 

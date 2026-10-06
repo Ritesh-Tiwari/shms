@@ -1,149 +1,177 @@
 {% extends "base.html" %}
 
-{% block title %}
-Payment Receipt
-{% endblock %}
+{% block title %}Receipt {{ payment.payment_id|default:"Details" }}{% endblock %}
 
 {% block content %}
-
-<div class="flex flex-col w-full">
-
-    <div class="px-gutter py-xl max-w-[900px] mx-auto w-full">
-
-        <div class="flex justify-between items-start mb-lg">
-
-            <div>
-
-                <h1 class="text-headline-lg font-headline-lg text-on-surface">
-                    Payment Receipt
-                </h1>
-
-                <p class="text-body-md text-on-surface-variant mt-xs">
-                    {{ payment.payment_id }}
-                </p>
-
-            </div>
-
-
-            <a
-                href="{% url 'billing:my-bill-detail' billing.pk %}"
-                class="px-md py-sm rounded-lg border border-outline-variant"
-            >
-                Back to Bill
+<main class="flex-1 w-full max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 pb-24 lg:pb-12 space-y-6">
+    <nav class="flex flex-wrap items-center justify-between gap-3" aria-label="Breadcrumb">
+        <a href="{% url 'billing:my-receipts' %}"
+            class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            Back to receipts
+        </a>
+        {% if payment and billing %}
+        <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="window.print()"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-[18px]">print</span>
+                Print
+            </button>
+            <a href="{% url 'billing:payment_receipt_pdf' payment.pk %}"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md transition-colors">
+                <span class="material-symbols-outlined text-[18px]">download</span>
+                Download PDF
             </a>
-
         </div>
+        {% endif %}
+    </nav>
 
-
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-
+    {% if payment and billing %}
+    <article class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/50 overflow-hidden">
+        <header class="p-5 sm:p-8 bg-surface-container-low border-b border-outline-variant/50">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5">
                 <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Payment ID
-                    </p>
-
-                    <p class="text-body-md mt-xs">
-                        {{ payment.payment_id }}
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm font-medium">
+                        <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                        Payment recorded
+                    </div>
+                    <h1 class="font-headline-lg font-semibold text-on-surface tracking-tight mt-3">Payment receipt</h1>
+                    <p class="font-body-sm text-on-surface-variant mt-1">
+                        Receipt <span class="font-medium text-on-surface">{{ payment.payment_id|default:"Not available" }}</span>
                     </p>
                 </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Bill ID
-                    </p>
-
-                    <p class="text-body-md mt-xs">
-                        {{ billing.bill_id }}
+                <div class="sm:text-right">
+                    <p class="font-body-sm text-on-surface-variant">Amount paid</p>
+                    <p class="font-headline-lg font-semibold text-primary mt-1">
+                        ₹{{ payment.amount|floatformat:2 }}
                     </p>
                 </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Amount
-                    </p>
-
-                    <p class="text-body-md mt-xs">
-                        ₹{{ payment.amount }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Payment Type
-                    </p>
-
-                    <p class="text-body-md mt-xs">
-                        {{ payment.get_payment_type_display }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Payment Method
-                    </p>
-
-                    <p class="text-body-md mt-xs">
-                        {{ payment.get_payment_method_display }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Payment Date
-                    </p>
-
-                    <p class="text-body-md mt-xs">
-                        {{ payment.payment_date|date:"d M Y, h:i A" }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Total Paid
-                    </p>
-
-                    <p class="text-body-md mt-xs">
-                        ₹{{ total_paid }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Remaining Due
-                    </p>
-
-                    <p class="text-body-md mt-xs">
-                        ₹{{ remaining_amount }}
-                    </p>
-                </div>
-
             </div>
+        </header>
 
+        <div class="p-5 sm:p-8 space-y-8">
+            <section aria-labelledby="payment-details-heading">
+                <h2 id="payment-details-heading" class="font-title-md font-semibold text-on-surface mb-4">Payment details</h2>
+                <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Payment ID</dt>
+                        <dd class="font-body-md font-medium text-on-surface mt-1 break-words">{{ payment.payment_id|default:"Not available" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Payment date</dt>
+                        <dd class="font-body-md text-on-surface mt-1">
+                            {% if payment.payment_date %}
+                            <time datetime="{{ payment.payment_date|date:'c' }}">{{ payment.payment_date|date:"d M Y, h:i A" }}</time>
+                            {% else %}Not available{% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Payment type</dt>
+                        <dd class="font-body-md text-on-surface mt-1">{{ payment.get_payment_type_display|default:"Not available" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Payment method</dt>
+                        <dd class="font-body-md text-on-surface mt-1">{{ payment.get_payment_method_display|default:"Not available" }}</dd>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <dt class="font-label-sm text-on-surface-variant">Transaction reference</dt>
+                        <dd class="font-body-md text-on-surface mt-1 break-words">
+                            {% if payment.transaction_reference %}{{ payment.transaction_reference }}{% else %}Not provided{% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </section>
 
-            <div class="flex justify-end mt-lg">
+            <section aria-labelledby="bill-details-heading" class="border-t border-surface-container pt-6">
+                <h2 id="bill-details-heading" class="font-title-md font-semibold text-on-surface mb-4">Bill and visit</h2>
+                <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Bill ID</dt>
+                        <dd class="mt-1">
+                            <a href="{% url 'billing:my-bill-detail' billing.pk %}" class="font-body-md font-medium text-primary hover:underline">
+                                {{ billing.bill_id|default:"Not available" }}
+                            </a>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Appointment</dt>
+                        <dd class="font-body-md text-on-surface mt-1">
+                            {% if billing.appointment %}{{ billing.appointment.appointment_id|default:"Not available" }}{% else %}Not available{% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Doctor</dt>
+                        <dd class="font-body-md text-on-surface mt-1">
+                            {% if billing.appointment.doctor.user.get_full_name %}
+                            Dr. {{ billing.appointment.doctor.user.get_full_name }}
+                            {% else %}Doctor information unavailable{% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Patient</dt>
+                        <dd class="font-body-md text-on-surface mt-1">
+                            {% if billing.patient.user.get_full_name %}{{ billing.patient.user.get_full_name }}{% else %}Patient information unavailable{% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Bill date</dt>
+                        <dd class="font-body-md text-on-surface mt-1">
+                            {% if billing.bill_date %}{{ billing.bill_date|date:"d M Y" }}{% else %}Not available{% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="font-label-sm text-on-surface-variant">Bill status</dt>
+                        <dd class="font-body-md text-on-surface mt-1">{{ billing.get_payment_status_display|default:"Not available" }}</dd>
+                    </div>
+                </dl>
+            </section>
 
-                <a
-                    href="{% url 'billing:payment_receipt_pdf' payment.pk %}"
-                    class="px-md py-sm rounded-lg bg-primary text-on-primary"
-                >
-                    Download Receipt
-                </a>
+            <section aria-labelledby="summary-heading" class="border-t border-surface-container pt-6">
+                <h2 id="summary-heading" class="font-title-md font-semibold text-on-surface mb-4">Payment summary</h2>
+                <dl class="max-w-xl ml-auto space-y-3">
+                    <div class="flex justify-between gap-4 font-body-md">
+                        <dt class="text-on-surface-variant">Bill total</dt>
+                        <dd class="text-on-surface">₹{{ billing.total_amount|floatformat:2 }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-4 font-body-md">
+                        <dt class="text-on-surface-variant">Paid through this receipt</dt>
+                        <dd class="text-on-surface">₹{{ total_paid|floatformat:2 }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-4 border-t border-surface-container pt-3 font-title-sm font-semibold">
+                        <dt class="text-on-surface">Remaining balance</dt>
+                        <dd class="{% if remaining_amount > 0 %}text-error{% else %}text-secondary{% endif %}">
+                            ₹{{ remaining_amount|floatformat:2 }}
+                        </dd>
+                    </div>
+                </dl>
+                <p class="font-body-sm text-on-surface-variant mt-5">
+                    This receipt confirms the payment recorded above. Keep the receipt ID for your records.
+                </p>
+            </section>
+        </div>
+    </article>
+    {% else %}
+    <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/50 p-8 text-center shadow-sm" role="alert">
+        <span class="material-symbols-outlined text-primary text-[36px]">receipt_long</span>
+        <h1 class="font-title-md font-semibold text-on-surface mt-3">Receipt details unavailable</h1>
+        <p class="font-body-sm text-on-surface-variant mt-2">
+            We couldn't load the payment details. Return to your receipts and try opening the receipt again.
+        </p>
+        <a href="{% url 'billing:my-receipts' %}"
+            class="inline-flex items-center justify-center gap-2 mt-5 px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md">
+            Back to receipts
+        </a>
+    </section>
+    {% endif %}
+</main>
 
-            </div>
-
-        </section>
-
-    </div>
-
-</div>
-
+<style>
+    @media print {
+        body * { visibility: hidden; }
+        main, main * { visibility: visible; }
+        main { position: absolute; inset: 0; width: 100%; max-width: none; padding: 0; }
+        nav { display: none !important; }
+        article { box-shadow: none; border: 0; }
+    }
+</style>
 {% endblock %}

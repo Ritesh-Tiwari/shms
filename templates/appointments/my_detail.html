@@ -7,7 +7,7 @@ Appointment Details
 {% block content %}
 
 <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
-    <div class="max-w-4xl mx-auto flex flex-col gap-6">
+    <div class="max-w-5xl mx-auto flex flex-col gap-6">
         <div class="flex items-center justify-between"><a
                 class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors group font-label-md text-label-md"
                 href="{% url 'appointments:my-appointments' %}"><span
@@ -77,12 +77,15 @@ Appointment Details
                         class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container hover:text-primary transition-all font-label-md text-label-md font-medium border border-slate-200/60"
                         href="#"><span class="material-symbols-outlined text-[18px]">prescriptions</span><span
                             class="">View Prescription ( No Prescription )</span>
+                    </a>
                     {% endif %}
+                    {% if appointment.billing %}
                     <a
                         class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container hover:text-primary transition-all font-label-md text-label-md font-medium border border-slate-200/60"
-                        href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span
-                            class="">View Bill ( BILL000001)</span>
+                        href="{% url 'billing:my-bill-detail' appointment.billing.pk %}"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span
+                            class="">View Bill ({{ appointment.billing.bill_id }})</span>
                     </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="pt-4 border-t border-slate-100 flex items-center justify-between"><a
@@ -94,7 +97,7 @@ Appointment Details
 </main>
 
 
-
+{% comment %} 
 <div>
 
     <h1>
@@ -145,6 +148,6 @@ Appointment Details
         Back to My Appointments
     </a>
 
-</div>
+</div> {% endcomment %}
 
 {% endblock %}

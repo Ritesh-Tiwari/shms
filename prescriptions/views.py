@@ -262,7 +262,7 @@ def my_prescriptions(request):
         )
     )
     current_prescription = prescriptions.first()  # Get the most recent prescription
-
+    
     paginator = Paginator(
         prescriptions,
         10,

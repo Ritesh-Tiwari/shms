@@ -6,278 +6,213 @@ My Profile
 
 {% block content %}
 
-<div class="flex flex-col w-full">
-    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
-
-        <div class="flex items-center justify-between mb-xl">
-
-            <div>
-                <h1 class="text-headline-lg font-headline-lg text-on-surface">
-                    My Profile
-                </h1>
-
-                <p class="text-body-md text-on-surface-variant mt-xs">
-                    View your personal and health information.
-                </p>
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full">
+        <!-- Breadcrumb Navigation & Top Action Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6">
+            <div class="flex flex-col gap-1.5">
+                <a class="inline-flex items-center gap-1.5 text-primary hover:text-primary-container font-label-md text-label-md transition-colors w-fit"
+                    href="{% url "dashboard:dashboard" %}">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    <span class="">Back to Dashboard</span>
+                </a>
             </div>
+            <!-- Secondary Edit Button -->
+            <div class="flex items-center gap-3">
+                <a href="{% url 'patients:edit-my-profile' %}"
+                    class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-surface-container-lowest text-on-surface-variant hover:text-primary hover:bg-surface-container-low shadow-sm transition-all font-label-md text-label-md"
+                    type="button">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                    <span class="">Edit Profile</span>
+                </a>
 
-            <a
-                href="{% url 'patients:edit-my-profile' %}"
-                class="flex items-center gap-sm px-md py-sm rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary/90 transition-colors">
+            </div>
+        </div>
+        <!-- Primary Profile Card -->
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6 sm:p-8 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                    <!-- Patient Avatar with Status Ring -->
+                    <div class="relative flex-shrink-0">
+                        <div
+                            class="w-20 h-20 rounded-full bg-gradient-to-tr from-primary to-primary-container text-on-primary flex items-center justify-center font-headline-lg text-headline-lg tracking-wider shadow-md">
+                            {{ patient.user.first_name|slice:":1"}}{{ patient.user.last_name|slice:":1"}}
+                        </div>
+                        <span
+                            class="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-secondary ring-4 ring-surface-container-lowest flex items-center justify-center"
+                            title="Active Record">
+                            <span class="material-symbols-outlined text-white text-[12px]">check</span>
+                        </span>
+                    </div>
+                    <!-- Identity and Primary Attributes -->
+                    <div class="flex flex-col gap-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <h2 class="font-title-md text-title-md text-on-surface font-semibold truncate">{{patient.user.get_full_name}}
+                            </h2>
+                            <span
+                                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm font-semibold">
+                                <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                Active Patient
+                            </span>
+                        </div>
+                        <div
+                            class="flex flex-wrap items-center gap-x-4 gap-y-1 font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                            <span class="inline-flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[16px] text-outline">badge</span>
+                                <span class="font-medium text-on-surface"> {{ patient.patient_id }}</span>
+                            </span>
+                            <span class="text-outline-variant">•</span>
+                            <span class="">{{patient.age}} age</span>
+                            <span class="text-outline-variant">•</span>
+                            <span class="">{{patient.get_gender_display}}</span>
+                            <span class="text-outline-variant">•</span>
+                            <span class="inline-flex items-center gap-1 text-primary font-medium">
+                                <span class="material-symbols-outlined text-[16px]">water_drop</span>
+                                {{ patient.blood_group}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Quick Verified Meta Chips -->
 
-                <span class="material-symbols-outlined text-[20px]">
-                    edit
-                </span>
+            </div>
+        </div>
+        <!-- Main Information Grid (Two-column layout on Desktop) -->
+        <div class="gap-6 mb-6">
+            <!-- Left Column: Personal & Contact Information (Span 2) -->
+            <div class="space-y-6">
+                <!-- Personal Information Card -->
+                <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6 sm:p-7">
+                    <div class="flex items-center justify-between pb-5 mb-5 border-b border-surface-container">
+                        <div class="flex items-center gap-2.5">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[18px]">person</span>
+                            </div>
+                            <div>
+                                <h3 class="font-title-md text-title-md text-on-surface font-semibold">Personal
+                                    Information</h3>
 
-                Edit Profile
-            </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-8">
+                        <div class="flex flex-col">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+                                Name</span>
+                            <span class="font-body-md text-body-md text-on-surface font-medium mt-1">{{patient.user.get_full_name}}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Date
+                                of Birth &amp; Age</span>
+                            <span class="font-body-md text-body-md text-on-surface font-medium mt-1">{{patient.date_of_birth|date:'d M Y'}} ({{patient.age}}
+                                Yrs)</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Gender</span>
+                            <span class="font-body-md text-body-md text-on-surface font-medium mt-1">{{patient.get_gender_display}}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Primary
+                                Phone</span>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="font-body-md text-body-md text-on-surface font-medium"> {{patient.user.phone_number}}</span>
+                                <span
+                                    class="inline-flex items-center text-[11px] font-semibold text-secondary bg-secondary/10 px-2 py-0.5 rounded-full">
+                                    Verified
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:col-span-2">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Email
+                                Address</span>
+                            <span
+                                class="font-body-md text-body-md text-on-surface font-medium mt-1">{{patient.user.email}}</span>
+                        </div>
+                        <div class="flex flex-col md:col-span-2">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Residential
+                                Address</span>
+                            <p class="font-body-md text-body-md text-on-surface font-normal mt-1 leading-relaxed">
+                                {{ patient.address}},<br class="hidden sm:inline">
+                                {{patient.city}} , {{patient.state}} - {{patient.pincode}}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Emergency Contact Callout Container -->
+                    <div
+                        class="mt-6 pt-5 border-t border-surface-container grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-8">
+                        <div class="flex flex-col"><span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Emergency
+                                Phone</span><span class="font-body-md text-body-md text-on-surface font-medium mt-1">
+                                    {{patient.emergency_contact}} </span></div>
+                    </div>
+                </div>
+                <!-- Health & Medical Details Card -->
+                <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6 sm:p-7">
+                    <div class="flex items-center justify-between pb-5 mb-5 border-b border-surface-container">
+                        <div class="flex items-center gap-2.5">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[18px]">ecg_heart</span>
+                            </div>
+                            <div>
+                                <h3 class="font-title-md text-title-md text-on-surface font-semibold">Medical Details
+                                </h3>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 rounded-xl bg-surface-container-low flex flex-col justify-between">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Blood
+                                Group</span>
+                            <div class="flex items-center gap-1.5 mt-2">
+                                <span class="material-symbols-outlined text-primary text-[20px]">bloodtype</span>
+                                <span class="font-title-md text-title-md font-bold text-on-surface">{{patient.blood_group}}</span>
+                                
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-surface-container-low flex flex-col justify-between">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Known
+                                Allergies</span>
+                            <div class="flex items-center gap-1.5 mt-2">
+                                <span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                <span class="font-label-md text-label-md text-on-surface font-medium">{{ patient.allergies}}
+                                    </span>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-surface-container-low flex flex-col justify-between">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Medical History
+
+                            </span>
+                            <div class="flex items-center gap-1.5 mt-2">
+                                <span
+                                    class="material-symbols-outlined text-outline text-[20px]">do_not_disturb_on</span>
+                                <span class="font-label-md text-label-md text-on-surface font-medium">
+                                    {{patient.medical_history}} </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Clinical History List -->
+
+                </div>
+            </div>
+            <!-- Right Column: Associated Records & Quick Navigation (Span 1) -->
 
         </div>
-
-
-        <!-- Personal Information -->
-
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
-
-            <div class="flex items-center gap-sm mb-lg">
-
-                <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
-
-                    <span class="material-symbols-outlined text-[20px]">
-                        person
-                    </span>
-
-                </div>
-
-                <h2 class="text-title-md font-title-md text-on-surface">
-                    Personal Information
-                </h2>
-
-            </div>
-
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Patient ID
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.patient_id }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Full Name
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.user.get_full_name }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Email
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.user.email }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Phone
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.user.phone_number|default:"Not provided" }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Date of Birth
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.date_of_birth }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Gender
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.get_gender_display }}
-                    </p>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- Contact & Address -->
-
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
-
-            <div class="flex items-center gap-sm mb-lg">
-
-                <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
-
-                    <span class="material-symbols-outlined text-[20px]">
-                        location_on
-                    </span>
-
-                </div>
-
-                <h2 class="text-title-md font-title-md text-on-surface">
-                    Contact & Address
-                </h2>
-
-            </div>
-
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-
-                <div class="md:col-span-2">
-                    <p class="text-label-sm text-on-surface-variant">
-                        Address
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.address|default:"Not provided" }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        City
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.city|default:"Not provided" }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        State
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.state|default:"Not provided" }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Pincode
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.pincode|default:"Not provided" }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Emergency Contact
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.emergency_contact|default:"Not provided" }}
-                    </p>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- Clinical Information -->
-
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
-
-            <div class="flex items-center gap-sm mb-lg">
-
-                <div class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center">
-
-                    <span class="material-symbols-outlined text-[20px]">
-                        medical_information
-                    </span>
-
-                </div>
-
-                <div>
-                    <h2 class="text-title-md font-title-md text-on-surface">
-                        Clinical Information
-                    </h2>
-
-                    <p class="text-body-sm text-on-surface-variant">
-                        Clinical information is managed by authorized healthcare staff.
-                    </p>
-                </div>
-
-            </div>
-
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Blood Group
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ patient.get_blood_group_display }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-sm text-on-surface-variant">
-                        Allergies
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs whitespace-pre-line">
-                        {{ patient.allergies|default:"No allergies recorded." }}
-                    </p>
-                </div>
-
-
-                <div class="md:col-span-2">
-
-                    <p class="text-label-sm text-on-surface-variant">
-                        Medical History
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs whitespace-pre-line">
-                        {{ patient.medical_history|default:"No medical history recorded." }}
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
     </div>
-</div>
+</main>
+
+
 
 {% endblock %}

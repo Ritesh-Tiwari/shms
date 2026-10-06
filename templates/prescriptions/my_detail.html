@@ -40,8 +40,7 @@ Prescription Details
                         class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Prescription
                         ID</span>
                     <div class="flex items-center gap-2"><span
-                            class="font-semibold text-body-md text-on-surface">{{ prescription.prescription_id }}</span><span
-                            class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">Official</span>
+                            class="font-semibold text-body-md text-on-surface">{{ prescription.prescription_id }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col gap-1"><span
@@ -52,9 +51,7 @@ Prescription Details
                         class="font-label-sm text-label-sm text-on-surface-variant font-medium uppercase tracking-wider">Prescribing
                         Doctor</span>
                     <div class="flex items-center gap-1.5"><span
-                            class="font-semibold text-body-md text-on-surface">Dr. {{ prescription.appointment.doctor.user.get_full_name }}</span><span
-                            class="text-outline-variant">•</span><span
-                            class="font-body-sm text-body-sm text-on-surface-variant">Internal Medicine</span>
+                            class="font-semibold text-body-md text-on-surface">Dr. {{ prescription.appointment.doctor.user.get_full_name }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col gap-1"><span
@@ -95,36 +92,19 @@ Prescription Details
                         {% for medicine in prescription.medicines.all %}
                         <tr class="hover:bg-surface-container-lowest transition-colors">
                             <td class="py-4 px-4">
-                                <div class="font-semibold text-on-surface">{{ medicine.medicine_name }}</div><span
-                                    class="block font-normal text-on-surface-variant text-[12px]">{{ medicine.form }}</span>
+                                <div class="font-semibold text-on-surface">{{ medicine.medicine_name }}</div>
                             </td>
                             <td class="py-4 px-4 font-medium text-on-surface">{{ medicine.dosage }}</td>
                             <td class="py-4 px-4">
-                                <div class="font-semibold text-on-surface">{{ medicine.frequency }}</div><span
-                                    class="block font-normal text-on-surface-variant text-[12px]">{{ medicine.frequency_description }}</span>
+                                <div class="font-semibold text-on-surface">{{ medicine.frequency }}</div>
                             </td>
                             <td class="py-4 px-4 font-medium text-on-surface">{{ medicine.duration }}</td>
                             <td class="py-4 px-4"><span
-                                    class="inline-flex items-center px-2.5 py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-medium">Take
-                                    after food</span></td>
+                                    class="inline-flex items-center px-2.5 py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-medium">
+                                    {{medicine.instructions}}</span></td>
                         </tr>
                         {% endfor %}
-                        <tr class="hover:bg-surface-container-lowest transition-colors">
-                            <td class="py-4 px-4">
-                                <div class="font-semibold text-on-surface">Cetirizine 10mg</div><span
-                                    class="block font-normal text-on-surface-variant text-[12px]">Oral
-                                    Tablet</span>
-                            </td>
-                            <td class="py-4 px-4 font-medium text-on-surface">10mg</td>
-                            <td class="py-4 px-4">
-                                <div class="font-semibold text-on-surface">0-0-1</div><span
-                                    class="block font-normal text-on-surface-variant text-[12px]">Night</span>
-                            </td>
-                            <td class="py-4 px-4 font-medium text-on-surface">10 days</td>
-                            <td class="py-4 px-4"><span
-                                    class="inline-flex items-center px-2.5 py-1 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">Take
-                                    at bedtime</span></td>
-                        </tr>
+                        
                     </tbody>
                 </table>
                 {% else %}

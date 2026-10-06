@@ -1,205 +1,242 @@
 {% extends "base.html" %}
 
-{% block title %}
-Bill Details
-{% endblock %}
+{% block title %}Bill Details{% endblock %}
 
 {% block content %}
-
-<div class="flex flex-col w-full">
-
-    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
-
-        <div class="flex justify-between items-start mb-lg">
-
-            <div>
-
-                <h1 class="text-headline-lg font-headline-lg text-on-surface">
-                    Bill Details
-                </h1>
-
-                <p class="text-body-md text-on-surface-variant mt-xs">
-                    {{ billing.bill_id }}
-                </p>
-
-            </div>
-
-
-            <a
-                href="{% url 'billing:my-bills' %}"
-                class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant"
-            >
-                Back
-            </a>
-
-        </div>
-
-
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mb-lg">
-
-            <h2 class="text-title-md font-title-md text-on-surface mb-lg">
-                Billing Information
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Bill ID
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ billing.bill_id }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Appointment
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ billing.appointment.appointment_id }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Doctor
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        Dr.
-                        {{ billing.appointment.doctor.user.get_full_name }}
-                    </p>
-                </div>
-
-
-                <div>
-                    <p class="text-label-md text-on-surface-variant">
-                        Bill Date
-                    </p>
-
-                    <p class="text-body-md text-on-surface mt-xs">
-                        {{ billing.bill_date|date:"d M Y" }}
-                    </p>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
-
-            <h2 class="text-title-md font-title-md text-on-surface mb-lg">
-                Payment Summary
-            </h2>
-
-            <div class="space-y-md">
-
-                <div class="flex justify-between">
-                    <span>Consultation Amount</span>
-                    <span>₹{{ billing.amount }}</span>
-                </div>
-
-
-                <div class="flex justify-between">
-                    <span>Tax</span>
-                    <span>₹{{ billing.tax_amount }}</span>
-                </div>
-
-
-                <div class="flex justify-between font-semibold">
-                    <span>Total Bill</span>
-                    <span>₹{{ billing.total_amount }}</span>
-                </div>
-
-
-                <div class="flex justify-between">
-                    <span>Total Paid</span>
-                    <span>₹{{ paid_amount }}</span>
-                </div>
-
-
-                <div class="flex justify-between font-semibold">
-                    <span>Remaining Due</span>
-                    <span>₹{{ remaining_amount }}</span>
-                </div>
-
-
-                <div class="flex justify-between">
-                    <span>Status</span>
-                    <span>
-                        {{ billing.get_payment_status_display }}
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-2">
+                <a class="inline-flex items-center gap-1.5 text-primary hover:text-on-primary-fixed-variant transition-colors font-label-md"
+                    href="{% url 'billing:my-bills' %}">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    Back to My Bills
+                </a>
+                <div class="flex flex-wrap items-center gap-3">
+                    <h1 class="font-headline-lg text-on-surface tracking-tight">Bill Details</h1>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm">
+                        <span class="w-2 h-2 rounded-full bg-primary"></span>
+                        {{ billing.get_payment_status_display|default:"Status unavailable" }}
                     </span>
                 </div>
-
+                <p class="font-body-sm text-on-surface-variant">{{ billing.bill_id|default:"Bill ID unavailable" }}</p>
             </div>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="window.print()"
+                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-[18px]">print</span>
+                    Print Bill
+                </button>
+                {% with latest_payment=billing.payments.first %}
+                {% if latest_payment %}
+                <a href="{% url 'billing:payment_receipt_pdf' latest_payment.pk %}"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    Download Receipt
+                </a>
+                {% else %}
+                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container text-on-surface-variant cursor-not-allowed"
+                    aria-disabled="true" title="A receipt is available after a payment is recorded">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    No Receipt Yet
+                </span>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
 
+        <section class="bg-surface-container-lowest rounded-xl p-5 sm:p-8 shadow-sm">
+            <div class="flex items-center gap-2.5 pb-4 mb-4 border-b border-outline-variant/20">
+                <span class="material-symbols-outlined text-primary text-[22px]">receipt_long</span>
+                <h2 class="font-title-md text-on-surface font-semibold">Invoice &amp; Encounter Details</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="p-4 rounded-lg bg-surface-container-low">
+                    <p class="font-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Bill ID</p>
+                    <p class="font-mono font-semibold text-on-surface">{{ billing.bill_id|default:"Not available" }}</p>
+                </div>
+                <div class="p-4 rounded-lg bg-surface-container-low">
+                    <p class="font-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Appointment</p>
+                    <a class="font-mono font-semibold text-primary hover:underline"
+                        href="{% url 'appointments:my-appointment-detail' billing.appointment.pk %}">
+                        {{ billing.appointment.appointment_id|default:"Not available" }}
+                    </a>
+                </div>
+                <div class="p-4 rounded-lg bg-surface-container-low">
+                    <p class="font-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Patient</p>
+                    <p class="font-medium text-on-surface">
+                        {{ billing.patient.patient_id|default:"" }}
+                        {% if billing.patient.user.get_full_name %}— {{ billing.patient.user.get_full_name }}{% endif %}
+                    </p>
+                </div>
+                <div class="p-4 rounded-lg bg-surface-container-low">
+                    <p class="font-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Doctor</p>
+                    <p class="font-medium text-on-surface">
+                        {% if billing.appointment.doctor.doctor_id %}{{ billing.appointment.doctor.doctor_id }} — {% endif %}
+                        {% if billing.appointment.doctor.user.get_full_name %}Dr. {{ billing.appointment.doctor.user.get_full_name }}{% else %}Doctor information unavailable{% endif %}
+                    </p>
+                    <p class="font-body-sm text-on-surface-variant mt-1">
+                        {{ billing.appointment.doctor.specialization|default:""|title }}
+                    </p>
+                </div>
+                <div class="p-4 rounded-lg bg-surface-container-low sm:col-span-2">
+                    <p class="font-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Bill Date</p>
+                    <p class="font-medium text-on-surface">
+                        {% if billing.bill_date %}<time datetime="{{ billing.bill_date|date:'c' }}">{{ billing.bill_date|date:"d M Y, g:i A" }}</time>{% else %}Date unavailable{% endif %}
+                    </p>
+                </div>
+            </div>
         </section>
 
-
-        {% if billing.payments.all %}
-
-            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg mt-lg">
-
-                <h2 class="text-title-md font-title-md text-on-surface mb-lg">
-                    Payments
-                </h2>
-
-                <div class="space-y-md">
-
-                    {% for payment in billing.payments.all %}
-
-                        <div class="border border-outline-variant rounded-lg p-md">
-
-                            <div class="flex justify-between">
-
-                                <div>
-
-                                    <p class="text-title-sm font-title-sm">
-                                        {{ payment.payment_id }}
-                                    </p>
-
-                                    <p class="text-body-sm text-on-surface-variant mt-xs">
-                                        {{ payment.payment_date|date:"d M Y, h:i A" }}
-                                    </p>
-
-                                </div>
-
-
-                                <div class="text-right">
-
-                                    <p class="font-semibold">
-                                        ₹{{ payment.amount }}
-                                    </p>
-
-                                    <a
-                                        href="{% url 'billing:my-receipt' payment.pk %}"
-                                        class="text-primary text-sm"
-                                    >
-                                        View Receipt
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    {% endfor %}
-
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <section class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
+                <div class="flex items-center gap-2.5 pb-4 mb-4 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-primary text-[22px]">account_balance_wallet</span>
+                    <h2 class="font-title-md text-on-surface font-semibold">Payment Summary</h2>
                 </div>
-
+                <dl class="space-y-3">
+                    <div class="flex items-center justify-between gap-4 py-2 font-body-md text-on-surface-variant">
+                        <dt>Consultation Amount</dt>
+                        <dd class="text-on-surface font-semibold font-mono whitespace-nowrap">₹{{ billing.amount|floatformat:2 }}</dd>
+                    </div>
+                    <div class="flex items-center justify-between gap-4 py-2 font-body-md text-on-surface-variant">
+                        <dt>Tax{% if billing.get_tax_type_display %} ({{ billing.get_tax_type_display }}){% endif %}</dt>
+                        <dd class="text-on-surface font-semibold font-mono whitespace-nowrap">₹{{ billing.tax_amount|floatformat:2 }}</dd>
+                    </div>
+                    <div class="flex items-center justify-between gap-4 border-t border-surface-container pt-3 font-title-sm font-semibold">
+                        <dt>Total Bill</dt>
+                        <dd class="text-on-surface font-mono whitespace-nowrap">₹{{ billing.total_amount|floatformat:2 }}</dd>
+                    </div>
+                    <div class="flex items-center justify-between gap-4 py-2 font-body-md text-on-surface-variant">
+                        <dt>Total Paid</dt>
+                        <dd class="text-on-surface font-semibold font-mono whitespace-nowrap">₹{{ paid_amount|default_if_none:0|floatformat:2 }}</dd>
+                    </div>
+                    <div class="flex items-center justify-between gap-4 py-3 px-4 rounded-lg {% if remaining_amount > 0 %}bg-error-container/30 text-error{% else %}bg-secondary-container/30 text-secondary{% endif %}">
+                        <dt class="font-label-md font-semibold">Remaining Due</dt>
+                        {% if remaining_amount >= 0 %}
+                        <dd class="font-title-sm font-bold font-mono whitespace-nowrap">₹{{ remaining_amount|floatformat:2 }}</dd>
+                        {% else %}
+                        <dd class="font-label-sm font-semibold">Please contact billing</dd>
+                        {% endif %}
+                    </div>
+                    {% if remaining_amount < 0 %}
+                    <div class="p-3 rounded-lg bg-error/5 text-error font-body-sm" role="alert">
+                        The recorded payments exceed the bill total. Please contact the billing desk to review this balance.
+                    </div>
+                    {% endif %}
+                    <div class="flex items-center justify-between gap-4 py-2 font-body-md">
+                        <dt class="text-on-surface-variant">Status</dt>
+                        <dd class="text-on-surface font-semibold">{{ billing.get_payment_status_display|default:"Status unavailable" }}</dd>
+                    </div>
+                </dl>
             </section>
 
-        {% endif %}
+            <section class="lg:col-span-7 bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
+                <div class="flex items-center gap-2.5 pb-4 mb-4 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-primary text-[22px]">receipt_long</span>
+                    <h2 class="font-title-md text-on-surface font-semibold">Invoice Breakdown</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-surface-container-low font-label-sm text-on-surface-variant uppercase tracking-wider">
+                                <th scope="col" class="py-3 px-4 rounded-l-lg">Description</th>
+                                <th scope="col" class="py-3 px-4 text-center">Qty</th>
+                                <th scope="col" class="py-3 px-4 text-right rounded-r-lg">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-body-sm">
+                            <tr class="border-b border-surface-container">
+                                <td class="py-4 px-4 font-medium text-on-surface">Doctor Consultation Fee</td>
+                                <td class="py-4 px-4 text-center text-on-surface-variant">1</td>
+                                <td class="py-4 px-4 text-right font-semibold text-on-surface whitespace-nowrap">₹{{ billing.amount|floatformat:2 }}</td>
+                            </tr>
+                            {% if billing.tax_amount %}
+                            <tr>
+                                <td class="py-4 px-4 font-medium text-on-surface">
+                                    Tax{% if billing.get_tax_type_display %} — {{ billing.get_tax_type_display }}{% endif %}
+                                </td>
+                                <td class="py-4 px-4 text-center text-on-surface-variant">1</td>
+                                <td class="py-4 px-4 text-right font-semibold text-on-surface whitespace-nowrap">₹{{ billing.tax_amount|floatformat:2 }}</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-6 bg-surface-container-low/60 rounded-xl p-4 sm:p-5">
+                    <div class="flex justify-between items-center gap-4">
+                        <span class="font-title-md text-on-surface font-semibold">Total Amount</span>
+                        <span class="font-headline-lg text-primary font-bold whitespace-nowrap">₹{{ billing.total_amount|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </section>
+        </div>
 
+        <section class="bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
+            <div class="flex items-center gap-2.5 pb-4 mb-4">
+                <span class="material-symbols-outlined text-primary text-[22px]">payments</span>
+                <div>
+                    <h2 class="font-title-md text-on-surface font-semibold">Payment History</h2>
+                    <p class="font-body-sm text-on-surface-variant mt-1">Payments recorded against this bill.</p>
+                </div>
+            </div>
+            {% if billing.payments.all %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-surface-container-low font-label-sm text-on-surface-variant uppercase tracking-wider">
+                            <th scope="col" class="py-3 px-4">Payment ID</th>
+                            <th scope="col" class="py-3 px-4">Date</th>
+                            <th scope="col" class="py-3 px-4">Mode</th>
+                            <th scope="col" class="py-3 px-4 text-right">Amount</th>
+                            <th scope="col" class="py-3 px-4 text-right">Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-body-sm">
+                        {% for payment in billing.payments.all %}
+                        <tr class="border-b border-surface-container last:border-0 hover:bg-surface-container-low/40 transition-colors">
+                            <td class="py-4 px-4 font-semibold text-primary">{{ payment.payment_id|default:"Payment" }}</td>
+                            <td class="py-4 px-4 text-on-surface whitespace-nowrap">
+                                {% if payment.payment_date %}<time datetime="{{ payment.payment_date|date:'c' }}">{{ payment.payment_date|date:"d M Y, h:i A" }}</time>{% else %}Date unavailable{% endif %}
+                            </td>
+                            <td class="py-4 px-4 text-on-surface-variant whitespace-nowrap">
+                                {{ payment.get_payment_method_display|default:"Method unavailable" }}
+                                <span class="block text-xs">{{ payment.get_payment_type_display|default:"Payment" }}</span>
+                            </td>
+                            <td class="py-4 px-4 text-right font-bold text-on-surface whitespace-nowrap">₹{{ payment.amount|floatformat:2 }}</td>
+                            <td class="py-4 px-4 text-right whitespace-nowrap">
+                                <a href="{% url 'billing:my-receipt' payment.pk %}"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-sm font-medium transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                                    View Receipt
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-6 rounded-xl bg-surface-container-low text-center">
+                <span class="material-symbols-outlined text-outline text-[30px]">receipt_long</span>
+                <p class="font-label-md font-semibold text-on-surface mt-2">No payments recorded yet</p>
+                <p class="font-body-sm text-on-surface-variant mt-1">Payment history and receipts will appear here once recorded.</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 pb-6">
+            <a href="{% url 'appointments:my-appointment-detail' billing.appointment.pk %}"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md transition-colors">
+                <span class="material-symbols-outlined text-[18px]">event</span>
+                View Appointment
+            </a>
+            <a href="{% url 'billing:my-receipts' %}"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md transition-colors">
+                <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                My Receipts
+            </a>
+        </div>
     </div>
-
-</div>
-
+</main>
 {% endblock %}

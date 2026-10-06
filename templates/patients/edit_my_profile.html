@@ -6,207 +6,233 @@ Edit My Profile
 
 {% block content %}
 
-<div class="flex flex-col w-full">
-    <div class="px-gutter py-xl max-w-[1200px] mx-auto w-full">
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full">
+        <div class="max-w-5xl mx-auto w-full space-y-8">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="space-y-1">
+                    <a class="inline-flex items-center gap-1.5 text-primary hover:text-primary-container font-label-md text-label-md transition-colors group mb-1"
+                        href="{% url "patients:my-profile" %}">
+                        <span
+                            class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-1">arrow_back</span>
+                        <span class="">Back to Profile</span>
+                    </a>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Update My Details
+                        </h1>
+                        <span
+                            class="px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed">
+                            {{patient.user.get_full_name}} • {{patient.patient_id}}</span>
+                    </div>
 
-        <div class="flex justify-between items-end mb-lg">
-            <div>
-                <h1 class="text-headline-lg font-headline-lg text-on-surface">
-                    Edit My Profile
-                </h1>
-                <p class="text-body-md text-on-surface-variant mt-xs">
-                    Update your contact and address information.
-                </p>
+                </div>
+
             </div>
+             {% if user_form.non_field_errors or patient_form.non_field_errors %}
+                <section class="bg-error-container rounded-xl p-lg mb-lg">
+                    <div class="flex gap-md">
+                        <span class="material-symbols-outlined text-error">error</span>
+                        <div>
+                            <h3 class="text-label-md font-semibold text-on-error-container">
+                                Please correct the errors below
+                            </h3>
 
-            <a
-                href="{% url 'patients:my-profile' %}"
-                class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors">
-                Cancel
-            </a>
+                            {% for error in user_form.non_field_errors %}
+                                <p class="text-body-sm text-on-error-container mt-xs">{{ error }}</p>
+                            {% endfor %}
+
+                            {% for error in patient_form.non_field_errors %}
+                                <p class="text-body-sm text-on-error-container mt-xs">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            {% endif %}
+
+            <form method="post" class="bg-surface-container-lowest rounded-xl shadow-sm p-6 sm:p-8 space-y-10">
+                {% csrf_token %}
+                <!-- Section 1: Contact Information -->
+                <section class="space-y-6">
+                    <div class="flex items-center gap-2.5 pb-2">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined text-[20px]">call</span>
+                        </div>
+                        <div>
+                            <h3 class="font-title-md text-title-md text-on-surface">Contact Information</h3>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface" for="primaryPhone">Phone
+                                Number</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">call</span>
+                                <input
+                                    class="w-full h-10 pl-10 pr-3.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                    id="primaryPhone" type="tel" name="phone_number" maxlength="15"
+                                    value="{{ user_form.phone_number.value|default_if_none:'' }}"
+                                    aria-invalid="{% if user_form.phone_number.errors %}true{% else %}false{% endif %}"
+                                    {% if user_form.phone_number.errors %}aria-describedby="phone-number-errors"{% endif %}>
+                            </div>
+                            {% if user_form.phone_number.errors %}
+                                <div id="phone-number-errors" class="text-sm text-error" role="alert">
+                                    {% for error in user_form.phone_number.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface" for="emailAddress">Email
+                                Address <span class="text-error">*</span></label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">mail</span>
+                                <input
+                                    class="w-full h-10 pl-10 pr-3.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                    id="emailAddress" type="email" name="email" required
+                                    value="{{ user_form.email.value|default_if_none:'' }}"
+                                    aria-invalid="{% if user_form.email.errors %}true{% else %}false{% endif %}"
+                                    {% if user_form.email.errors %}aria-describedby="email-errors"{% endif %}>
+                            </div>
+                            {% if user_form.email.errors %}
+                                <div id="email-errors" class="text-sm text-error" role="alert">
+                                    {% for error in user_form.email.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Address Information -->
+                <section class="space-y-6 pt-4">
+                    <div class="flex items-center gap-2.5 pb-2">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined text-[20px]">location_on</span>
+                        </div>
+                        <div>
+                            <h3 class="font-title-md text-title-md text-on-surface">Address Information</h3>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="space-y-1.5 md:col-span-3">
+                            <label class="block font-label-md text-label-md text-on-surface" for="address">Residential
+                                Address / Street Address <span class="text-error">*</span></label>
+                            <textarea
+                                class="w-full p-3.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-y"
+                                id="address" rows="2" name="address" required
+                                aria-invalid="{% if patient_form.address.errors %}true{% else %}false{% endif %}"
+                                {% if patient_form.address.errors %}aria-describedby="address-errors"{% endif %}>{{ patient_form.address.value|default_if_none:'' }}</textarea>
+                            {% if patient_form.address.errors %}
+                                <div id="address-errors" class="text-sm text-error" role="alert">
+                                    {% for error in patient_form.address.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface" for="city">City <span
+                                    class="text-error">*</span></label>
+                            <input
+                                class="w-full h-10 px-3.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                id="city" type="text" name="city" required maxlength="100"
+                                value="{{ patient_form.city.value|default_if_none:'' }}"
+                                aria-invalid="{% if patient_form.city.errors %}true{% else %}false{% endif %}"
+                                {% if patient_form.city.errors %}aria-describedby="city-errors"{% endif %}>
+                            {% if patient_form.city.errors %}
+                                <div id="city-errors" class="text-sm text-error" role="alert">
+                                    {% for error in patient_form.city.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface" for="state">State <span
+                                    class="text-error">*</span></label>
+                            <input
+                                class="w-full h-10 px-3.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                id="state" type="text" name="state" required maxlength="100"
+                                value="{{ patient_form.state.value|default_if_none:'' }}"
+                                aria-invalid="{% if patient_form.state.errors %}true{% else %}false{% endif %}"
+                                {% if patient_form.state.errors %}aria-describedby="state-errors"{% endif %}>
+                            {% if patient_form.state.errors %}
+                                <div id="state-errors" class="text-sm text-error" role="alert">
+                                    {% for error in patient_form.state.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface" for="pincode">Pincode <span
+                                    class="text-error">*</span></label>
+                            <input
+                                class="w-full h-10 px-3.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                id="pincode" type="text" name="pincode" required maxlength="10" inputmode="numeric"
+                                value="{{ patient_form.pincode.value|default_if_none:'' }}"
+                                aria-invalid="{% if patient_form.pincode.errors %}true{% else %}false{% endif %}"
+                                {% if patient_form.pincode.errors %}aria-describedby="pincode-errors"{% endif %}>
+                            {% if patient_form.pincode.errors %}
+                                <div id="pincode-errors" class="text-sm text-error" role="alert">
+                                    {% for error in patient_form.pincode.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Emergency Contact -->
+                <section class="space-y-6 pt-4">
+                    <div class="flex items-center gap-2.5 pb-2">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined text-[20px]">contacts</span>
+                        </div>
+                        <div>
+                            <h3 class="font-title-md text-title-md text-on-surface">Emergency Contact</h3>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5 md:col-span-2">
+                            <label class="block font-label-md text-label-md text-on-surface"
+                                for="emergencyContact">Emergency Phone Number <span class="text-error">*</span></label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">phone_in_talk</span>
+                                <input
+                                    class="w-full h-10 pl-10 pr-3.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                    id="emergencyContact" type="tel" name="emergency_contact" maxlength="15" required
+                                    value="{{ patient_form.emergency_contact.value|default_if_none:'' }}"
+                                    aria-invalid="{% if patient_form.emergency_contact.errors %}true{% else %}false{% endif %}"
+                                    {% if patient_form.emergency_contact.errors %}aria-describedby="emergency-contact-errors"{% endif %}>
+                            </div>
+                            {% if patient_form.emergency_contact.errors %}
+                                <div id="emergency-contact-errors" class="text-sm text-error" role="alert">
+                                    {% for error in patient_form.emergency_contact.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Action Buttons -->
+                <div class="pt-6 flex flex-col sm:flex-row items-center gap-4 justify-end">
+                    <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                        <a class="px-5 py-2.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors text-center"
+                            href="{% url 'patients:my-profile' %}">
+                            Cancel
+                        </a>
+                        <button
+                            class="inline-flex items-center justify-center gap-2 px-7 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                            type="submit">
+                            <span class="material-symbols-outlined text-[18px]"
+                                style="font-variation-settings: &quot;FILL&quot; 1;">save</span>
+                            <span class="">Save Changes</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        {% if user_form.non_field_errors or patient_form.non_field_errors %}
-            <section class="bg-error-container rounded-xl p-lg mb-lg">
-                <div class="flex gap-md">
-                    <span class="material-symbols-outlined text-error">error</span>
-                    <div>
-                        <h3 class="text-label-md font-semibold text-on-error-container">
-                            Please correct the errors below
-                        </h3>
-
-                        {% for error in user_form.non_field_errors %}
-                            <p class="text-body-sm text-on-error-container mt-xs">{{ error }}</p>
-                        {% endfor %}
-
-                        {% for error in patient_form.non_field_errors %}
-                            <p class="text-body-sm text-on-error-container mt-xs">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </section>
-        {% endif %}
-
-        <form method="post" class="space-y-lg" novalidate>
-            {% csrf_token %}
-
-            <!-- Contact -->
-            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
-
-                <div class="flex items-center gap-sm mb-lg">
-                    <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[20px]">contact_phone</span>
-                    </div>
-
-                    <h2 class="text-title-md font-title-md text-on-surface">
-                        Contact Information
-                    </h2>
-                </div>
-
-                <div>
-                    <label for="{{ user_form.phone_number.id_for_label }}"
-                           class="block text-label-md text-on-surface-variant mb-xs">
-                        Phone Number
-                    </label>
-
-                    {{ user_form.phone_number }}
-
-                    {% for error in user_form.phone_number.errors %}
-                        <p class="text-sm text-error mt-xs">{{ error }}</p>
-                    {% endfor %}
-                </div>
-
-                
-                <div>
-                    <label for="{{ user_form.email.id_for_label }}"
-                           class="block text-label-md text-on-surface-variant mb-xs">
-                        email 
-                    </label>
-
-                    {{ user_form.email }}
-
-                    {% for error in user_form.email.errors %}
-                        <p class="text-sm text-error mt-xs">{{ error }}</p>
-                    {% endfor %}
-                </div>
-            </section>
-
-            <!-- Address -->
-            <section class="bg-surface-container-lowest rounded-xl shadow-sm p-lg">
-
-                <div class="flex items-center gap-sm mb-lg">
-                    <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[20px]">location_on</span>
-                    </div>
-
-                    <h2 class="text-title-md font-title-md text-on-surface">
-                        Address Information
-                    </h2>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-
-                    <div class="md:col-span-2">
-                        <label for="{{ patient_form.address.id_for_label }}"
-                               class="block text-label-md text-on-surface-variant mb-xs">
-                            Address
-                        </label>
-
-                        {{ patient_form.address }}
-
-                        {% for error in patient_form.address.errors %}
-                            <p class="text-sm text-error mt-xs">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-
-                    <div>
-                        <label for="{{ patient_form.city.id_for_label }}"
-                               class="block text-label-md text-on-surface-variant mb-xs">
-                            City
-                        </label>
-
-                        {{ patient_form.city }}
-
-                        {% for error in patient_form.city.errors %}
-                            <p class="text-sm text-error mt-xs">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-
-                    <div>
-                        <label for="{{ patient_form.state.id_for_label }}"
-                               class="block text-label-md text-on-surface-variant mb-xs">
-                            State
-                        </label>
-
-                        {{ patient_form.state }}
-
-                        {% for error in patient_form.state.errors %}
-                            <p class="text-sm text-error mt-xs">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-
-                    <div>
-                        <label for="{{ patient_form.pincode.id_for_label }}"
-                               class="block text-label-md text-on-surface-variant mb-xs">
-                            Pincode
-                        </label>
-
-                        {{ patient_form.pincode }}
-
-                        {% for error in patient_form.pincode.errors %}
-                            <p class="text-sm text-error mt-xs">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-
-                    <div>
-                        <label for="{{ patient_form.emergency_contact.id_for_label }}"
-                               class="block text-label-md text-on-surface-variant mb-xs">
-                            Emergency Contact
-                        </label>
-
-                        {{ patient_form.emergency_contact }}
-
-                        {% for error in patient_form.emergency_contact.errors %}
-                            <p class="text-sm text-error mt-xs">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-
-                </div>
-            </section>
-
-            <!-- Read-only notice -->
-            <section class="bg-surface-container rounded-xl p-lg">
-                <div class="flex gap-md">
-                    <span class="material-symbols-outlined text-primary">info</span>
-
-                    <div>
-                        <h3 class="text-label-md font-semibold text-on-surface">
-                            Clinical information is protected
-                        </h3>
-
-                        <p class="text-body-sm text-on-surface-variant mt-xs">
-                            Date of birth, gender, blood group, allergies and
-                            medical history can only be managed by authorized healthcare staff.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <div class="flex justify-end gap-md">
-                <a
-                    href="{% url 'patients:my-profile' %}"
-                    class="px-md py-sm rounded-lg border border-outline-variant text-on-surface-variant">
-                    Cancel
-                </a>
-
-                <button
-                    type="submit"
-                    class="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md hover:bg-primary/90 transition-colors">
-                    Save Changes
-                </button>
-            </div>
-        </form>
     </div>
-</div>
+</main>
+
 
 {% endblock %}

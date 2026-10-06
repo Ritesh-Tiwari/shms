@@ -24,7 +24,7 @@
                     <p class="px-3 mb-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Main
                         Navigation</p>
                     <nav class="space-y-1">
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-container text-white font-medium text-sm shadow-sm transition-all"
+                        <a {% if request.resolver_match.namespace == 'dashboard' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'dashboard' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'dashboard:dashboard' %}">
                             <span class="material-symbols-outlined text-[20px]">grid_view</span>
                             <span>Dashboard</span>
@@ -34,17 +34,17 @@
 
                         {% if user.role == "ADMIN" %}
 
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        <a {% if request.resolver_match.namespace == 'doctors' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'doctors' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'doctors:list' %}">
                             <span class="material-symbols-outlined text-[20px]">medical_services</span>
                             <span>Doctors</span>   
                         </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        <a {% if request.resolver_match.namespace == 'patients' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'patients' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'patients:list' %}">
                             <span class="material-symbols-outlined text-[20px]">person</span>
                             <span>Patients</span>
                         </a>                     
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        <a {% if request.resolver_match.namespace == 'appointments' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'appointments' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'appointments:list' %}">
                             <span class="material-symbols-outlined text-[20px]">calendar_month</span>
                             <span>Appointments</span>
@@ -57,7 +57,7 @@
                             Clinical
                         </div>
 
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        <a {% if request.resolver_match.namespace == 'appointments' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'appointments' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'appointments:list' %}">
                             <span class="material-symbols-outlined text-[20px]">calendar_month</span>
                             <span>My Appointments</span>
@@ -77,28 +77,29 @@
                         <!-- ================= PATIENT ================= -->
                         {% if user.role == 'PATIENT' %}
                         
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        <a {% if request.resolver_match.namespace == 'patients' and request.resolver_match.url_name == 'my-profile' or request.resolver_match.namespace == 'patients' and request.resolver_match.url_name == 'edit-my-profile' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'patients' and request.resolver_match.url_name == 'my-profile' or request.resolver_match.namespace == 'patients' and request.resolver_match.url_name == 'edit-my-profile' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'patients:my-profile' %}">
                             <span class="material-symbols-outlined text-[20px]">person</span>
                             <span>My Profile</span>    
                         </a>
 
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        <a {% if request.resolver_match.namespace == 'appointments' and request.resolver_match.url_name == 'my-appointments' or request.resolver_match.namespace == 'appointments' and request.resolver_match.url_name == 'my-appointment-detail' or request.resolver_match.namespace == 'appointments' and request.resolver_match.url_name == 'my-cancel' or request.resolver_match.namespace == 'appointments' and request.resolver_match.url_name == 'book' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'appointments' and request.resolver_match.url_name == 'my-appointments' or request.resolver_match.namespace == 'appointments' and request.resolver_match.url_name == 'my-appointment-detail' or request.resolver_match.namespace == 'appointments' and request.resolver_match.url_name == 'my-cancel' or request.resolver_match.namespace == 'appointments' and request.resolver_match.url_name == 'book' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'appointments:my-appointments' %}">
                             <span class="material-symbols-outlined text-[20px]">calendar_month</span>
                             <span>My Appointments</span>    
                         </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        <a {% if request.resolver_match.namespace == 'prescriptions' and request.resolver_match.url_name == 'my-prescriptions' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'prescriptions' and request.resolver_match.url_name == 'my-prescriptions' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'prescriptions:my-prescriptions' %}">
                             <span class="material-symbols-outlined text-[20px]">prescriptions</span>
                             <span>My Prescriptions</span>
                         </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        <a {% if request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'my-bills' or request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'my-bill-detail' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'my-bills' or request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'my-bill-detail' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'billing:my-bills' %}">
                             <span class="material-symbols-outlined text-[20px]">receipt</span>
                             <span>My Bills</span>
                         </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+
+                        <a {% if request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'my-receipts' or request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'my-receipt' or request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'payment_receipt_pdf' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'my-receipts' or request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'my-receipt' or request.resolver_match.namespace == 'billing' and request.resolver_match.url_name == 'payment_receipt_pdf' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'billing:my-receipts' %}">
                             <span class="material-symbols-outlined text-[20px]">payment</span>
                             <span>My Payments</span>
