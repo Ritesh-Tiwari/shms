@@ -1,6 +1,6 @@
 <!-- Left Sidebar (Collapsible on Mobile, Fixed on Desktop) -->
     <aside
-        class="fixed inset-y-0 left-0 w-64 bg-surface-container-lowest border-r border-slate-200/80 z-50 flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
+        class="fixed inset-y-0 left-0 w-64 bg-surface-container-lowest border-r border-slate-200/80 z-50 flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out no-print"
         id="sidebar">
         <div class="flex flex-col h-full">
             <!-- App Header / Logo -->
@@ -67,11 +67,11 @@
                             <span class="material-symbols-outlined text-[20px]">prescriptions</span>
                             <span>Prescriptions</span>
                         </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        {% comment %} <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
                             href="#">
                             <span class="material-symbols-outlined text-[20px]">vital_signs</span>
                             <span>Medical History</span>
-                        </a>
+                        </a> {% endcomment %}
                         {% endif %}
 
                         <!-- ================= PATIENT ================= -->
@@ -106,11 +106,11 @@
                         </a>
                         
 
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
+                        {% comment %} <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium text-sm transition-all"
                             href="#">
                             <span class="material-symbols-outlined text-[20px]">vital_signs</span>
                             <span>My Medical History</span>
-                        </a>
+                        </a> {% endcomment %}
                         {% endif %}
 
                     </nav>

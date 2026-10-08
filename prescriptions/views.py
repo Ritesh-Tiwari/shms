@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.db.models.aggregates import Count
-from django.db.models.aggregates import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 
@@ -12,7 +11,7 @@ from .forms import (
     PrescriptionForm,
     PrescriptionMedicineFormSet,
 )
-from .models import Prescription
+from .models import Prescription, PrescriptionStatus
 
 
 @role_required(
@@ -261,8 +260,15 @@ def my_prescriptions(request):
             "-created_at",
         )
     )
-    current_prescription = prescriptions.first()  # Get the most recent prescription
-    
+    current_prescription = prescriptions.first()
+    active_prescriptions_count = prescriptions.filter(
+        status=PrescriptionStatus.ACTIVE,
+    ).count()
+    completed_prescriptions_count = prescriptions.filter(
+        status=PrescriptionStatus.COMPLETED,
+    ).count()
+    all_prescriptions_count = prescriptions.count()
+
     paginator = Paginator(
         prescriptions,
         10,
@@ -282,6 +288,9 @@ def my_prescriptions(request):
         {
             "page_obj": page_obj,
             "current_prescription": current_prescription,
+            "active_prescriptions_count": active_prescriptions_count,
+            "completed_prescriptions_count": completed_prescriptions_count,
+            "all_prescriptions_count": all_prescriptions_count,
         },
     )
 

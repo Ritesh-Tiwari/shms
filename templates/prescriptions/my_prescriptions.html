@@ -37,14 +37,11 @@ My Prescriptions
                 <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">My Prescriptions
                 </h1>
             </div>
-            {% comment %} <div class="flex items-center gap-2.5"><button
-                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container shadow-sm font-label-md text-label-md transition-all"><span
-                        class="material-symbols-outlined text-[18px]">add_box</span><span class="">Request
-                        Refill / Consult</span></button></div> {% endcomment %}
+           
         </header>
         <!-- Search & Filter Controls -->
         <section
-            class="bg-surface-container-lowest p-4 rounded-xl shadow-sm mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            class="no-print bg-surface-container-lowest p-4 rounded-xl shadow-sm mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
             <!-- Filter Tabs -->
             <div class="flex items-center p-1 bg-surface-container-low rounded-lg gap-1 overflow-x-auto"
                 id="rx-tabs">
@@ -53,21 +50,21 @@ My Prescriptions
                     data-tab="active">
                     <span class="">Active</span>
                     <span
-                        class="px-1.5 py-0.2 rounded-full bg-primary-fixed text-on-primary-fixed text-[11px] font-bold">2</span>
+                        class="px-1.5 py-0.2 rounded-full bg-primary-fixed text-on-primary-fixed text-[11px] font-bold">{{ active_prescriptions_count|default:"0"}}</span>
                 </button>
                 <button
                     class="tab-trigger inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-all"
                     data-tab="completed">
                     <span class="">Completed</span>
                     <span
-                        class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold">1</span>
+                        class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold">{{completed_prescriptions_count|default:"0"}}</span>
                 </button>
                 <button
                     class="tab-trigger inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-all"
                     data-tab="all">
                     <span class="">All Prescriptions</span>
                     <span
-                        class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold">3</span>
+                        class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold">{{all_prescriptions_count|default:"0"}}</span>
                 </button>
             </div>
             <!-- Search & Filter dropdowns -->
@@ -83,31 +80,42 @@ My Prescriptions
             <!-- Card 1: Current Prescription (Active) -->
             <article
                 class="rx-card bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 sm:p-6"
-                data-doctor="ananya" data-status="active"
-                data-text="amoxicillin paracetamol pantoprazole dr ananya sharma cardiology pre000002 apt000005">
+                data-doctor="{{prescription.appointment.doctor.user.first_name}}" data-status="{{ page_obj.0.status_label|title }}"
+                data-text="{{page_obj.0.status_label}} {{page_obj.0.appointment.doctor.user.get_full_name}} {{page_obj.0.prescription_id}} {{ page_obj.0.appointment.doctor.specialization }} {{ page_obj.0.appointment.appointment_id }} {% for medicine in page_obj.0.medicines.all %}{{ medicine.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
                 <div
                     class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-surface-container">
                     <div>
                         <div class="flex items-center gap-2 mb-1"><span
-                                class="px-2.5 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold tracking-wide">{{ current_prescription.prescription_id }}</span><span
-                                class="font-title-md text-title-md text-on-surface font-semibold">Dr. {{ current_prescription.appointment.doctor.user.get_full_name }}</span><span class="text-outline-variant">•</span><span
-                                class="font-body-sm text-body-sm text-on-surface-variant">{{ current_prescription.appointment.doctor.specialization }}</span>
+                                class="px-2.5 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold tracking-wide">{{ page_obj.0.prescription_id }}</span><span
+                                class="font-title-md text-title-md text-on-surface font-semibold">Dr. {{ page_obj.0.appointment.doctor.user.get_full_name }} {{ page_obj.0.status_label|title }}</span><span class="text-outline-variant">•</span><span
+                                class="font-body-sm text-body-sm text-on-surface-variant">{{ page_obj.0.appointment.doctor.specialization }} </span>
                         </div>
                         <div
                             class="flex items-center gap-3 text-on-surface-variant font-label-md text-label-md">
                             <div class="flex items-center gap-1"><span
                                     class="material-symbols-outlined text-[16px]">calendar_today</span><span
-                                    class="">Issued {{ current_prescription.created_at|date:"M d, Y" }}</span></div><span
+                                    class="">Issued {{ page_obj.0.created_at|date:"M d, Y" }}</span></div><span
                                 class="text-outline-variant">•</span>
                             <div class="flex items-center gap-1"><span
                                     class="material-symbols-outlined text-[16px]">link</span><span class="">Ref:
-                                    {{ current_prescription.appointment.appointment_id }}</span></div>
+                                    {{ page_obj.0.appointment.appointment_id }} </span></div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 self-start sm:self-center"><span
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                       {% if page_obj.0.is_active %}
+                        <span
                             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/30 text-secondary font-label-sm text-label-sm font-bold"><span
                                 class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>Active
-                            Course</span></div>
+                            Course</span>
+                        {% else %}
+                        <span
+                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">
+                            <span
+                                class="material-symbols-outlined text-[14px]">check_circle</span>Course Completed 
+                        </span>
+                        {% endif %}
+                        
+                    </div>
                 </div>
                 <div class="overflow-x-auto rounded-lg bg-surface-container-low/40 p-1 mb-4">
                     <table class="w-full text-left border-collapse">
@@ -121,7 +129,7 @@ My Prescriptions
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-surface-container font-body-sm text-body-sm">
-                            {% for medicine in current_prescription.medicines.all %}
+                            {% for medicine in page_obj.0.medicines.all %}
                             <tr class="hover:bg-surface-container-lowest transition-colors">
                                 <td class="py-3 px-3.5 font-semibold text-on-surface"> {{ medicine.medicine_name }}<span
                                         </td>
@@ -133,40 +141,30 @@ My Prescriptions
                             </tr>
                             {% endfor %}
                             
-                            <tr class="hover:bg-surface-container-lowest transition-colors">
-                                <td class="py-3 px-3.5 font-semibold text-on-surface">Pantoprazole 40mg<span
-                                        class="block font-normal text-on-surface-variant text-[12px]">Gastro-resistant
-                                        Capsule</span></td>
-                                <td class="py-3 px-3.5 text-on-surface">1 capsule • Once daily</td>
-                                <td class="py-3 px-3.5 text-on-surface">7 days</td>
-                                <td class="py-3 px-3.5"><span
-                                        class="inline-flex items-center px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">Before
-                                        breakfast</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-1">
-                    <button
+                    <button onclick="window.print()"
                         class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-md text-label-md transition-colors"><span
                             class="material-symbols-outlined text-[18px]">download</span><span class="">Download
                             PDF</span>
                     </button>
-                    <a href="{% url 'prescriptions:my-prescription-detail' current_prescription.pk %}"
+                    <a href="{% url 'prescriptions:my-prescription-detail' page_obj.0.pk %}"
                         class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-md text-label-md font-medium transition-colors"><span
                             class="material-symbols-outlined text-[18px]">visibility</span><span class="">View
                             Details</span>
                     </a>
                 </div>
             </article>
-            <!-- Card 2: Dr. Mohan Prashad (Active) -->
+            <!-- Card 2 -->
             {% if page_obj.object_list %}
-                {% for prescription in page_obj %}
+                {% for prescription in page_obj|slice:"1:" %}
 
                 <article
                     class="rx-card bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 sm:p-6"
-                    data-doctor="mohan" data-status="active"
-                    data-text="cetirizine vitamin d3 dr mohan prashad general medicine pre000003 apt000004">
+                    data-doctor="{{prescription.appointment.doctor.user.first_name}}" data-status="{{ prescription.status_label|title }}"
+                    data-text="{{prescription.status_label}} {{prescription.appointment.doctor.user.get_full_name}} {{prescription.prescription_id}} {{prescription.appointment.doctor.specialization }} {{ prescription.appointment.appointment_id }} {% for medicine in prescription.medicines.all %}{{ medicine.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
                     
                     <div
                         class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-surface-container">
@@ -188,11 +186,18 @@ My Prescriptions
                             </div>
                         </div>
                         <div class="flex items-center gap-2 self-start sm:self-center">
+                            {% if prescription.is_active %}
                             <span
                                 class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/30 text-secondary font-label-sm text-label-sm font-bold"><span
                                     class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>Active
-                                Course
+                                Course</span>
+                            {% else %}
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">
+                                <span
+                                    class="material-symbols-outlined text-[14px]">check_circle</span>Course Completed 
                             </span>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
@@ -211,20 +216,7 @@ My Prescriptions
                                     class="">Duration: <strong>{{ medicine.duration }}</strong></span></div>
                         </div>
                         {% endfor %}
-                        {% comment %} <div
-                            class="p-3.5 rounded-lg bg-surface-container-low/50 flex flex-col justify-between gap-2">
-                            <div class="flex items-start justify-between gap-2">
-                                <div>
-                                    <p class="font-semibold text-on-surface text-body-sm">Vitamin D3 60k IU</p>
-                                    <p class="text-on-surface-variant text-[12px]">Supplement • 1 sachet</p>
-                                </div><span
-                                    class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-semibold text-label-sm">With
-                                    warm milk</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-on-surface-variant text-[13px]"><span
-                                    class="material-symbols-outlined text-[16px]">calendar_month</span><span
-                                    class="">Duration: <strong>Weekly on Sundays (4 wks)</strong></span></div>
-                        </div> {% endcomment %}
+                        
                     </div>
                     <div class="flex items-center justify-end gap-2 pt-1">
                         <button
@@ -252,70 +244,7 @@ My Prescriptions
                 </button>
             </div>
             {% endif %}
-            <!-- Card 3: Dr. Rajesh Sharma (Completed) -->
-            <article
-                class="rx-card bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-shadow p-5 sm:p-6 opacity-90 hidden"
-                data-doctor="rajesh" data-status="completed"
-                data-text="atorvastatin dr rajesh sharma cardiology pre000001 apt000001">
-                <div
-                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-surface-container">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1"><span
-                                class="px-2.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-bold tracking-wide">PRE000001</span><span
-                                class="font-title-md text-title-md text-on-surface font-semibold">Dr. Rajesh
-                                Sharma</span><span class="text-outline-variant">•</span><span
-                                class="font-body-sm text-body-sm text-on-surface-variant">Preventive
-                                Cardiology</span></div>
-                        <div
-                            class="flex items-center gap-3 text-on-surface-variant font-label-md text-label-md">
-                            <div class="flex items-center gap-1"><span
-                                    class="material-symbols-outlined text-[16px]">calendar_today</span><span
-                                    class="">Issued Aug 10, 2026</span></div><span
-                                class="text-outline-variant">•</span>
-                            <div class="flex items-center gap-1"><span
-                                    class="material-symbols-outlined text-[16px]">link</span><span class="">Ref:
-                                    APT000001</span></div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 self-start sm:self-center">
-                        <span
-                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">
-                            <span
-                                class="material-symbols-outlined text-[14px]">check_circle</span>Course Completed
-                        </span>
-                    </div>
-                </div>
-                <div class="overflow-x-auto rounded-lg bg-surface-container-low/40 p-1 mb-4">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr
-                                class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                                <th class="py-2 px-3">Medicine</th>
-                                <th class="py-2 px-3">Dosage</th>
-                                <th class="py-2 px-3">Duration</th>
-                                <th class="py-2 px-3">Instruction</th>
-                            </tr>
-                        </thead>
-                        <tbody class="font-body-sm text-body-sm">
-                            <tr>
-                                <td class="py-2.5 px-3 font-semibold text-on-surface">Atorvastatin 10mg</td>
-                                <td class="py-2.5 px-3 text-on-surface">1 tablet • Nightly</td>
-                                <td class="py-2.5 px-3 text-on-surface">30 days</td>
-                                <td class="py-2.5 px-3"><span
-                                        class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Post
-                                        dinner</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex items-center justify-end gap-2 pt-1"><button
-                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-md text-label-md transition-colors"><span
-                            class="material-symbols-outlined text-[18px]">download</span><span class="">Download
-                            PDF</span></button><button
-                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-md text-label-md font-medium transition-colors"><span
-                            class="material-symbols-outlined text-[18px]">visibility</span><span class="">View
-                            Details</span></button></div>
-            </article>
+            
         </div>
         <!-- Empty State (Hidden by default) -->
         <div class="hidden flex-col items-center justify-center p-12 text-center bg-surface-container-lowest rounded-xl shadow-sm"
@@ -347,13 +276,24 @@ My Prescriptions
                 let currentQuery = '';
                 let currentDoctor = 'all';
 
+                function updateTabStyles(selectedTab) {
+                    tabs.forEach(tab => {
+                        const isSelected = tab.getAttribute('data-tab') === selectedTab;
+                        tab.classList.toggle('bg-surface-container-lowest', isSelected);
+                        tab.classList.toggle('text-primary', isSelected);
+                        tab.classList.toggle('shadow-xs', isSelected);
+                        tab.classList.toggle('font-semibold', isSelected);
+                        tab.classList.toggle('text-on-surface-variant', !isSelected);
+                    });
+                }
+
                 function updateView() {
                     let visibleCount = 0;
 
                     cards.forEach(card => {
-                        const status = card.getAttribute('data-status');
-                        const doctor = card.getAttribute('data-doctor');
-                        const searchContent = (card.getAttribute('data-text') || '').toLowerCase();
+                        const status = (card.getAttribute('data-status') || '').trim().toLowerCase();
+                        const doctor = (card.getAttribute('data-doctor') || '').trim().toLowerCase();
+                        const searchContent = (card.textContent || '').toLowerCase();
 
                         const matchesTab = (currentTab === 'all') || (status === currentTab);
                         const matchesDoctor = (currentDoctor === 'all') || (doctor === currentDoctor);
@@ -378,29 +318,22 @@ My Prescriptions
 
                 tabs.forEach(tab => {
                     tab.addEventListener('click', () => {
-                        tabs.forEach(t => {
-                            t.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-xs', 'font-semibold');
-                            t.classList.add('text-on-surface-variant');
-                        });
-
-                        tab.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-xs', 'font-semibold');
-                        tab.classList.remove('text-on-surface-variant');
-
-                        currentTab = tab.getAttribute('data-tab');
+                        currentTab = (tab.getAttribute('data-tab') || 'all').toLowerCase();
+                        updateTabStyles(currentTab);
                         updateView();
                     });
                 });
 
                 if (searchInput) {
-                    searchInput.addEventListener('input', (e) => {
-                        currentQuery = e.target.value.toLowerCase().trim();
+                    searchInput.addEventListener('input', event => {
+                        currentQuery = event.target.value.toLowerCase().trim();
                         updateView();
                     });
                 }
 
                 if (doctorFilter) {
-                    doctorFilter.addEventListener('change', (e) => {
-                        currentDoctor = e.target.value;
+                    doctorFilter.addEventListener('change', event => {
+                        currentDoctor = event.target.value.toLowerCase();
                         updateView();
                     });
                 }
@@ -411,88 +344,16 @@ My Prescriptions
                     currentDoctor = 'all';
                     if (searchInput) searchInput.value = '';
                     if (doctorFilter) doctorFilter.value = 'all';
-
-                    tabs.forEach(t => {
-                        if (t.getAttribute('data-tab') === 'all') {
-                            t.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-xs', 'font-semibold');
-                            t.classList.remove('text-on-surface-variant');
-                        } else {
-                            t.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-xs', 'font-semibold');
-                            t.classList.add('text-on-surface-variant');
-                        }
-                    });
-
+                    updateTabStyles(currentTab);
                     updateView();
                 };
 
-                // Set initial view to Active tab
+                updateTabStyles(currentTab);
                 updateView();
             })();
         </script>
     </div>
 </main>
-<script>
-    
-(function initAppointmentsFiltering() {
-    const tabButtons = document.querySelectorAll('#appointment-tabs .tab-btn');
-    const searchInput = document.getElementById('appointment-search');
-    const appointmentItems = document.querySelectorAll('.appointment-item');
-
-    let currentFilter = 'upcoming';
-    let searchQuery = '';
-
-    function applyFilters() {
-        appointmentItems.forEach(item => {
-            const itemType = item.getAttribute('data-type');
-            const itemText = (item.getAttribute('data-text') || '').toLowerCase();
-
-            const matchesType = (currentFilter === 'all') || (itemType === currentFilter);
-            const matchesSearch = !searchQuery || itemText.includes(searchQuery);
-
-            if (matchesType && matchesSearch) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
-
-    tabButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            tabButtons.forEach(b => {
-                b.classList.remove('bg-primary', 'text-white', 'shadow-sm');
-                b.classList.add('text-slate-600', 'hover:bg-slate-100');
-                const counter = b.querySelector('span:last-child');
-                if (counter) {
-                    counter.classList.remove('bg-white/20', 'text-white');
-                    counter.classList.add('bg-slate-200/80', 'text-slate-700');
-                }
-            });
-
-            btn.classList.add('bg-primary', 'text-white', 'shadow-sm');
-            btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
-            const activeCounter = btn.querySelector('span:last-child');
-            if (activeCounter) {
-                activeCounter.classList.remove('bg-slate-200/80', 'text-slate-700');
-                activeCounter.classList.add('bg-white/20', 'text-white');
-            }
-
-            currentFilter = btn.getAttribute('data-filter') || 'all';
-            applyFilters();
-        });
-    });
-
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            searchQuery = e.target.value.toLowerCase().trim();
-            applyFilters();
-        });
-    }
-
-    // Initial filter apply
-    applyFilters();
-})();
-</script>
 
 {% comment %} 
 <div class="flex flex-col w-full">

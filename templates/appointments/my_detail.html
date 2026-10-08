@@ -59,6 +59,7 @@ Appointment Details
                     </div>
                 </div>
             </div>
+            {% if appointment.prescription and appointment.billing %}
             <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-100">
                 <div class="flex items-center gap-2"><span
                         class="material-symbols-outlined text-[20px] text-slate-400">link</span><span
@@ -66,18 +67,11 @@ Appointment Details
                         Records</span></div>
                 <div class="flex flex-wrap items-center gap-2.5">
                     {% if appointment.prescription %}
-
                     <a
                         class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container hover:text-primary transition-all font-label-md text-label-md font-medium border border-slate-200/60"
                         href="{% url 'prescriptions:my-prescription-detail' appointment.prescription.pk %}"><span class="material-symbols-outlined text-[18px]">prescriptions</span><span
                             class="">View Prescription ({{ appointment.prescription.prescription_id }})</span>
-                    </a>
-                    {% else %}
-                    <a
-                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container hover:text-primary transition-all font-label-md text-label-md font-medium border border-slate-200/60"
-                        href="#"><span class="material-symbols-outlined text-[18px]">prescriptions</span><span
-                            class="">View Prescription ( No Prescription )</span>
-                    </a>
+                    </a>                    
                     {% endif %}
                     {% if appointment.billing %}
                     <a
@@ -88,6 +82,7 @@ Appointment Details
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
             <div class="pt-4 border-t border-slate-100 flex items-center justify-between"><a
                     class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md"
                     href="{% url 'appointments:my-appointments' %}"><span class="material-symbols-outlined text-[18px]">arrow_back</span><span class="">Back to

@@ -42,4 +42,5 @@ urlpatterns = [
         views.update_prescription,
         name="update",
     ),
+    
 ]

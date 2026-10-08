@@ -1,7 +1,9 @@
 from django.db import models
-
 from appointments.models import Appointment
 
+class PrescriptionStatus(models.TextChoices):
+    ACTIVE = "ACTIVE", "Active"
+    COMPLETED = "COMPLETED", "Completed"
 
 class Prescription(models.Model):
 
@@ -16,11 +18,18 @@ class Prescription(models.Model):
         unique=True,
         blank=True,
     )
+    
 
     diagnosis = models.TextField()
 
     remarks = models.TextField(
         blank=True,
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=PrescriptionStatus.choices,
+        default=PrescriptionStatus.ACTIVE,
     )
 
     created_at = models.DateTimeField(
@@ -46,13 +55,15 @@ class Prescription(models.Model):
     def __str__(self):
 
         return self.prescription_id
+    
     @property
     def is_active(self):
-        return self.appointment.status in ['SCHEDULED', 'CONFIRMED']
+        return self.status == PrescriptionStatus.ACTIVE
 
     @property
-    def status_label(self):
-        return "Active" if self.is_active else "Completed"
+    def status_label(self): 
+        return self.get_status_display()
+    
 
     def save(self, *args, **kwargs):
 

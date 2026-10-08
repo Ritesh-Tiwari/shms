@@ -109,7 +109,7 @@ My Appointments
                                     View
                                 </a>
                                 {% if appointment.status != "CANCELLED" and appointment.status != "COMPLETED" %}
-                                <a href="#"
+                                <a href="{% url 'appointments:my-reschedule' appointment.pk %}"
                                     class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/70 text-slate-700 text-xs font-medium transition-colors"
                                     type="button">
                                     Reschedule

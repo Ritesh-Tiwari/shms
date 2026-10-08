@@ -335,6 +335,73 @@ def update_appointment(request, pk):
     )
 
 @role_required(
+    UserRole.PATIENT,
+)
+def my_reschedule_appointment(request, pk):
+
+    appointment = get_object_or_404(
+        Appointment.objects.select_related(
+            "patient__user",
+            "doctor__user",
+        ),
+        pk=pk,
+        patient__user=request.user,
+    )
+
+    if appointment.status in ['COMPLETED', 'CANCELLED']:
+        messages.error(request, "You cannot reschedule a completed or cancelled appointment.")
+        return redirect("dashboard:dashboard")
+    
+    if request.method == "POST":
+
+        form = AppointmentUpdateForm(
+            request.POST,
+            instance=appointment,
+        )
+
+        if form.is_valid():
+
+            try:
+
+                AppointmentService.update_appointment(
+                    appointment=appointment,
+                    appointment_data=form.cleaned_data,
+                )
+
+                messages.success(
+                    request,
+                    "Appointment updated successfully.",
+                )
+
+                return redirect(
+                    "appointments:my-appointment-detail",
+                    pk=appointment.pk,
+                )
+
+            except ValueError as error:
+
+                form.add_error(
+                    None,
+                    str(error),
+                )
+
+    else:
+
+        form = AppointmentUpdateForm(
+            instance=appointment,
+        )
+
+    return render(
+        request,
+        "appointments/my_reschedule.html",
+        {
+            "form": form,
+            "appointment": appointment,
+            "today_date": date.today().strftime("%Y-%m-%d"),
+        },
+    )
+
+@role_required(
     UserRole.ADMIN,
     UserRole.DOCTOR,
 )

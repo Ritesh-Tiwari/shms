@@ -1,0 +1,209 @@
+@{% extends "base.html" %}
+{% block title %}Reschedule Appointment{% endblock %}
+
+{% block content %}
+
+
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full">
+        <!-- Subtle decorative ambient background elements -->
+        <div class="relative w-full">
+            <div
+                class="absolute -top-10 -right-8 w-96 h-96 bg-primary-fixed/30 rounded-full blur-3xl pointer-events-none -z-10">
+            </div>
+            <div
+                class="absolute top-1/2 -left-12 w-80 h-80 bg-surface-container-high/40 rounded-full blur-2xl pointer-events-none -z-10">
+            </div>
+            <!-- Top Navigation / Breadcrumb & Reference Badge -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <a class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors group font-body-sm text-body-sm"
+                    href="{% url "appointments:my-appointments" %}">
+                    <span
+                        class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-1">arrow_back</span>
+                    <span>Back to My Appointments</span>
+                </a>
+                <div
+                    class="inline-flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-lg self-start sm:self-auto shadow-sm">
+                    <span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
+                    <span
+                        class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Appointment
+                        Ref:</span>
+                    <span class="font-label-md text-label-md font-semibold text-primary">{{appointment.appointment_id}}</span>
+                </div>
+            </div>
+            <!-- Main Reschedule Form Container -->
+            <div
+                class="w-full max-w-4xl mx-auto bg-surface-container-lowest rounded-xl shadow-md p-6 sm:p-8 lg:p-10 space-y-8">
+                <!-- Card Title & Description -->
+                <div class="space-y-2">
+                    <div
+                        class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">
+                        <span class="material-symbols-outlined text-[14px]">edit_calendar</span>
+                        <span>Schedule Adjustment</span>
+                    </div>
+                    <h1 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight">
+                        Reschedule Appointment</h1>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Select a new date and time for your
+                        consultation with your specialist.</p>
+                </div>
+                <!-- Current Appointment Snapshot Card -->
+                <div
+                    class="bg-surface-container-low rounded-xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-start sm:items-center gap-3.5">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary shrink-0">
+                            <span class="material-symbols-outlined text-[24px]">event_busy</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Current
+                                    Booking</span>
+                                <span
+                                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-secondary/10 text-secondary">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                    {{appointment.get_status_display}}
+                                </span>
+                            </div>
+                            <p class="font-title-md text-title-md text-on-surface mt-0.5">
+                                Dr. {{appointment.doctor.user.get_full_name}} <span
+                                    class="font-body-sm text-body-sm text-on-surface-variant">({{appointment.doctor.specialization|title}})</span>
+                            </p>
+                            <div class="flex items-center gap-2 mt-1 text-on-surface-variant font-body-sm text-body-sm">
+                                <span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+                                <span>{{appointment.appointment_date|date:"d M Y"}} at {{appointment.appointment_date|time:"g:i A"}}</span>
+                                <span class="text-outline-variant">•</span>
+                                <span> {{appointment.doctor.address}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!-- Form Section -->
+                <form method="post" class="space-y-6" id="rescheduleForm">
+                    {% csrf_token %}
+                     {% if form.non_field_errors %}
+                    <div class="rounded-lg border border-error/30 bg-error/5 p-4 text-error" role="alert">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <!-- Physician Profile (Read-Only) -->
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface font-semibold block">Attending
+                            Specialist</label>
+                        <div class="flex items-center justify-between bg-surface-container rounded-lg p-3.5 sm:px-4">
+                            <div class="flex items-center gap-3.5">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-semibold text-sm">
+                                    {{appointment.doctor.user.first_name|slice:":1"}} {{appointment.doctor.user.last_name|slice:":1"}}
+                                </div>
+                                <div>
+                                    <p class="font-label-md text-label-md font-semibold text-on-surface">Dr. {{appointment.doctor.user.get_full_name}}</p>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant">{{appointment.doctor.specialization|title}} • {{appointment.doctor.experience}}+
+                                        Years Exp</p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-1 text-secondary font-label-sm text-label-sm bg-secondary-container/30 px-2.5 py-1 rounded-md">
+                                <span class="material-symbols-outlined text-[16px]">verified</span>
+                                <span class="hidden sm:inline">Assigned Specialist</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Date & Time Slot Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Date Picker Field -->
+                        <div class="space-y-2">
+                            <label
+                                class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1"
+                                for="newDate">
+                                New Appointment Date     
+                                {% if form.appointment_date.errors %}
+                                <span class="text-error ">*
+                                    {{ form.appointment_date.errors }}
+                                </span>
+                                {% endif %}
+                            </label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">calendar_month</span>
+                                <input
+                                    class="w-full pl-11 pr-4 py-2.5 bg-surface-container-low text-on-surface rounded-lg font-body-md text-body-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                    id="newDate" min="{{today_date}}" name="{{ form.appointment_date.html_name }}" required="" type="date"
+                                    value="{{today_date}}"/>
+                            </div>
+                            
+                        </div>
+                        <!-- Time Slot Dropdown -->
+                        <div class="space-y-2">
+                            <label
+                                class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1"
+                                for="newTimeSlot">
+                                New Appointment Time Slot 
+                                {% if form.appointment_time.errors %}
+                                <span class="text-error ">*
+                                    {{ form.appointment_time.errors }}
+                                </span>
+                                {% endif %}
+                            </label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">schedule</span>
+                                <input
+                                    class="w-full pl-11 pr-4 py-2.5 bg-surface-container-low text-on-surface rounded-lg font-body-md text-body-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                    id="newTime" name="{{ form.appointment_time.html_name }}" required="" type="time"
+                                    value="{{ form.appointment_time.value }}"
+                                    />
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!-- Reason for Rescheduling -->
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="font-label-md text-label-md text-on-surface font-semibold"
+                                for="rescheduleReason">
+                                Reason for Rescheduling
+                            </label>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant" id="charCounter">0 /
+                                300</span>
+                        </div>
+                        <div class="relative">
+                            <textarea
+                                class="w-full p-3.5 bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/60 rounded-lg font-body-sm text-body-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+                                id="rescheduleReason" maxlength="300" name="{{ form.reason_for_visit.html_name }}"                                
+                                placeholder="e.g., Work conflict, travel requirement, or need an earlier morning slot..."
+                                rows="3" required></textarea>
+                        </div>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant">
+                            Optional: Brief context helps our clinic staff prioritize scheduling contingencies.
+                        </p>
+                    </div>
+                                      
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-4">
+                        <a href="{% url "appointments:my-appointments" %}"
+                            class="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-label-md text-label-md font-medium transition-all text-center"
+                            type="button">
+                            Cancel
+                        </a>
+                        <button
+                            class="w-full sm:w-auto px-7 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group"
+                            id="submitBtn" type="submit">
+                            <span
+                                class="material-symbols-outlined text-[18px] transition-transform group-hover:rotate-12">update</span>
+                            <span>Confirm Reschedule</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</main>
+
+
+{% endblock %}

@@ -29,6 +29,11 @@ urlpatterns = [
         views.my_appointment_detail,
         name="my-appointment-detail",
     ),
+    path(
+        "my/<int:pk>/reschedule/",
+        views.my_reschedule_appointment,
+        name="my-reschedule",
+    ),
 
     path(
         "my/<int:pk>/cancel/",

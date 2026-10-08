@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import Q, Prefetch, Sum
 from django.core.paginator import Paginator
 from django.utils import timezone
-
+from django.core.exceptions import ObjectDoesNotExist
 from decimal import Decimal
 
 from appointments.models import Appointment
@@ -19,7 +19,12 @@ from prescriptions.models import Prescription
 
 @role_required(UserRole.PATIENT)
 def home(request):
-    patient = get_object_or_404(Patient.objects.select_related("user"), user=request.user)
+
+    try:
+        patient = Patient.objects.select_related("user").get(user=request.user)
+    except Patient.DoesNotExist:
+        messages.error(request, "Patient profile not found.")
+        return redirect("dashboard:dashboard")
 
     upcoming_appointments = (
         patient.appointments
@@ -41,7 +46,7 @@ def home(request):
     last_visit_date = recent_appointments.first().appointment_date if recent_appointments.exists() else None
     total_visits = patient.appointments.exclude(status="CANCELLED").filter(appointment_date__lt=timezone.localdate()).count()
 
-    current_prescription = (
+    latest_prescription = (
         Prescription.objects
         .filter(appointment__patient=patient)
         .select_related("appointment__doctor__user")
@@ -50,14 +55,12 @@ def home(request):
         .first()
     )
 
-    total_active_medicines = sum(
-            prescription.medicines.count()
-            for prescription in (
-                Prescription.objects
-                .filter(appointment__patient=patient)
-                .prefetch_related("medicines")
-            )
-        )
+    prescribed_medicine_count = (
+        latest_prescription.medicines.count()
+        if latest_prescription
+        else 0
+    )
+    
 
     latest_bill = (
         patient.bills
@@ -67,14 +70,46 @@ def home(request):
         .first()
     )
 
-    if latest_bill:
-        total_paid = latest_bill.payments.aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
-        balance_due = max(latest_bill.total_amount - total_paid, Decimal("0.00"))
-        latest_payment = latest_bill.payments.order_by("-payment_date").first()
+    # ---------------------------------------
+    # Overall billing summary for patient
+    # ---------------------------------------
+    billing_summary = patient.bills.aggregate(
+        total_billed=Sum("total_amount"),
+    )
+
+    payment_summary = patient.bills.aggregate(
+        total_paid=Sum("payments__amount"),
+    )
+
+    total_billed = (
+        billing_summary["total_billed"]
+        or Decimal("0.00")
+    )
+
+    total_paid = (
+        payment_summary["total_paid"]
+        or Decimal("0.00")
+    )
+
+    balance_due = max(
+        total_billed - total_paid,
+        Decimal("0.00"),
+    )
+
+    if balance_due == Decimal("0.00"):
+        billing_status = "PAID"
+    elif total_paid > Decimal("0.00"):
+        billing_status = "PARTIAL"
     else:
-        total_paid = Decimal("0.00")
-        balance_due = Decimal("0.00")
-        latest_payment = None
+        billing_status = "DUE"
+
+    latest_payment = (
+        latest_bill.payments
+        .order_by("-payment_date")
+        .first()
+        if latest_bill
+        else None
+    )
 
     return render(
         request,
@@ -84,20 +119,27 @@ def home(request):
             "upcoming_appointments": upcoming_appointments,
             "recent_appointments": recent_appointments,
             "next_appointment": next_appointment,
-            "current_prescription": current_prescription,
-            "total_active_medicines": total_active_medicines,
+            "latest_prescription": latest_prescription,
+            "prescribed_medicine_count": prescribed_medicine_count,
             "total_visits": total_visits,
-            "balance_due": balance_due,
             "latest_bill": latest_bill,
             "latest_payment": latest_payment,
             "last_visit_date": last_visit_date,
+            "total_billed": total_billed,
+            "total_paid": total_paid,
+            "balance_due": balance_due,
+            "billing_status": billing_status,
         },
     )
 
 @role_required(UserRole.PATIENT)
 def my_profile(request):
 
-    patient = request.user.patient_profile
+    try:
+        patient = request.user.patient_profile
+    except ObjectDoesNotExist:
+        messages.error(request, "Patient profile not found.")
+        return redirect("dashboard:dashboard")
 
     return render(
         request,
@@ -110,7 +152,11 @@ def my_profile(request):
 @role_required(UserRole.PATIENT)
 def edit_my_profile(request):
 
-    patient = request.user.patient_profile
+    try:
+        patient = request.user.patient_profile
+    except ObjectDoesNotExist:
+        messages.error(request, "Patient profile not found.")
+        return redirect("dashboard:dashboard")
 
     if request.method == "POST":
 

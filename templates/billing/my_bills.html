@@ -48,7 +48,7 @@ My Bills
                     <!-- Bill Row  -->
                      {% for billing in billings %}
                     <div class="bill-record p-5 lg:px-6 lg:py-4 transition-colors hover:bg-surface-container-low/50"
-                        data-search=" {{ billing.bill_id }} {{ billing.appointment.appointment_id }} {{ billing.doctor.user.get_full_name }} {{ billing.appointment.appointment_date }} {{ billing.amount }}">
+                        data-search=" {{ billing.bill_id }} {{ billing.appointment.appointment_id }} {{ billing.doctor.user.get_full_name }} {{ billing.appointment.appointment_date|date:"d/M/Y" }} {{ billing.appointment.appointment_date|date:"d-M-Y" }}{{ billing.appointment.appointment_date|date:"d M Y" }} {{ billing.amount }}">
                         <div class="flex flex-col lg:grid lg:grid-cols-12 lg:items-center gap-4">
                             <!-- Bill ID & Appointment Ref -->
                             <div class="lg:col-span-2 flex items-center justify-between lg:block">
@@ -56,7 +56,7 @@ My Bills
                                     <div class="flex items-center gap-2">
                                         <span class="font-label-md font-semibold text-primary">{{ billing.bill_id }}</span>
                                         <span
-                                            class="lg:hidden px-2 py-0.5 rounded-full font-label-sm bg-secondary/10 text-secondary font-medium">Paid</span>
+                                            class="lg:hidden px-2 py-0.5 rounded-full font-label-sm bg-secondary/10 text-secondary font-medium">{{billing.get_payment_status_display}}</span>
                                     </div>
                                     <div class="flex items-center gap-1.5 mt-0.5 text-on-surface-variant font-body-sm">
                                         <span
@@ -65,7 +65,7 @@ My Bills
                                     </div>
                                 </div>
                                 <div class="lg:hidden text-right">
-                                    <span class="font-title-md text-on-surface font-semibold">₹{{ billing.amount }} </span>
+                                    <span class="font-title-md text-on-surface font-semibold">₹{{ billing.total_amount }} </span>
                                 </div>
                             </div>
                             <!-- Doctor Information -->
@@ -137,12 +137,12 @@ My Bills
                     </p>
                     <div class="flex flex-col sm:flex-row items-center gap-3 mt-6 w-full sm:w-auto">
                         <a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md font-medium transition-all"
-                            href="#">
+                            href="{% url "appointments:my-appointments" %}">
                             <span class="material-symbols-outlined text-[18px]">calendar_month</span>
                             <span class="">View Appointments</span>
                         </a>
                         <a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md font-medium transition-all shadow-sm"
-                            href="#">
+                            href="{% url "appointments:book" %}">
                             <span class="material-symbols-outlined text-[18px]">add</span>
                             <span class="">+ Book an Appointment</span>
                         </a>

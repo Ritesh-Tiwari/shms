@@ -60,9 +60,32 @@ Patients
                 </div>
                 <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">Active</span>
             </div>
-            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Active Medicines</p>
-            <h3 class="text-lg font-bold text-on-surface mt-1">{{ total_active_medicines }} Prescribed</h3>
-            <p class="text-xs text-on-surface-variant mt-0.5">1 current medication plan</p>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Prescribed Medicines
+            </p>
+
+            {% if latest_prescription %}
+
+            <h3 class="text-lg font-bold text-on-surface mt-1">
+                {{ prescribed_medicine_count }} Prescribed
+            </h3>
+
+            <p class="text-xs text-on-surface-variant mt-0.5">
+                Latest prescription • {{ latest_prescription.created_at|date:"d M Y" }}
+            </p>
+
+            {% else %}
+
+            <h3 class="text-lg font-bold text-on-surface mt-1">
+                No Prescriptions
+            </h3>
+
+            <p class="text-xs text-on-surface-variant mt-0.5">
+                No medicines have been prescribed yet.
+            </p>
+
+            {% endif %}
+
         </div>
         <!-- Card 3: Medical Visits -->
         <div
@@ -86,12 +109,54 @@ Patients
                 <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                     <span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
                 </div>
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Paid
-                    in Full</span>
+                {% if billing_status == "PAID" %}
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                        Paid in Full
+                    </span>
+
+                {% elif billing_status == "PARTIAL" %}
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
+                        Partially Paid
+                    </span>
+
+                {% elif billing_status == "DUE" %}
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700">
+                        Payment Due
+                    </span>
+
+                {% else %}
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                        No Bills
+                    </span>
+                {% endif %}
+
+
             </div>
+
+            
             <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Balance Due</p>
             <h3 class="text-lg font-bold text-on-surface mt-1">₹{{ balance_due|floatformat:2 }}</h3>
-            <p class="text-xs text-on-surface-variant mt-0.5">No pending patient charges</p>
+            
+            {% if billing_status == "PAID" %}
+                <p class="text-xs text-emerald-600 mt-0.5">
+                    No pending patient charges
+                </p>
+
+            {% elif billing_status == "PARTIAL" %}
+                <p class="text-xs text-amber-600 mt-0.5">
+                    Some patient charges are still pending
+                </p>
+
+            {% elif billing_status == "DUE" %}
+                <p class="text-xs text-red-600 mt-0.5">
+                    Outstanding patient charges
+                </p>
+
+            {% else %}
+                <p class="text-xs text-on-surface-variant mt-0.5">
+                    No billing records available
+                </p>
+            {% endif %}
         </div>
     </section>
     <!-- 3. NEXT APPOINTMENT ELEVATED CARD -->
@@ -211,7 +276,7 @@ Patients
                 <p class="text-sm text-slate-500">No recent appointments found.</p>
                 {% endif %}
             </div>
-            {% if current_prescription %}
+            {% if latest_prescription %}
             <!-- Current Prescriptions -->
             <div
                 class="bg-surface-container-lowest p-5 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
@@ -220,13 +285,19 @@ Patients
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary text-[20px]">pill</span>
                         <div>
-                            <h2 class="text-base font-bold text-on-surface">Current Prescriptions</h2>
-                            <p class="text-xs text-slate-500">Regimen {{ current_prescription.prescription_id }} • Dr. {{ current_prescription.appointment.doctor.user.get_full_name }} ({{ current_prescription.appointment.appointment_date|date:"d M Y" }})</p>
+                            <h2 class="text-base font-bold text-on-surface">Latest Prescription</h2>
+                            <p class="text-xs text-slate-500">Prescription  {{ latest_prescription.prescription_id }} • Dr. {{ latest_prescription.appointment.doctor.user.get_full_name }} ({{ latest_prescription.appointment.appointment_date|date:"d M Y" }})</p>
                         </div>
                     </div>
-                    <span
-                        class="self-start sm:self-auto px-2 py-0.5 rounded bg-blue-50 text-primary text-xs font-semibold">Active
-                        Plan</span>
+                    {% if latest_prescription %}
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">
+                        Latest
+                    </span>
+                    {% else %}
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                        None
+                    </span>
+                    {% endif %}
                 </div>
                 <!-- Medicines Table -->
                 <div class="overflow-x-auto -mx-5 sm:mx-0">
@@ -242,7 +313,7 @@ Patients
                         </thead>
 
                         <tbody class="divide-y divide-slate-100">
-                            {% for medicine in current_prescription.medicines.all %}
+                            {% for medicine in latest_prescription.medicines.all %}
                             <tr class="hover:bg-slate-50/50">
                                 <td class="py-3 px-4 font-semibold text-on-surface">{{ medicine.medicine_name }}</td>
                                 <td class="py-3 px-3 text-slate-600">{{ medicine.dosage }}</td>
@@ -260,7 +331,7 @@ Patients
                     class="p-3 bg-blue-50/60 rounded-xl border border-blue-100/60 flex items-start gap-2.5 text-xs text-slate-600">
                     <span class="material-symbols-outlined text-primary text-[18px] flex-shrink-0 mt-0.5">info</span>
                     <div>
-                        <span class="font-semibold text-on-surface">Doctor's Remark:</span> {{ current_prescription.remarks|default:"No additional remarks provided." }}
+                        <span class="font-semibold text-on-surface">Doctor's Remark:</span> {{ latest_prescription.remarks|default:"No additional remarks provided." }}
                     </div>
                 </div>
             </div>
@@ -334,12 +405,20 @@ Patients
                         <div>
                             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Total
                                 Paid</span>
-                            <span class="font-bold text-sm text-on-surface">₹{{  total_paid|floatformat:2 }}</span>
+                            <span class="font-bold text-sm text-on-surface">₹{{ total_paid|floatformat:2 }}</span>
                         </div>
                         <div class="text-right">
                             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Balance
                                 Due</span>
-                            <span class="font-bold text-sm text-emerald-600">₹{{ balance_due|floatformat:2 }}</span>
+                            <span class="font-bold text-sm 
+                                {% if balance_due > 0 %}
+                                    text-red-600
+                                {% else %}
+                                    text-emerald-600
+                                {% endif %}
+                            ">
+                                ₹{{ balance_due|floatformat:2 }}
+                            </span>
                         </div>
                     </div>
                     {% if latest_payment %}
@@ -361,10 +440,54 @@ Patients
                 <p class="text-sm text-slate-500">No recent bills found.</p>
                 {% endif %}
 
-                <div class="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50/60 text-xs text-emerald-800">
-                    <span class="material-symbols-outlined text-[16px] text-emerald-600">verified</span>
-                    <span>All current invoices and hospital dues are clear.</span>
-                </div>
+                {% if billing_status == "PAID" %}
+
+                    <div class="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50/60 text-xs text-emerald-800">
+                        <span class="material-symbols-outlined text-[16px] text-emerald-600">verified
+                        </span>
+
+                        <span>
+                            All current invoices and hospital dues are clear.
+                        </span>
+                    </div>
+
+                    {% elif billing_status == "PARTIAL" %}
+
+                    <div class="flex items-center gap-2 p-2.5 rounded-lg bg-amber-50 text-xs text-amber-800">
+                        <span class="material-symbols-outlined text-[16px] text-amber-600">
+                            pending
+                        </span>
+
+                        <span>
+                            You have partially paid invoices with an outstanding balance.
+                        </span>
+                    </div>
+
+                    {% elif billing_status == "DUE" %}
+
+                    <div class="flex items-center gap-2 p-2.5 rounded-lg bg-red-50 text-xs text-red-800">
+                        <span class="material-symbols-outlined text-[16px] text-red-600">
+                            warning
+                        </span>
+
+                        <span>
+                            You have outstanding hospital charges that require payment.
+                        </span>
+                    </div>
+
+                    {% else %}
+
+                    <div class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 text-xs text-slate-600">
+                        <span class="material-symbols-outlined text-[16px] text-slate-500">
+                            receipt_long
+                        </span>
+
+                        <span>
+                            No billing records are available.
+                        </span>
+                    </div>
+
+                    {% endif %}
             </div>
         </div>
     </section>
