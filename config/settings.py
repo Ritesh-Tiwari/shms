@@ -10,19 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-from decouple import RepositoryEnv,Config
+from decouple import config
 from pathlib import Path
 
 import dj_database_url
 import os
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Explicitly .env file path specify karein
-ENV_PATH = BASE_DIR / '.env'
-if ENV_PATH.exists():
-    config = Config(RepositoryEnv(ENV_PATH))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
