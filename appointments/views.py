@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db import IntegrityError
-from datetime import date
+from datetime import date,timedelta
 from core.decorators import role_required
 from accounts.choices import UserRole
 from .models import Appointment, AppointmentStatus
@@ -391,13 +391,15 @@ def my_reschedule_appointment(request, pk):
             instance=appointment,
         )
 
+    tomorrow = date.today() + timedelta(days=1)
+
     return render(
         request,
         "appointments/my_reschedule.html",
         {
             "form": form,
             "appointment": appointment,
-            "today_date": date.today().strftime("%Y-%m-%d"),
+            "tomorrow_date":tomorrow.strftime("%Y-%m-%d"),
         },
     )
 
