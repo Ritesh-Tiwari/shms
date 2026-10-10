@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.db.models.aggregates import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
+from django.db import transaction
 
 from accounts.choices import UserRole
 from appointments.models import Appointment, AppointmentStatus
@@ -14,10 +15,7 @@ from .forms import (
 from .models import Prescription, PrescriptionStatus
 
 
-@role_required(
-    UserRole.DOCTOR,
-    UserRole.ADMIN
-)
+@role_required(UserRole.DOCTOR)
 def create_prescription(request, appointment_id):
 
     appointment = get_object_or_404(
@@ -81,34 +79,31 @@ def create_prescription(request, appointment_id):
         )
 
         if form.is_valid() and formset.is_valid():
+            try:
+                with transaction.atomic():
+                    prescription = form.save(commit=False)
+                    prescription.appointment = appointment
+                    prescription.save()
 
-            prescription = form.save(
-                commit=False,
-            )
+                    
+                    formset.instance = prescription
+                    formset.save()
 
-            prescription.appointment = appointment
+                messages.success(
+                    request,
+                    "Prescription created successfully.",
+                )
 
-            prescription.save()
+                return redirect(
+                    "prescriptions:detail",
+                    pk=prescription.pk,
+                )
 
-            medicines = formset.save(
-                commit=False,
-            )
-
-            for medicine in medicines:
-
-                medicine.prescription = prescription
-                medicine.save()
-
-            messages.success(
-                request,
-                "Prescription created successfully.",
-            )
-
-            return redirect(
-                "prescriptions:detail",
-                pk=prescription.pk,
-            )
-
+            except Exception:
+                messages.error(
+                    request,
+                    "Prescription could not be saved. Please try again.",
+                )
     else:
 
         form = PrescriptionForm()
@@ -204,10 +199,10 @@ def update_prescription(request, pk):
         )
 
         if form.is_valid() and formset.is_valid():
-
-            form.save()
-
-            formset.save()
+            with transaction.atomic():
+                prescription = form.save()
+                formset.instance = prescription
+                formset.save()
 
             messages.success(
                 request,

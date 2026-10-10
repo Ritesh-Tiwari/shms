@@ -485,28 +485,37 @@ def update_appointment_status(request, pk):
         pk=pk,
     )
 
-    if request.method == "POST":
 
-        new_status = request.POST.get("status")
+    if request.method != "POST":
+        messages.error(
+            request,
+            "Invalid request method.",
+        )
+        return redirect(
+            "appointments:detail",
+            pk=appointment.pk,
+        )
 
-        try:
+    new_status = request.POST.get("status")
 
-            AppointmentService.update_status(
-                appointment=appointment,
-                new_status=new_status,
-            )
+    try:
 
-            messages.success(
-                request,
-                "Appointment status updated successfully.",
-            )
+        AppointmentService.update_status(
+            appointment=appointment,
+            new_status=new_status,
+        )
 
-        except ValueError as error:
+        messages.success(
+            request,
+            "Appointment status updated successfully.",
+        )   
 
-            messages.error(
-                request,
-                str(error),
-            )
+    except ValueError as error:
+
+        messages.error(
+            request,
+            str(error),
+        )
 
     return redirect(
         "appointments:detail",

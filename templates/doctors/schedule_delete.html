@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Schedule{% endblock %}
+
+{% block content %}
+
+<div class="p-lg max-w-xl mx-auto">
+
+<h1 class="text-2xl font-bold mb-4">Delete Schedule</h1>
+
+<p class="mb-5">
+    Delete the {{ schedule.get_weekday_display }} schedule
+    from {{ schedule.start_time|time:"H:i" }}
+    to {{ schedule.end_time|time:"H:i" }}?
+</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <button type="submit"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg">
+        Confirm Delete
+    </button>
+
+    <a href="{% url 'doctors:schedule' %}"
+       class="ml-3 text-blue-600">
+        Cancel
+    </a>
+</form>
+
+</div>
+{% endblock %}

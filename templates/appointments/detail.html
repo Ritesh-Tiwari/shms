@@ -112,29 +112,26 @@
                 {% endif %}
             </section>
         </div>
-
-        {% if appointment.status == "COMPLETED" %}
-            {% comment %} {% if appointment.doctor.user == request.user %} {% endcomment %}
-
-                <aside class="lg:col-span-4 flex flex-col gap-lg">
-                    <section class="bg-surface-container-lowest shadow-sm rounded-xl p-lg flex flex-col gap-md">
-                        <h2 class="text-title-md font-title-md text-on-surface flex items-center gap-sm"><span class="material-symbols-outlined text-secondary">clinical_notes</span>Clinical Record</h2>
-                        
-                        {% if not appointment.prescription %}
-                            <p class="text-body-sm text-on-surface-variant">No prescription has been added yet.</p>
-                            <a href="{% url 'prescriptions:create' appointment.pk %}" class="w-full px-md py-2 rounded-lg bg-secondary text-on-secondary text-label-md font-label-md hover:opacity-90 transition-colors flex justify-center items-center gap-sm"><span class="material-symbols-outlined text-[18px]">prescriptions</span>Create Prescription</a>
-                        
-                        {% else %}                        
-                            <p class="text-body-sm text-on-surface-variant">A prescription has been recorded for this completed appointment.</p>
-                            <a href="{% url 'prescriptions:detail' appointment.prescription.pk %}" class="w-full px-md py-2 rounded-lg bg-surface-container-high text-on-surface text-label-md font-label-md hover:bg-surface-variant transition-colors flex justify-center items-center gap-sm"><span class="material-symbols-outlined text-[18px]">visibility</span>View Prescription</a>
-                        {% endif %}
-                    </section>
-                </aside>
-            {% comment %} {% endif %} {% endcomment %}
+        {% if request.user.role == "DOCTOR" %}
+            {% if appointment.doctor.user_id == request.user.id %}
+                {% if appointment.status == "COMPLETED" %}
+                    <aside class="lg:col-span-4 flex flex-col gap-lg">
+                        <section class="bg-surface-container-lowest shadow-sm rounded-xl p-lg flex flex-col gap-md">
+                            <h2 class="text-title-md font-title-md text-on-surface flex items-center gap-sm"><span class="material-symbols-outlined text-secondary">clinical_notes</span>Clinical Record</h2>
+                            
+                            {% if not appointment.prescription %}
+                                <p class="text-body-sm text-on-surface-variant">No prescription has been added yet.</p>
+                                <a href="{% url 'prescriptions:create' appointment.pk %}" class="w-full px-md py-2 rounded-lg bg-secondary text-on-secondary text-label-md font-label-md hover:opacity-90 transition-colors flex justify-center items-center gap-sm"><span class="material-symbols-outlined text-[18px]">prescriptions</span>Create Prescription</a>
+                            
+                            {% else %}                        
+                                <p class="text-body-sm text-on-surface-variant">A prescription has been recorded for this completed appointment.</p>
+                                <a href="{% url 'prescriptions:detail' appointment.prescription.pk %}" class="w-full px-md py-2 rounded-lg bg-surface-container-high text-on-surface text-label-md font-label-md hover:bg-surface-variant transition-colors flex justify-center items-center gap-sm"><span class="material-symbols-outlined text-[18px]">visibility</span>View Prescription</a>
+                            {% endif %}
+                        </section>
+                    </aside>
+                {% endif %}
+            {% endif %}
         {% endif %}
-
-
-
     </div>
 </div>
 {% endblock %}

@@ -57,6 +57,11 @@
                             Clinical
                         </div>
 
+                        <a {% if request.resolver_match.namespace == 'doctors' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'doctors' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
+                            href="{% url 'doctors:my-patients' %}">
+                            <span class="material-symbols-outlined text-[20px]">person</span>
+                            <span>Patients</span>
+                        </a>       
                         <a {% if request.resolver_match.namespace == 'appointments' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'appointments' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'appointments:list' %}">
                             <span class="material-symbols-outlined text-[20px]">calendar_month</span>

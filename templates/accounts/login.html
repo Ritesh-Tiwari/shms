@@ -46,9 +46,12 @@
 <body class="bg-background font-body-md text-on-surface">
     <div class="">
         <main class="relative min-h-screen bg-background">
+
             <div class="flex flex-col w-full h-full min-h-[calc(100vh-64px)] min-h-screen">
+                 
                 <div class="flex flex-col lg:flex-row w-full h-full flex-grow">
                     <!-- Left Column: Image -->
+                    
                     <div class="hidden lg:flex lg:w-1/2 relative bg-surface-container">
                         <div class="absolute inset-0 bg-cover bg-center w-full h-full"
                             data-alt="High-quality cinematic photograph of a modern, bright hospital corridor or clinic reception. Shallow depth of field, natural sunlight streaming through large windows. Clean, professional environment. Subtle, calming blue and white color palette representing trust and healthcare excellence."
@@ -78,7 +81,9 @@
                     </div>
                     <!-- Right Column: Login Form -->
                     <div class="flex w-full lg:w-1/2 flex-col justify-center items-center p-gutter md:p-xxl bg-surface">
+                         {% include "includes/messages.html" %}
                         <div class="w-full max-w-md flex flex-col items-center">
+                           
                             <!-- Header -->
                             <div class="text-center mb-xl w-full">
                                 <div class="flex justify-center mb-md">

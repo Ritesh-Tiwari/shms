@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Add Schedule{% endblock %}
+
+{% block content %}
+
+<div class="p-lg max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-5">Add Weekly Schedule</h1>
+
+<form method="post" class="bg-white rounded-xl shadow p-6 space-y-4">
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+
+    {% for field in form %}
+    <div>
+        <label for="{{ field.id_for_label }}"
+               class="block font-medium mb-1">
+            {{ field.label }}
+        </label>
+
+        {{ field }}
+
+        {% for error in field.errors %}
+        <p class="text-red-600 text-sm">{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    <div class="flex gap-3">
+        <button type="submit"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+            Save Schedule
+        </button>
+
+        <a href="{% url 'doctors:schedule' %}"
+           class="px-4 py-2 bg-slate-200 rounded-lg">
+            Cancel
+        </a>
+    </div>
+</form>
+
+
+</div>
+{% endblock %}

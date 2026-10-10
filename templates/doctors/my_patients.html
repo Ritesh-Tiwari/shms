@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}My Patients{% endblock %}
+
+{% block content %}
+
+<div class="p-lg space-y-5">
+<h1 class="text-2xl font-bold">My Patients</h1>
+
+<form method="get" class="flex gap-3">
+    <input type="search"
+           name="search"
+           value="{{ search }}"
+           placeholder="Search patient name or ID"
+           class="flex-1 border rounded-lg px-4 py-2">
+
+    <button type="submit"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+        Search
+    </button>
+</form>
+
+<div class="bg-white rounded-xl shadow overflow-x-auto">
+    <table class="w-full text-left">
+        <thead class="bg-slate-100">
+            <tr>
+                <th class="p-3">Patient ID</th>
+                <th class="p-3">Patient</th>
+                <th class="p-3">Email</th>
+                <th class="p-3">Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for patient in page_obj %}
+            <tr class="border-t">
+                <td class="p-3">{{ patient.patient_id }}</td>
+                <td class="p-3">
+                    {{ patient.user.get_full_name }}
+                </td>
+                <td class="p-3">{{ patient.user.email }}</td>
+                <td class="p-3">
+                    <a class="text-blue-600 hover:underline"
+                       href="{% url 'doctors:patient-summary' patient.pk %}">
+                        View Clinical Summary
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="p-5 text-center">
+                    No assigned patients found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="flex gap-4">
+    {% if page_obj.has_previous %}
+    <a href="?search={{ search|urlencode }}&page={{ page_obj.previous_page_number }}">
+        Previous
+    </a>
+    {% endif %}
+
+    <span>
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?search={{ search|urlencode }}&page={{ page_obj.next_page_number }}">
+        Next
+    </a>
+    {% endif %}
+</div>
+
+
+</div>
+{% endblock %}

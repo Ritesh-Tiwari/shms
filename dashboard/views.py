@@ -14,11 +14,15 @@ from patients.models import Patient
     UserRole.ADMIN,
     UserRole.DOCTOR,
     UserRole.PATIENT,
+    UserRole.RECEPTIONIST,
 )
 def dashboard(request):
 
     if request.user.role == UserRole.PATIENT:
         return redirect("patients:home")
+    
+    if request.user.role == UserRole.DOCTOR:
+            return redirect("doctors:dashboard")
 
     search = request.GET.get("search", "").strip()
     status = request.GET.get("status", "").strip()

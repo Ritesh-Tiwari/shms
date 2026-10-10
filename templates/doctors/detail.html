@@ -29,7 +29,11 @@ Doctor Details
                     <div
                         class="absolute -bottom-3 -right-3 bg-secondary text-on-secondary px-sm py-xs rounded-full flex items-center gap-xs shadow-md border-2 border-surface z-20">
                         <span class="material-symbols-outlined text-[16px]">verified</span>
-                        <span class="font-label-sm uppercase tracking-wider">Active</span>
+                        {% if doctor.user.is_active %}                            
+                            <span class="font-label-sm uppercase tracking-wider">Active</span>
+                        {% else %}
+                            <span class="font-label-sm uppercase tracking-wider">Inactive</span>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="flex-1 flex flex-col justify-end pb-sm">
@@ -54,6 +58,31 @@ Doctor Details
                                 <span class="material-symbols-outlined text-[18px]">calendar_month</span>
                                 View Schedule
                             </button>
+                            <!-- Danger Zone Dropdown / Icon Button -->
+                            <div class="relative group">
+                                <button type="button" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors">
+                                <span class="material-symbols-outlined">more_vert</span>
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div class="hidden group-hover:block absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-10">
+                                <form method="post" action="{% url 'doctors:toggle-active' doctor.pk %}">
+                                    {% csrf_token %}
+                                    {% if doctor.user.is_active %}
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center">
+                                    <span class="material-symbols-outlined text-[16px] mr-2">block</span>
+                                    Deactivate Account
+                                    </button>
+                                    {% else %}
+                                     <button type="submit" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center">
+                                    <span class="material-symbols-outlined text-[16px] mr-2">lock_open</span>
+                                    Activate Account
+                                    </button>
+                                    {% endif %}
+                                </form>
+                                </div>
+                            </div>
+                                                        
                         </div>
                     </div>
                     <div class="text-body-lg text-on-surface-variant font-medium">{{ doctor.qualification }}</div>
@@ -92,6 +121,7 @@ Doctor Details
                         <div class="text-title-md text-on-surface">₹{{ doctor.consultation_fee }}</div>
                     </div>
                 </div>
+                
 
             </div>
             <!-- Content Area -->

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Clinical Summary{% endblock %}
+
+{% block content %}
+
+<div class="p-lg space-y-lg">
+
+<h1 class="text-2xl font-bold">Patient Clinical Summary</h1>
+
+<section class="bg-white rounded-xl shadow p-5 space-y-2">
+    <h2 class="text-xl font-semibold">
+        {{ patient.user.get_full_name }}
+    </h2>
+
+    <p>Patient ID: {{ patient.patient_id }}</p>
+    <p>Age: {{ patient.age|default:"Not recorded" }}</p>
+    <p>Gender: {{ patient.get_gender_display }}</p>
+    <p>Blood Group: {{ patient.blood_group }}</p>
+    <p>Allergies: {{ patient.allergies|default:"Not recorded" }}</p>
+    <p>Medical History: {{ patient.medical_history|default:"Not recorded" }}</p>
+</section>
+
+<section class="bg-white rounded-xl shadow p-5">
+    <h2 class="text-xl font-semibold mb-4">My Appointments With This Patient</h2>
+
+    {% for appointment in appointments %}
+    <div class="border-b py-3">
+        <p class="font-medium">
+            {{ appointment.appointment_id }}
+        </p>
+        <p>
+            {{ appointment.appointment_date|date:"d M Y" }}
+            {{ appointment.appointment_time|time:"H:i" }}
+        </p>
+        <p>{{ appointment.get_status_display }}</p>
+        <p>{{ appointment.reason_for_visit }}</p>
+    </div>
+    {% empty %}
+    <p>No appointments found.</p>
+    {% endfor %}
+</section>
+
+<section class="bg-white rounded-xl shadow p-5">
+    <h2 class="text-xl font-semibold mb-4">Prescriptions</h2>
+
+    {% for prescription in prescriptions %}
+    <div class="border-b py-3">
+        <p class="font-medium">{{ prescription.prescription_id }}</p>
+        <p>Diagnosis: {{ prescription.diagnosis }}</p>
+        <p>Status: {{ prescription.get_status_display }}</p>
+
+        <ul class="list-disc pl-5 mt-2">
+            {% for medicine in prescription.medicines.all %}
+            <li>
+                {{ medicine.medicine_name }} —
+                {{ medicine.dosage }},
+                {{ medicine.frequency }},
+                {{ medicine.duration }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% empty %}
+    <p>No prescriptions found.</p>
+    {% endfor %}
+</section>
+
+
+</div>
+{% endblock %}

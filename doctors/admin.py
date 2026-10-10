@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Doctor
+from .models import Doctor, DoctorSchedule
 
 
 @admin.register(Doctor)
@@ -29,4 +29,25 @@ class DoctorAdmin(admin.ModelAdmin):
 
     ordering = (
         "doctor_id",
+    )
+
+@admin.register(DoctorSchedule)
+class DoctorScheduleAdmin(admin.ModelAdmin):
+    list_display = (
+        "doctor",
+        "weekday",
+        "start_time",
+        "end_time",
+        "is_active",
+    )
+
+    list_filter = (
+        "weekday",
+        "is_active",
+    )
+
+    search_fields = (
+        "doctor__doctor_id",
+        "doctor__user__first_name",
+        "doctor__user__last_name",
     )

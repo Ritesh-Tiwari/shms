@@ -2,6 +2,37 @@ from django.utils import timezone
 from django import forms
 
 from .models import Appointment
+from doctors.models import DoctorSchedule
+
+def validate_doctor_schedule(
+    form,
+    doctor,
+    appointment_date,
+    appointment_time,
+):
+    if not doctor or not appointment_date or not appointment_time:
+        return
+
+    if doctor.availability != "AVAILABLE":
+        form.add_error(
+            "doctor",
+            "This doctor is currently unavailable.",
+        )
+        return
+
+    schedule_exists = DoctorSchedule.objects.filter(
+        doctor=doctor,
+        weekday=appointment_date.weekday(),
+        is_active=True,
+        start_time__lte=appointment_time,
+        end_time__gt=appointment_time,
+    ).exists()
+
+    if not schedule_exists:
+        form.add_error(
+            "appointment_time",
+            "The doctor is not scheduled at this time.",
+        )
 
 
 class AppointmentForm(forms.ModelForm):
@@ -47,6 +78,13 @@ class AppointmentForm(forms.ModelForm):
 
         appointment_time = cleaned_data.get(
             "appointment_time"
+        )
+
+        validate_doctor_schedule(
+            self,
+            self.instance.doctor,
+            cleaned_data.get("appointment_date"),
+            cleaned_data.get("appointment_time"),
         )
 
         if not appointment_date or not appointment_time:
@@ -118,6 +156,12 @@ class AppointmentUpdateForm(forms.ModelForm):
         appointment_time = cleaned_data.get(
             "appointment_time"
         )
+        validate_doctor_schedule(
+            self,
+            self.instance.doctor,
+            cleaned_data.get("appointment_date"),
+            cleaned_data.get("appointment_time"),
+        )
 
         if not appointment_date or not appointment_time:
             return cleaned_data
@@ -180,7 +224,7 @@ class PatientAppointmentForm(forms.ModelForm):
     def clean(self):
 
         cleaned_data = super().clean()
-
+        
         appointment_date = cleaned_data.get(
             "appointment_date"
         )
@@ -189,6 +233,13 @@ class PatientAppointmentForm(forms.ModelForm):
             "appointment_time"
         )
 
+        validate_doctor_schedule(
+            self,
+            cleaned_data.get("doctor"),
+            cleaned_data.get("appointment_date"),
+            cleaned_data.get("appointment_time"),
+        )
+    
         if not appointment_date or not appointment_time:
             return cleaned_data
 

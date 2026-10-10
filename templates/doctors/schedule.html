@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}My Schedule{% endblock %}
+
+{% block content %}
+
+<div class="p-lg space-y-6">
+
+<div class="flex justify-between items-center gap-4">
+    <div>
+        <h1 class="text-2xl font-bold">My Weekly Schedule</h1>
+        <p class="text-slate-600">
+            Manage your recurring availability.
+        </p>
+    </div>
+
+    <a href="{% url 'doctors:schedule-add' %}"
+       class="px-4 py-2 rounded-lg bg-blue-600 text-white">
+        Add Schedule
+    </a>
+</div>
+
+<div class="bg-white rounded-xl shadow overflow-x-auto">
+    <table class="w-full text-left">
+        <thead class="bg-slate-100">
+            <tr>
+                <th class="p-3">Day</th>
+                <th class="p-3">Start</th>
+                <th class="p-3">End</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for schedule in schedules %}
+            <tr class="border-t">
+                <td class="p-3">
+                    {{ schedule.get_weekday_display }}
+                </td>
+                <td class="p-3">
+                    {{ schedule.start_time|time:"H:i" }}
+                </td>
+                <td class="p-3">
+                    {{ schedule.end_time|time:"H:i" }}
+                </td>
+                <td class="p-3">
+                    {% if schedule.is_active %}
+                        Active
+                    {% else %}
+                        Inactive
+                    {% endif %}
+                </td>
+                <td class="p-3">
+                    <a class="text-red-600 hover:underline"
+                       href="{% url 'doctors:schedule-delete' schedule.pk %}">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="p-5 text-center">
+                    No schedules added yet.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+</div>
+{% endblock %}
