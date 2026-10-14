@@ -23,6 +23,9 @@ def dashboard(request):
     
     if request.user.role == UserRole.DOCTOR:
             return redirect("doctors:dashboard")
+    
+    if request.user.role == UserRole.RECEPTIONIST:
+        return redirect("receptionist:dashboard")   
 
     search = request.GET.get("search", "").strip()
     status = request.GET.get("status", "").strip()

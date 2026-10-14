@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Receptionists | SHMS
+{% endblock %}
+
+{% block content %}
+
+<div class="space-y-6">
+
+    <div class="flex flex-wrap items-center justify-between gap-4">
+
+        <div>
+
+            <h1 class="text-2xl font-bold text-slate-900">
+                Receptionist Management
+            </h1>
+
+            <p class="mt-1 text-sm text-slate-500">
+                Create and manage receptionist accounts.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'receptionist:create' %}"
+            class="rounded-lg bg-blue-600 px-5 py-3
+                   font-semibold text-white hover:bg-blue-700"
+        >
+            + Add Receptionist
+        </a>
+
+    </div>
+
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="rounded-lg border border-emerald-200
+                        bg-emerald-50 p-4 text-emerald-700">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <form
+        method="get"
+        class="flex flex-col gap-3 rounded-xl border
+               border-slate-200 bg-white p-5 sm:flex-row"
+    >
+
+        <input
+            type="search"
+            name="q"
+            value="{{ query }}"
+            maxlength="100"
+            placeholder="Search ID, name, email, phone..."
+            class="w-full rounded-lg border border-slate-300
+                   px-4 py-3 text-sm"
+        >
+
+
+        <button
+            type="submit"
+            class="rounded-lg bg-slate-900 px-5 py-3
+                   font-semibold text-white hover:bg-slate-700"
+        >
+            Search
+        </button>
+
+
+        <a
+            href="{% url 'receptionist:list' %}"
+            class="rounded-lg border border-slate-300
+                   px-5 py-3 text-center font-semibold"
+        >
+            Reset
+        </a>
+
+    </form>
+
+
+    <div class="overflow-x-auto rounded-xl border
+                border-slate-200 bg-white">
+
+        <table class="w-full text-left text-sm">
+
+            <thead class="bg-slate-50 text-slate-600">
+
+                <tr>
+
+                    <th class="px-5 py-4">
+                        Receptionist ID
+                    </th>
+
+                    <th class="px-5 py-4">
+                        Name
+                    </th>
+
+                    <th class="px-5 py-4">
+                        Email
+                    </th>
+
+                    <th class="px-5 py-4">
+                        Phone
+                    </th>
+
+                    <th class="px-5 py-4">
+                        Joining Date
+                    </th>
+
+                    <th class="px-5 py-4">
+                        Account Status
+                    </th>
+
+                    <th class="px-5 py-4">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody class="divide-y divide-slate-100">
+
+                {% for receptionist in page_obj %}
+
+                    <tr>
+
+                        <td class="px-5 py-4 font-semibold">
+                            {{ receptionist.receptionist_id }}
+                        </td>
+
+
+                        <td class="px-5 py-4">
+
+                            {{ receptionist.user.get_full_name }}
+
+                        </td>
+
+
+                        <td class="px-5 py-4">
+
+                            {{ receptionist.user.email }}
+
+                        </td>
+
+
+                        <td class="px-5 py-4">
+
+                            {{ receptionist.user.phone_number|default:"—" }}
+
+                        </td>
+
+
+                        <td class="px-5 py-4">
+
+                            {{ receptionist.joining_date|date:"d M Y" }}
+
+                        </td>
+
+
+                        <td class="px-5 py-4">
+
+                            {% if receptionist.user.is_active %}
+
+                                <span class="rounded-full bg-emerald-100
+                                             px-3 py-1 text-emerald-700">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="rounded-full bg-red-100
+                                             px-3 py-1 text-red-700">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td class="px-5 py-4">
+
+                            <div class="flex flex-wrap gap-3">
+
+                                <a
+                                    href="{% url 'receptionist:detail' receptionist.pk %}"
+                                    class="font-semibold text-blue-600"
+                                >
+                                    View
+                                </a>
+
+
+                                <a
+                                    href="{% url 'receptionist:update' receptionist.pk %}"
+                                    class="font-semibold text-emerald-700"
+                                >
+                                    Edit
+                                </a>
+
+
+                                <a
+                                    href="{% url 'receptionist:delete' receptionist.pk %}"
+                                    class="font-semibold text-red-600"
+                                >
+                                    Delete
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="px-5 py-10 text-center text-slate-500"
+                        >
+                            No receptionists found.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <div class="flex items-center justify-between">
+
+        <p class="text-sm text-slate-500">
+
+            Page {{ page_obj.number }}
+            of {{ page_obj.paginator.num_pages }}
+
+        </p>
+
+
+        <div class="flex gap-2">
+
+            {% if page_obj.has_previous %}
+
+                <a
+                    href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}"
+                    class="rounded-lg border px-4 py-2"
+                >
+                    Previous
+                </a>
+
+            {% endif %}
+
+
+            {% if page_obj.has_next %}
+
+                <a
+                    href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}"
+                    class="rounded-lg border px-4 py-2"
+                >
+                    Next
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

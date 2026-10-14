@@ -52,6 +52,12 @@ class Appointment(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True,
     )
+    
+    checked_in_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
 
     class Meta:
         db_table = "appointments"

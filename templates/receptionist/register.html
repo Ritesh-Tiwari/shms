@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ page_title }} | SHMS
+{% endblock %}
+
+{% block content %}
+
+<div class="mx-auto max-w-3xl space-y-6">
+
+    <div>
+        <h1 class="text-2xl font-bold text-slate-900">
+            {{ page_title }}
+        </h1>
+
+        <p class="mt-2 text-sm text-slate-500">
+            Manage receptionist account and employment details.
+        </p>
+    </div>
+
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="rounded-lg border border-emerald-200
+                        bg-emerald-50 p-4 text-emerald-700">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <form
+        method="post"
+        class="space-y-6 rounded-xl border
+               border-slate-200 bg-white p-6"
+    >
+
+        {% csrf_token %}
+
+
+        {% if user_form.non_field_errors %}
+
+            <div class="rounded-lg bg-red-50 p-4 text-red-700">
+
+                {% for error in user_form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        {% if profile_form.non_field_errors %}
+
+            <div class="rounded-lg bg-red-50 p-4 text-red-700">
+
+                {% for error in profile_form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <section class="space-y-4">
+
+            <h2 class="border-b pb-3 text-lg font-semibold">
+                Account Information
+            </h2>
+
+
+            {% for field in user_form %}
+
+                <div class="space-y-2">
+
+                    <label
+                        for="{{ field.id_for_label }}"
+                        class="block text-sm font-medium text-slate-700"
+                    >
+                        {{ field.label }}
+
+                        {% if field.field.required %}
+                            <span class="text-red-600">*</span>
+                        {% endif %}
+                    </label>
+
+
+                    {{ field }}
+
+
+                    {% if field.help_text %}
+
+                        <p class="text-xs text-slate-500">
+                            {{ field.help_text }}
+                        </p>
+
+                    {% endif %}
+
+
+                    {% for error in field.errors %}
+
+                        <p class="text-sm text-red-600">
+                            {{ error }}
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endfor %}
+
+        </section>
+
+
+        <section class="space-y-4">
+
+            <h2 class="border-b pb-3 text-lg font-semibold">
+                Employment Information
+            </h2>
+
+
+            {% for field in profile_form %}
+
+                <div class="space-y-2">
+
+                    <label
+                        for="{{ field.id_for_label }}"
+                        class="block text-sm font-medium text-slate-700"
+                    >
+                        {{ field.label }}
+
+                        {% if field.field.required %}
+                            <span class="text-red-600">*</span>
+                        {% endif %}
+                    </label>
+
+
+                    {{ field }}
+
+
+                    {% for error in field.errors %}
+
+                        <p class="text-sm text-red-600">
+                            {{ error }}
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endfor %}
+
+        </section>
+
+
+        <div class="flex flex-wrap gap-3 border-t pt-5">
+
+            <button
+                type="submit"
+                class="rounded-lg bg-blue-600 px-5 py-3
+                       font-semibold text-white
+                       hover:bg-blue-700"
+            >
+                {{ button_text }}
+            </button>
+
+
+            <a
+                href="{% url 'receptionist:list' %}"
+                class="rounded-lg border border-slate-300
+                       px-5 py-3 font-semibold text-slate-700
+                       hover:bg-slate-50"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

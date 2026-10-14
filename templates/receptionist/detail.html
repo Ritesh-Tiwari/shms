@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Receptionist Details | SHMS
+{% endblock %}
+
+{% block content %}
+
+<div class="mx-auto max-w-4xl space-y-6">
+
+    <div class="flex flex-wrap items-center justify-between gap-4">
+
+        <div>
+
+            <h1 class="text-2xl font-bold text-slate-900">
+                Receptionist Details
+            </h1>
+
+            <p class="mt-1 text-sm text-slate-500">
+                View staff account and employment information.
+            </p>
+
+        </div>
+
+
+        <div class="flex gap-3">
+
+            <a
+                href="{% url 'receptionist:update' receptionist.pk %}"
+                class="rounded-lg bg-blue-600 px-4 py-3
+                       font-semibold text-white"
+            >
+                Edit
+            </a>
+
+
+            <a
+                href="{% url 'receptionist:list' %}"
+                class="rounded-lg border px-4 py-3
+                       font-semibold text-slate-700"
+            >
+                Back
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="rounded-xl border border-slate-200 bg-white p-6">
+
+        <div class="mb-6 border-b pb-4">
+
+            <p class="text-sm text-slate-500">
+                Receptionist ID
+            </p>
+
+            <h2 class="mt-1 text-2xl font-bold text-blue-700">
+                {{ receptionist.receptionist_id }}
+            </h2>
+
+        </div>
+
+
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+
+
+            <div>
+
+                <p class="text-sm text-slate-500">
+                    Full Name
+                </p>
+
+                <p class="mt-1 font-semibold text-slate-900">
+                    {{ receptionist.user.get_full_name }}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-sm text-slate-500">
+                    Username
+                </p>
+
+                <p class="mt-1 font-semibold text-slate-900">
+                    {{ receptionist.user.username }}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-sm text-slate-500">
+                    Email
+                </p>
+
+                <p class="mt-1 font-semibold text-slate-900">
+                    {{ receptionist.user.email }}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-sm text-slate-500">
+                    Phone
+                </p>
+
+                <p class="mt-1 font-semibold text-slate-900">
+                    {{ receptionist.user.phone_number|default:"—" }}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-sm text-slate-500">
+                    Joining Date
+                </p>
+
+                <p class="mt-1 font-semibold text-slate-900">
+                    {{ receptionist.joining_date|date:"d M Y" }}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-sm text-slate-500">
+                    Account Status
+                </p>
+
+                {% if receptionist.user.is_active %}
+
+                    <span class="mt-1 inline-block rounded-full
+                                 bg-emerald-100 px-3 py-1
+                                 text-emerald-700">
+                        Active
+                    </span>
+
+                {% else %}
+
+                    <span class="mt-1 inline-block rounded-full
+                                 bg-red-100 px-3 py-1
+                                 text-red-700">
+                        Inactive
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div>
+
+                <p class="text-sm text-slate-500">
+                    Created At
+                </p>
+
+                <p class="mt-1 font-semibold text-slate-900">
+                    {{ receptionist.created_at|date:"d M Y, h:i A" }}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <p class="text-sm text-slate-500">
+                    Last Updated
+                </p>
+
+                <p class="mt-1 font-semibold text-slate-900">
+                    {{ receptionist.updated_at|date:"d M Y, h:i A" }}
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="mt-8 border-t pt-5">
+
+            <a
+                href="{% url 'receptionist:delete' receptionist.pk %}"
+                class="font-semibold text-red-600"
+            >
+                Delete Receptionist Account
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

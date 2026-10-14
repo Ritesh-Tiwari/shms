@@ -23,6 +23,7 @@ from .availability import (
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.RECEPTIONIST,
 )
 def create_appointment(request):
 

@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}
+Appointments | SHMS
+{% endblock %}
+
+{% block content %}
+
+<div class="space-y-6">
+
+    <div>
+        <h1 class="text-2xl font-bold text-slate-900">
+            Appointment Management
+        </h1>
+
+        <p class="mt-1 text-sm text-slate-500">
+            Search appointments and record patient check-ins.
+        </p>
+    </div>
+
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="rounded-lg border p-4
+                {% if message.tags == 'error' %}
+                    border-red-200 bg-red-50 text-red-700
+                {% else %}
+                    border-emerald-200 bg-emerald-50 text-emerald-700
+                {% endif %}"
+            >
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <form
+        method="get"
+        class="grid grid-cols-1 gap-4 rounded-xl
+               border border-slate-200 bg-white p-5
+               md:grid-cols-4"
+    >
+
+        <div>
+            <label class="mb-2 block text-sm font-medium">
+                Search
+            </label>
+
+            {{ form.search }}
+        </div>
+
+
+        <div>
+            <label class="mb-2 block text-sm font-medium">
+                Appointment Date
+            </label>
+
+            {{ form.appointment_date }}
+        </div>
+
+
+        <div>
+            <label class="mb-2 block text-sm font-medium">
+                Status
+            </label>
+
+            {{ form.status }}
+        </div>
+
+
+        <div class="flex items-end">
+
+            <button
+                type="submit"
+                class="w-full rounded-lg bg-blue-600 px-4 py-3
+                       font-semibold text-white hover:bg-blue-700"
+            >
+                Search Appointments
+            </button>
+
+        </div>
+
+    </form>
+
+
+    <div class="overflow-x-auto rounded-xl border
+                border-slate-200 bg-white">
+
+        <table class="w-full text-left text-sm">
+
+            <thead class="bg-slate-50 text-slate-600">
+
+                <tr>
+                    <th class="px-5 py-3">Appointment</th>
+                    <th class="px-5 py-3">Patient</th>
+                    <th class="px-5 py-3">Doctor</th>
+                    <th class="px-5 py-3">Date</th>
+                    <th class="px-5 py-3">Time</th>
+                    <th class="px-5 py-3">Status</th>
+                    <th class="px-5 py-3">Action</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody class="divide-y divide-slate-100">
+
+                {% for appointment in page_obj %}
+
+                    <tr>
+
+                        <td class="px-5 py-4 font-medium">
+                            {{ appointment.appointment_id }}
+                        </td>
+
+                        <td class="px-5 py-4">
+                            {{ appointment.patient.user.get_full_name }}
+                        </td>
+
+                        <td class="px-5 py-4">
+                            {{ appointment.doctor.user.get_full_name }}
+                        </td>
+
+                        <td class="px-5 py-4">
+                            {{ appointment.appointment_date|date:"d M Y" }}
+                        </td>
+
+                        <td class="px-5 py-4">
+                            {{ appointment.appointment_time|time:"h:i A" }}
+                        </td>
+
+                        <td class="px-5 py-4">
+
+                            {% if appointment.checked_in_at %}
+
+                                <span class="text-emerald-700">
+                                    Checked In
+                                </span>
+
+                            {% else %}
+
+                                {{ appointment.get_status_display }}
+
+                            {% endif %}
+
+                        </td>
+
+                        <td class="px-5 py-4">
+
+                            {% if appointment.checked_in_at %}
+
+                                <span class="text-emerald-700">
+                                    Already Checked In
+                                </span>
+
+                            {% elif appointment.status != "CANCELLED" and appointment.status != "COMPLETED" %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'receptionist:check-in' appointment.pk %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="rounded-lg bg-emerald-600
+                                               px-3 py-2 text-white
+                                               hover:bg-emerald-700"
+                                    >
+                                        Check In
+                                    </button>
+
+                                </form>
+
+                            {% else %}
+
+                                <span class="text-slate-400">
+                                    Not Available
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td
+                            colspan="7"
+                            class="px-5 py-10 text-center text-slate-500"
+                        >
+                            No appointments found.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <div class="flex items-center justify-between">
+
+        <p class="text-sm text-slate-500">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </p>
+
+        <div class="flex gap-2">
+
+            {% if page_obj.has_previous %}
+
+                <a
+                    href="?page={{ page_obj.previous_page_number }}"
+                    class="rounded-lg border px-4 py-2"
+                >
+                    Previous
+                </a>
+
+            {% endif %}
+
+
+            {% if page_obj.has_next %}
+
+                <a
+                    href="?page={{ page_obj.next_page_number }}"
+                    class="rounded-lg border px-4 py-2"
+                >
+                    Next
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

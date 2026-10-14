@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.db.models import Q, Prefetch, Sum
 from django.core.paginator import Paginator
 from django.utils import timezone
@@ -207,6 +207,7 @@ def edit_my_profile(request):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.RECEPTIONIST,
 )
 def register_patient(request):
 
@@ -218,21 +219,30 @@ def register_patient(request):
 
         if user_form.is_valid() and patient_form.is_valid():
 
-            PatientService.create_patient(
+            try:
 
-                user_data=user_form.cleaned_data,
+                with transaction.atomic():
 
-                patient_data=patient_form.cleaned_data,
+                    PatientService.create_patient(
+                        user_data=user_form.cleaned_data,
+                        patient_data=patient_form.cleaned_data,
+                    )
 
-            )
+            except IntegrityError:
 
-            messages.success(
-                request,
-                "Patient registered successfully.",
-            )
+                user_form.add_error(
+                    "email",
+                    "An account with this information already exists.",
+                )
 
-            return redirect("patients:list")
+            else:
 
+                messages.success(
+                    request,
+                    "Patient registered successfully.",
+                )
+
+                return redirect("patients:list")
     else:
 
         user_form = UserRegistrationForm()
