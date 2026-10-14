@@ -8,6 +8,18 @@ app_name = "appointments"
 
 urlpatterns = [
 
+    path(
+        "api/available-dates/",
+        views.available_dates_api,
+        name="available-dates",
+    ),
+
+    path(
+        "api/available-times/",
+        views.available_times_api,
+        name="available-times",
+    ),
+
     # -------------------------
     # Patient
     # -------------------------

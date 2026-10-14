@@ -1,41 +1,64 @@
-from django.utils import timezone
 from django import forms
 
+from doctors.models import Doctor
+
+from .availability import get_booking_error
 from .models import Appointment
-from doctors.models import DoctorSchedule
 
-def validate_doctor_schedule(
-    form,
-    doctor,
-    appointment_date,
-    appointment_time,
+
+class AvailableDoctorFormMixin:
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if "doctor" in self.fields:
+
+            self.fields["doctor"].queryset = (
+                Doctor.objects
+                .filter(
+                    user__is_active=True,
+                    availability="AVAILABLE",
+                )
+                .select_related("user")
+                .order_by("doctor_id")
+            )
+
+
+class AppointmentValidationMixin:
+
+    def validate_appointment_slot(
+        self,
+        doctor,
+        appointment_date,
+        appointment_time,
+    ):
+
+        exclude_appointment_id = None
+
+        if self.instance and self.instance.pk:
+            exclude_appointment_id = self.instance.pk
+
+        error = get_booking_error(
+            doctor=doctor,
+            appointment_date=appointment_date,
+            appointment_time=appointment_time,
+            exclude_appointment_id=exclude_appointment_id,
+        )
+
+        if error:
+            field_name, error_message = error
+
+            self.add_error(
+                field_name,
+                error_message,
+            )
+
+
+class AppointmentForm(
+    AvailableDoctorFormMixin,
+    AppointmentValidationMixin,
+    forms.ModelForm,
 ):
-    if not doctor or not appointment_date or not appointment_time:
-        return
-
-    if doctor.availability != "AVAILABLE":
-        form.add_error(
-            "doctor",
-            "This doctor is currently unavailable.",
-        )
-        return
-
-    schedule_exists = DoctorSchedule.objects.filter(
-        doctor=doctor,
-        weekday=appointment_date.weekday(),
-        is_active=True,
-        start_time__lte=appointment_time,
-        end_time__gt=appointment_time,
-    ).exists()
-
-    if not schedule_exists:
-        form.add_error(
-            "appointment_time",
-            "The doctor is not scheduled at this time.",
-        )
-
-
-class AppointmentForm(forms.ModelForm):
 
     class Meta:
 
@@ -50,20 +73,12 @@ class AppointmentForm(forms.ModelForm):
         ]
 
         widgets = {
-            "appointment_date": forms.DateInput(
-                attrs={
-                    "type": "date",
-                    
-                }
-            ),
-            "appointment_time": forms.TimeInput(
-                attrs={
-                    "type": "time",
-                }
-            ),
+            "appointment_date": forms.Select(),
+            "appointment_time": forms.Select(),
             "reason_for_visit": forms.Textarea(
                 attrs={
                     "rows": 3,
+                    "maxlength": 255,
                 }
             ),
         }
@@ -72,125 +87,20 @@ class AppointmentForm(forms.ModelForm):
 
         cleaned_data = super().clean()
 
-        appointment_date = cleaned_data.get(
-            "appointment_date"
+        self.validate_appointment_slot(
+            doctor=cleaned_data.get("doctor"),
+            appointment_date=cleaned_data.get("appointment_date"),
+            appointment_time=cleaned_data.get("appointment_time"),
         )
-
-        appointment_time = cleaned_data.get(
-            "appointment_time"
-        )
-
-        validate_doctor_schedule(
-            self,
-            self.instance.doctor,
-            cleaned_data.get("appointment_date"),
-            cleaned_data.get("appointment_time"),
-        )
-
-        if not appointment_date or not appointment_time:
-            return cleaned_data
-
-        now = timezone.localtime()
-        current_date = now.date()
-        current_time = now.time()
-
-        if appointment_date < current_date:
-
-            self.add_error(
-                "appointment_date",
-                "Appointment date cannot be in the past.",
-            )
-
-        elif (
-            appointment_date == current_date
-            and appointment_time <= current_time
-        ):
-
-            self.add_error(
-                "appointment_time",
-                "Appointment time must be in the future.",
-            )
-
-        return cleaned_data
-
-class AppointmentUpdateForm(forms.ModelForm):
-
-    class Meta:
-
-        model = Appointment
-
-        fields = [
-            "appointment_date",
-            "appointment_time",
-            "reason_for_visit",
-        ]
-
-        widgets = {
-            "appointment_date": forms.DateInput(
-                attrs={
-                    "type": "date",
-                    
-                    
-                }
-            ),
-            "appointment_time": forms.TimeInput(
-                attrs={
-                    "type": "time",
-                }
-            ),
-            "reason_for_visit": forms.Textarea(
-                attrs={
-                    "rows": 3,
-                }
-            ),
-        }
-
-    def clean(self):
-
-        cleaned_data = super().clean()
-
-        appointment_date = cleaned_data.get(
-            "appointment_date"
-        )
-
-        appointment_time = cleaned_data.get(
-            "appointment_time"
-        )
-        validate_doctor_schedule(
-            self,
-            self.instance.doctor,
-            cleaned_data.get("appointment_date"),
-            cleaned_data.get("appointment_time"),
-        )
-
-        if not appointment_date or not appointment_time:
-            return cleaned_data
-
-        now = timezone.localtime()
-        current_date = now.date()
-        current_time = now.time()
-
-        if appointment_date < current_date:
-
-            self.add_error(
-                "appointment_date",
-                "Appointment date cannot be in the past.",
-            )
-
-        elif (
-            appointment_date == current_date
-            and appointment_time <= current_time
-        ):
-
-            self.add_error(
-                "appointment_time",
-                "Appointment time must be in the future.",
-            )
 
         return cleaned_data
 
 
-class PatientAppointmentForm(forms.ModelForm):
+class PatientAppointmentForm(
+    AvailableDoctorFormMixin,
+    AppointmentValidationMixin,
+    forms.ModelForm,
+):
 
     class Meta:
 
@@ -204,19 +114,12 @@ class PatientAppointmentForm(forms.ModelForm):
         ]
 
         widgets = {
-            "appointment_date": forms.DateInput(
-                attrs={
-                    "type": "date",
-                }
-            ),
-            "appointment_time": forms.TimeInput(
-                attrs={
-                    "type": "time",
-                }
-            ),
+            "appointment_date": forms.Select(),
+            "appointment_time": forms.Select(),
             "reason_for_visit": forms.Textarea(
                 attrs={
                     "rows": 3,
+                    "maxlength": 255,
                 }
             ),
         }
@@ -224,44 +127,50 @@ class PatientAppointmentForm(forms.ModelForm):
     def clean(self):
 
         cleaned_data = super().clean()
-        
-        appointment_date = cleaned_data.get(
-            "appointment_date"
+
+        self.validate_appointment_slot(
+            doctor=cleaned_data.get("doctor"),
+            appointment_date=cleaned_data.get("appointment_date"),
+            appointment_time=cleaned_data.get("appointment_time"),
         )
 
-        appointment_time = cleaned_data.get(
-            "appointment_time"
+        return cleaned_data
+
+
+class AppointmentUpdateForm(
+    AppointmentValidationMixin,
+    forms.ModelForm,
+):
+
+    class Meta:
+
+        model = Appointment
+
+        fields = [
+            "appointment_date",
+            "appointment_time",
+            "reason_for_visit",
+        ]
+
+        widgets = {
+            "appointment_date": forms.Select(),
+            "appointment_time": forms.Select(),
+            "reason_for_visit": forms.Textarea(
+                attrs={
+                    "rows": 3,
+                    "maxlength": 255,
+                }
+            ),
+        }
+
+    def clean(self):
+
+        cleaned_data = super().clean()
+
+        self.validate_appointment_slot(
+            doctor=self.instance.doctor,
+            appointment_date=cleaned_data.get("appointment_date"),
+            appointment_time=cleaned_data.get("appointment_time"),
         )
-
-        validate_doctor_schedule(
-            self,
-            cleaned_data.get("doctor"),
-            cleaned_data.get("appointment_date"),
-            cleaned_data.get("appointment_time"),
-        )
-    
-        if not appointment_date or not appointment_time:
-            return cleaned_data
-
-        now = timezone.localtime()
-        current_date = now.date()
-        current_time = now.time()
-
-        if appointment_date < current_date:
-
-            self.add_error(
-                "appointment_date",
-                "Appointment date cannot be in the past.",
-            )
-
-        elif (
-            appointment_date == current_date
-            and appointment_time <= current_time
-        ):
-
-            self.add_error(
-                "appointment_time",
-                "Appointment time must be in the future.",
-            )
 
         return cleaned_data

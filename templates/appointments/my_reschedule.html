@@ -72,7 +72,7 @@
                             </p>
                             <div class="flex items-center gap-2 mt-1 text-on-surface-variant font-body-sm text-body-sm">
                                 <span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
-                                <span>{{appointment.appointment_date|date:"d M Y"}} at {{appointment.appointment_date|time:"g:i A"}}</span>
+                                <span>{{appointment.appointment_date|date:"d M Y"}} at {{appointment.appointment_time|time:"g:i A"}}</span>
                                 <span class="text-outline-variant">•</span>
                                 <span> {{appointment.doctor.address}}</span>
                             </div>
@@ -81,7 +81,17 @@
                     
                 </div>
                 <!-- Form Section -->
-                <form method="post" class="space-y-6" id="rescheduleForm">
+                <form method="post" 
+                    class="space-y-6" 
+                    id="rescheduleForm"
+                    data-availability-form
+                    data-doctor-id="{{ appointment.doctor_id }}"
+                    data-exclude-appointment-id="{{ appointment.pk }}"
+                    data-dates-url="{% url 'appointments:available-dates' %}"
+                    data-times-url="{% url 'appointments:available-times' %}"
+                    data-selected-date="{{ appointment.appointment_date|date:'Y-m-d' }}"
+                    data-selected-time="{{ appointment.appointment_time|time:'H:i' }}"
+                >
                     {% csrf_token %}
                      {% if form.non_field_errors %}
                     <div class="rounded-lg border border-error/30 bg-error/5 p-4 text-error" role="alert">
@@ -119,7 +129,7 @@
                         <div class="space-y-2">
                             <label
                                 class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1"
-                                for="newDate">
+                               for="id_appointment_date">
                                 New Appointment Date     
                                 {% if form.appointment_date.errors %}
                                 <span class="text-error ">*
@@ -130,10 +140,15 @@
                             <div class="relative">
                                 <span
                                     class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">calendar_month</span>
-                                <input
+                                <select
                                     class="w-full pl-11 pr-4 py-2.5 bg-surface-container-low text-on-surface rounded-lg font-body-md text-body-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                                    id="newDate" min="{{tomorrow_date}}" name="{{ form.appointment_date.html_name }}" required="" type="date"
-                                    value="{{tomorrow_date}}"/>
+                                    id="id_appointment_date"
+                                    name="{{ form.appointment_date.html_name }}"
+                                    required
+                                    disabled
+                                >
+                                    <option value="">Loading available dates...</option>
+                                </select>
                             </div>
                             
                         </div>
@@ -152,11 +167,21 @@
                             <div class="relative">
                                 <span
                                     class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">schedule</span>
-                                <input
+                                <select
                                     class="w-full pl-11 pr-4 py-2.5 bg-surface-container-low text-on-surface rounded-lg font-body-md text-body-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                                    id="newTime" name="{{ form.appointment_time.html_name }}" required="" type="time"
-                                    value="{{ form.appointment_time.value }}"
-                                    />
+                                    id="id_appointment_time"
+                                    name="{{ form.appointment_time.html_name }}"
+                                    required
+                                    disabled
+                                >
+                                    <option value="">Select a date first</option>
+                                </select>
+                                <div
+                                    id="availability-message"
+                                    class="text-sm text-on-surface-variant"
+                                    role="status"
+                                    aria-live="polite"
+                                ></div>
                             </div>
                             
                         </div>
@@ -171,11 +196,16 @@
                             
                         </div>
                         <div class="relative">
-                            <textarea
-                                class="w-full p-3.5 bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/60 rounded-lg font-body-sm text-body-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
-                                id="rescheduleReason" maxlength="300" name="{{ form.reason_for_visit.html_name }}"                                
-                                placeholder="e.g., Work conflict, travel requirement, or need an earlier morning slot..."
-                                rows="3" required></textarea>
+                        <textarea
+                            class="w-full p-3.5 bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/60 rounded-lg font-body-sm text-body-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+                            id="rescheduleReason"
+                            name="{{ form.reason_for_visit.html_name }}"
+                            maxlength="255"
+                            rows="3"
+                            required
+                        >
+                            {{ form.reason_for_visit.value|default:appointment.reason_for_visit }}
+                        </textarea>
                         </div>
                         <p class="font-label-sm text-label-sm text-on-surface-variant">
                             Optional: Brief context helps our clinic staff prioritize scheduling contingencies.
@@ -203,6 +233,7 @@
     </div>
     
 </main>
+{% include "appointments/_availability_script.html" %}
 
 
 {% endblock %}

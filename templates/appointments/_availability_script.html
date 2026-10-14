@@ -1,0 +1,439 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.querySelector(
+        "[data-availability-form]"
+    );
+
+    if (!form) {
+        return;
+    }
+
+    const doctorSelect = form.querySelector(
+        '[name="doctor"]'
+    );
+
+    const fixedDoctorId = form.dataset.doctorId || "";
+
+    const dateSelect = form.querySelector(
+        '[name="appointment_date"]'
+    );
+
+    const timeSelect = form.querySelector(
+        '[name="appointment_time"]'
+    );
+
+    const excludeAppointmentId =
+        form.dataset.excludeAppointmentId || "";
+
+    const message = document.getElementById(
+        "availability-message"
+    );
+
+    if ((!doctorSelect && !fixedDoctorId) || !dateSelect || !timeSelect) {
+        return;
+    }
+
+    const datesUrl = form.dataset.datesUrl;
+    const timesUrl = form.dataset.timesUrl;
+
+    const initialDate = (
+        form.dataset.selectedDate || ""
+    ).trim();
+
+    const initialTime = (
+        form.dataset.selectedTime || ""
+    ).trim().slice(0, 5);
+
+    let requestNumber = 0;
+
+    function showMessage(text) {
+
+        if (message) {
+            message.textContent = text;
+        }
+    }
+
+    function resetSelect(
+        select,
+        placeholder,
+        disabled = true
+    ) {
+
+        select.innerHTML = "";
+
+        const option = document.createElement("option");
+
+        option.value = "";
+        option.textContent = placeholder;
+
+        select.appendChild(option);
+
+        select.disabled = disabled;
+    }
+
+    function addOptions(
+        select,
+        items,
+        placeholder,
+        selectedValue = ""
+    ) {
+
+        resetSelect(
+            select,
+            placeholder,
+            false
+        );
+
+        items.forEach(function (item) {
+
+            const option = document.createElement("option");
+
+            option.value = item.value;
+            option.textContent = item.label;
+
+            if (item.value === selectedValue) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
+        });
+
+        if (items.length === 0) {
+            resetSelect(
+                select,
+                placeholder,
+                true
+            );
+        }
+    }
+
+    async function loadDates(
+        selectedDate = "",
+        selectedTime = ""
+    ) {
+
+        const doctorId = doctorSelect
+            ? doctorSelect.value
+            : fixedDoctorId;
+
+        const currentRequest = ++requestNumber;
+
+        resetSelect(
+            dateSelect,
+            "Loading available dates...",
+            true
+        );
+
+        resetSelect(
+            timeSelect,
+            "Select a date first",
+            true
+        );
+
+        if (!doctorId) {
+
+            resetSelect(
+                dateSelect,
+                "Select a doctor first",
+                true
+            );
+
+            showMessage(
+                "Select a doctor to see available dates."
+            );
+
+            return;
+        }
+
+        showMessage("Loading available dates...");
+
+        try {
+
+            const url = new URL(
+                datesUrl,
+                window.location.origin
+            );
+
+            url.searchParams.set(
+                "doctor_id",
+                doctorId
+            );
+
+            const response = await fetch(url, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load available dates."
+                );
+            }
+
+            const data = await response.json();
+
+            if (currentRequest !== requestNumber) {
+                return;
+            }
+
+            addOptions(
+                dateSelect,
+                data.dates,
+                "Select an available date",
+                selectedDate
+            );
+
+            if (data.dates.length === 0) {
+
+                showMessage(
+                    "No available dates found for this doctor."
+                );
+
+                return;
+            }
+
+            showMessage(
+                "Select a date to see available time slots."
+            );
+
+            // Load time slots if the selected date is still available.
+            if (
+                selectedDate &&
+                data.dates.some(
+                    item => item.value === selectedDate
+                )
+            ) {
+
+                await loadTimes(
+                    selectedDate,
+                    selectedTime
+                );
+
+            } else {
+
+                dateSelect.value = "";
+            }
+
+        } catch (error) {
+
+            if (currentRequest !== requestNumber) {
+                return;
+            }
+
+            resetSelect(
+                dateSelect,
+                "Unable to load dates",
+                true
+            );
+
+            resetSelect(
+                timeSelect,
+                "Select a date first",
+                true
+            );
+
+            showMessage(
+                "Could not load availability. Refresh the page and try again."
+            );
+
+            console.error(error);
+        }
+    }
+
+    async function loadTimes(
+        selectedDate,
+        selectedTime = ""
+    ) {
+
+        const doctorId = doctorSelect
+            ? doctorSelect.value
+            : fixedDoctorId;
+        if (!doctorId || !selectedDate) {
+
+            resetSelect(
+                timeSelect,
+                "Select a date first",
+                true
+            );
+
+            return;
+        }
+        
+
+        const currentRequest = ++requestNumber;
+
+        resetSelect(
+            timeSelect,
+            "Loading available times...",
+            true
+        );
+
+        showMessage("Loading available time slots...");
+
+        try {
+
+            const url = new URL(
+                timesUrl,
+                window.location.origin
+            );
+            if (excludeAppointmentId) {
+                url.searchParams.set(
+                    "exclude_appointment_id",
+                    excludeAppointmentId
+                );
+            }
+
+            url.searchParams.set(
+                "doctor_id",
+                doctorId
+            );
+
+            url.searchParams.set(
+                "date",
+                selectedDate
+            );
+
+            const response = await fetch(url, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+           
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load available time slots."
+                );
+            }
+
+            const data = await response.json();
+
+            if (currentRequest !== requestNumber) {
+                return;
+            }
+
+            addOptions(
+                timeSelect,
+                data.times,
+                "Select an available time",
+                selectedTime
+            );
+
+            if (data.times.length === 0) {
+
+                showMessage(
+                    "No available time slots on this date."
+                );
+
+                return;
+            }
+
+            showMessage(
+                data.times.length +
+                " available time slot(s) found."
+            );
+
+            // Clear a stale selected time if it has been booked.
+            if (
+                selectedTime &&
+                !data.times.some(
+                    item => item.value === selectedTime
+                )
+            ) {
+                timeSelect.value = "";
+            }
+
+        } catch (error) {
+
+            if (currentRequest !== requestNumber) {
+                return;
+            }
+
+            resetSelect(
+                timeSelect,
+                "Unable to load times",
+                true
+            );
+
+            showMessage(
+                "Could not load time slots. Please try again."
+            );
+
+            console.error(error);
+        }
+    }
+
+    if (doctorSelect) {
+        doctorSelect.addEventListener(
+            "change",
+            function () {
+                loadDates();
+            }
+        );
+    }
+
+    dateSelect.addEventListener(
+        "change",
+        function () {
+
+            resetSelect(
+                timeSelect,
+                "Select an available time",
+                true
+            );
+
+            if (!dateSelect.value) {
+                showMessage(
+                    "Select an available date."
+                );
+
+                return;
+            }
+
+            loadTimes(dateSelect.value);
+        }
+    );
+
+    // On initial load, restore a valid previous selection if possible.
+    if (doctorSelect.value) {
+
+        loadDates(
+            initialDate,
+            initialTime
+        );
+
+    } else {
+
+        resetSelect(
+            dateSelect,
+            "Select a doctor first",
+            true
+        );
+
+        resetSelect(
+            timeSelect,
+            "Select a date first",
+            true
+        );
+
+        showMessage(
+            "Select a doctor to see available dates."
+        );
+    }
+
+if (doctorSelect && doctorSelect.value) {
+    loadDates(initialDate, initialTime);
+} else if (fixedDoctorId) {
+    loadDates(initialDate, initialTime);
+} else {
+    resetSelect(dateSelect, "Select a doctor first", true);
+    resetSelect(timeSelect, "Select a date first", true);
+    showMessage("Select a doctor to see available dates.");
+}
+
+});
+
+
+</script>

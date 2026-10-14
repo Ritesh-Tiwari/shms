@@ -4,71 +4,130 @@
 
 {% block content %}
 
-<div class="p-lg space-y-6">
 
-<div class="flex justify-between items-center gap-4">
-    <div>
-        <h1 class="text-2xl font-bold">My Weekly Schedule</h1>
-        <p class="text-slate-600">
-            Manage your recurring availability.
-        </p>
+
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full">
+        <!-- Header / Action Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+                <h1
+                    class="text-2xl font-bold tracking-tight text-slate-900 font-headline-lg-mobile md:text-headline-lg">
+                    My Weekly Schedule</h1>
+                <p class="text-slate-500 font-body-sm text-sm mt-1">Manage your recurring availability.</p>
+            </div>
+            <div class="flex items-center">
+                <a href="{% url 'doctors:schedule-add' %}"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary-container hover:bg-primary text-on-primary font-medium text-sm rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    type="button">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    <span class="">Add Schedule</span>
+                </a>
+            </div>
+        </div>
+        <!-- Main Content Card / Table -->
+        <div
+            class="bg-white border border-slate-200/80 rounded-xl p-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+            <div class="flex flex-wrap items-center gap-2.5 flex-1">
+                <div class="relative flex-1 sm:max-w-xs min-w-[200px]"><span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px] pointer-events-none">search</span><input
+                        type="text" placeholder="Filter by time or day..."
+                        class="w-full pl-9 pr-3 py-2 bg-slate-50/70 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                </div>
+                <div class="relative min-w-[130px]"><label class="sr-only" for="day-filter">Filter by day</label><select
+                        id="day-filter"
+                        class="w-full bg-white border border-slate-200 rounded-lg pl-3 pr-8 py-2 text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer transition-all appearance-none">
+                        <option value="all">All Days</option>
+                        <option value="monday">Monday</option>
+                        <option value="tuesday">Tuesday</option>
+                        <option value="wednesday">Wednesday</option>
+                        <option value="thursday">Thursday</option>
+                        <option value="friday">Friday</option>
+                        <option value="saturday">Saturday</option>
+                        <option value="sunday">Sunday</option>
+                    </select><span
+                        class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px] pointer-events-none">expand_more</span>
+                </div>
+                <div class="relative min-w-[130px]"><label class="sr-only" for="status-filter">Filter by
+                        status</label><select id="status-filter"
+                        class="w-full bg-white border border-slate-200 rounded-lg pl-3 pr-8 py-2 text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer transition-all appearance-none">
+                        <option value="all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select><span
+                        class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px] pointer-events-none">expand_more</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100"><button
+                    type="button"
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors"><span
+                        class="material-symbols-outlined text-[16px]">restart_alt</span><span class="">Reset
+                        Filters</span></button></div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr
+                            class="bg-surface-container-low text-on-surface-variant font-label-sm text-xs uppercase tracking-wider">
+                            <th class="py-3.5 px-6 font-semibold" scope="col">Day</th>
+                            <th class="py-3.5 px-6 font-semibold" scope="col">Start</th>
+                            <th class="py-3.5 px-6 font-semibold" scope="col">End</th>
+                            <th class="py-3.5 px-6 font-semibold" scope="col">Status</th>
+                            <th class="py-3.5 px-6 font-semibold text-right sm:text-left" scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        {% for schedule in schedules %}
+                        <!-- Row 1 -->
+                        <tr class="hover:bg-surface-container-low/50 transition-colors">
+                            <td class="py-4 px-6 font-medium text-on-surface whitespace-nowrap">
+                               {{ schedule.get_weekday_display }}
+                            </td>
+                            <td class="py-4 px-6 font-mono text-on-surface-variant whitespace-nowrap">
+                                 {{ schedule.start_time|time:"H:i" }}
+                            </td>
+                            <td class="py-4 px-6 font-mono text-on-surface-variant whitespace-nowrap">
+                                {{ schedule.end_time|time:"H:i" }}
+                            </td>
+                            <td class="py-4 px-6 whitespace-nowrap">
+                                {% if schedule.is_active %}
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                                    Active
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                    Inactive
+                                </span>
+                            {% endif %}
+                            </td>
+                            <td class="py-4 px-6 whitespace-nowrap text-right sm:text-left">
+                                <a href="{% url 'doctors:schedule-delete' schedule.pk %}"
+                                    class="inline-flex items-center gap-1 text-rose-600 hover:text-rose-700 text-sm font-medium hover:underline transition-colors focus:outline-none"
+                                    type="button">
+                                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                                    <span class="">Delete</span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="p-5 text-center">
+                                No schedules added yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <a href="{% url 'doctors:schedule-add' %}"
-       class="px-4 py-2 rounded-lg bg-blue-600 text-white">
-        Add Schedule
-    </a>
-</div>
-
-<div class="bg-white rounded-xl shadow overflow-x-auto">
-    <table class="w-full text-left">
-        <thead class="bg-slate-100">
-            <tr>
-                <th class="p-3">Day</th>
-                <th class="p-3">Start</th>
-                <th class="p-3">End</th>
-                <th class="p-3">Status</th>
-                <th class="p-3">Action</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for schedule in schedules %}
-            <tr class="border-t">
-                <td class="p-3">
-                    {{ schedule.get_weekday_display }}
-                </td>
-                <td class="p-3">
-                    {{ schedule.start_time|time:"H:i" }}
-                </td>
-                <td class="p-3">
-                    {{ schedule.end_time|time:"H:i" }}
-                </td>
-                <td class="p-3">
-                    {% if schedule.is_active %}
-                        Active
-                    {% else %}
-                        Inactive
-                    {% endif %}
-                </td>
-                <td class="p-3">
-                    <a class="text-red-600 hover:underline"
-                       href="{% url 'doctors:schedule-delete' schedule.pk %}">
-                        Delete
-                    </a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="p-5 text-center">
-                    No schedules added yet.
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+</main>
 
 
-</div>
 {% endblock %}

@@ -193,3 +193,45 @@ class DoctorSchedule(models.Model):
             f"{self.get_weekday_display()} "
             f"{self.start_time}-{self.end_time}"
         )
+
+class DoctorLeave(models.Model):
+    doctor = models.ForeignKey(
+        Doctor,
+        on_delete=models.CASCADE,
+        related_name="leaves",
+    )
+
+    leave_date = models.DateField()
+
+    reason = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        db_table = "doctor_leaves"
+
+        ordering = [
+            "leave_date",
+        ]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["doctor", "leave_date"],
+                name="unique_doctor_leave_date",
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.doctor.doctor_id} - "
+            f"Leave on {self.leave_date}"
+        )

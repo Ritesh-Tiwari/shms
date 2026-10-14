@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Doctor, DoctorSchedule
+from .models import Doctor, DoctorSchedule, DoctorLeave
 
 
 @admin.register(Doctor)
@@ -50,4 +50,31 @@ class DoctorScheduleAdmin(admin.ModelAdmin):
         "doctor__doctor_id",
         "doctor__user__first_name",
         "doctor__user__last_name",
+    )
+
+
+@admin.register(DoctorLeave)
+class DoctorLeaveAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "doctor",
+        "leave_date",
+        "reason",
+        "is_active",
+    )
+
+    list_filter = (
+        "leave_date",
+        "is_active",
+    )
+
+    search_fields = (
+        "doctor__doctor_id",
+        "doctor__user__first_name",
+        "doctor__user__last_name",
+        "reason",
+    )
+
+    ordering = (
+        "leave_date",
     )

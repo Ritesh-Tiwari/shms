@@ -50,7 +50,16 @@ Create Appointment
                             information to secure a slot.</p>
                     </div>
                 </div>
-                <form method="post" class="flex flex-col gap-lg" id="appointment-form">
+                <form 
+                    method="post"
+                    class="flex flex-col gap-lg"
+                    id="appointment-form"
+                    data-availability-form
+                    data-dates-url="{% url 'appointments:available-dates' %}"
+                    data-times-url="{% url 'appointments:available-times' %}"
+                    data-selected-date="{{ form.appointment_date.value|default:'' }}"
+                    data-selected-time="{{ form.appointment_time.value|default:'' }}"
+                >
                     {% csrf_token %}
 
                     <!-- Patient & Doctor Selection -->
@@ -155,7 +164,7 @@ Create Appointment
                         <!-- Date -->
                         <div class="flex flex-col gap-xs z-10">
                             <label class="font-label-md text-label-md text-on-surface"
-                                for="{{ form.appointment_date.id_for_label }}">
+                                for="id_appointment_date">
                                 Date <span class="text-error">*</span>
                             </label>
 
@@ -165,25 +174,34 @@ Create Appointment
                                     event
                                 </span>
 
-                                <input
-                                    class="w-full bg-surface-container hover:bg-surface-container-high focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 rounded-lg pl-10 pr-md py-3 font-body-md text-body-md text-on-surface outline-none transition-all shadow-sm cursor-pointer [color-scheme:light]"
-                                    id="{{ form.appointment_date.id_for_label }}"
-                                    name="{{ form.appointment_date.html_name }}" type="date"
-                                    value="{{ form.appointment_date.value|default:'' }}" required>
+                                <select
+                                    class="w-full bg-surface-container hover:bg-surface-container-high focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all shadow-sm"
+                                    id="id_appointment_date"
+                                    name="{{ form.appointment_date.html_name }}"
+                                    required
+                                    disabled
+                                >
+                                    <option value="">Select a doctor first</option>
+                                </select>                            
                             </div>
-
-                            {% if form.appointment_date.errors %}
+                            <div
+                                id="availability-message"
+                                class="text-sm text-on-surface-variant"
+                                role="status"
+                                aria-live="polite"
+                            ></div>
+                            {% comment %} {% if form.appointment_date.errors %}
                             <div class="text-error text-sm mt-1">
                                 {{ form.appointment_date.errors }}
                             </div>
-                            {% endif %}
+                            {% endif %} {% endcomment %}
                         </div>
 
 
                         <!-- Time -->
                         <div class="flex flex-col gap-xs z-10">
                             <label class="font-label-md text-label-md text-on-surface"
-                                for="{{ form.appointment_time.id_for_label }}">
+                                for="id_appointment_time">
                                 Time <span class="text-error">*</span>
                             </label>
 
@@ -193,18 +211,27 @@ Create Appointment
                                     schedule
                                 </span>
 
-                                <input
-                                    class="w-full bg-surface-container hover:bg-surface-container-high focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 rounded-lg pl-10 pr-md py-3 font-body-md text-body-md text-on-surface outline-none transition-all shadow-sm cursor-pointer [color-scheme:light]"
-                                    id="{{ form.appointment_time.id_for_label }}"
-                                    name="{{ form.appointment_time.html_name }}" type="time"
-                                    value="{{ form.appointment_time.value|default:'' }}" required>
+                                <select
+                                    class="w-full bg-surface-container hover:bg-surface-container-high focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all shadow-sm"
+                                    id="id_appointment_time"
+                                    name="{{ form.appointment_time.html_name }}"
+                                    required
+                                    disabled
+                                >
+                                    <option value="">Select a date first</option>
+                                </select>
                             </div>
-
-                            {% if form.appointment_time.errors %}
+                            <div
+                                id="availability-message"
+                                class="text-sm text-on-surface-variant"
+                                role="status"
+                                aria-live="polite"
+                            ></div>
+                            {% comment %} {% if form.appointment_time.errors %}
                             <div class="text-error text-sm mt-1">
                                 {{ form.appointment_time.errors }}
                             </div>
-                            {% endif %}
+                            {% endif %} {% endcomment %}
                         </div>
 
                     </div>
@@ -407,13 +434,7 @@ Create Appointment
             dateDisplay.textContent = new Date().toLocaleDateString('en-IN', options);
         }
 
-        // Set min date to today for date picker
-        const dateInput = document.getElementById('appointment-date');
-        if (dateInput) {
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.setAttribute('min', today);
-        }
-
+      
         // Form submission simulation
         const form = document.getElementById('appointment-form');
         if (form) {
@@ -431,6 +452,7 @@ Create Appointment
         }
     });
 </script>
+{% include "appointments/_availability_script.html" %}
 
 
 {% endblock %}

@@ -4,42 +4,131 @@
 
 {% block content %}
 
-<div class="p-lg max-w-2xl mx-auto">
-    <h1 class="text-2xl font-bold mb-5">Add Weekly Schedule</h1>
 
-<form method="post" class="bg-white rounded-xl shadow p-6 space-y-4">
-    {% csrf_token %}
-
-    {{ form.non_field_errors }}
-
-    {% for field in form %}
-    <div>
-        <label for="{{ field.id_for_label }}"
-               class="block font-medium mb-1">
-            {{ field.label }}
-        </label>
-
-        {{ field }}
-
-        {% for error in field.errors %}
-        <p class="text-red-600 text-sm">{{ error }}</p>
-        {% endfor %}
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="max-w-2xl mx-auto space-y-6">
+        <div class="flex flex-col gap-2"><a
+                class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-primary transition-colors w-fit"
+                href="{% url "doctors:schedule" %}"><span class="material-symbols-outlined text-[18px]">arrow_back</span><span>Back to Weekly
+                    Schedule</span></a>
+            <div class="mt-1">
+                <h1
+                    class="text-2xl font-bold tracking-tight text-slate-900 font-headline-lg-mobile md:text-headline-lg">
+                    Add Weekly Schedule</h1>
+                <p class="text-slate-500 font-body-sm text-sm mt-1">Define a recurring availability slot for your weekly
+                    roster.</p>
+            </div>
+        </div>
+        <div class="bg-surface-container-lowest border border-slate-200/80 rounded-xl p-5 sm:p-8 shadow-sm">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                <div>
+                    <label
+                        class="block text-xs font-semibold tracking-wider text-slate-500 uppercase font-label-sm mb-2"
+                        for="{{ form.weekday.id_for_label }}">Weekday <span class="text-rose-600">*</span></label>
+                    <div class="relative">
+                        <select
+                            class="w-full bg-white border border-slate-200 rounded-lg pl-3.5 pr-10 py-2.5 text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer transition-all appearance-none"
+                            name="{{ form.weekday.html_name }}"
+                            id="{{ form.weekday.id_for_label }}" 
+                            required
+                        >
+                           {% for value, label in form.weekday.field.choices %}
+                                <option
+                                    value="{{ value }}"
+                                    {% if form.weekday.value|stringformat:"s" == value|stringformat:"s" %}
+                                        selected
+                                    {% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select><span
+                            class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] pointer-events-none">expand_more</span>
+                    </div>
+                    {% for error in form.weekday.errors %}
+                        <p class="text-sm text-rose-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div>
+                        <label
+                            class="block text-xs font-semibold tracking-wider text-slate-500 uppercase font-label-sm mb-2"
+                            for="{{ form.start_time.id_for_label }}">Start time <span class="text-rose-600">*</span>
+                        </label>
+                        <div class="relative">
+                            <input
+                                class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                type="time"
+                                name="{{ form.start_time.html_name }}"
+                                id="{{ form.start_time.id_for_label }}"
+                                value="{{ form.start_time.value|default_if_none:'' }}"
+                            />
+                            {% for error in form.start_time.errors %}
+                                <p class="text-sm text-rose-600 mt-1">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-semibold tracking-wider text-slate-500 uppercase font-label-sm mb-2"
+                            for="{{ form.end_time.id_for_label }}">End time <span class="text-rose-600">*</span>
+                        </label>
+                        <div class="relative">
+                            <input
+                                class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                type="time" 
+                                name="{{ form.end_time.html_name }}"
+                                id="{{ form.end_time.id_for_label }}"
+                                value="{{ form.end_time.value|default_if_none:'' }}"    
+                            />
+                            {% for error in form.end_time.errors %}
+                                <p class="text-sm text-rose-600 mt-1">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-slate-100">
+                    <div class="flex items-start gap-3">
+                        <div class="flex items-center h-5 mt-0.5">
+                            <input
+                                type="checkbox"
+                                name="{{ form.is_active.html_name }}"
+                                id="{{ form.is_active.id_for_label }}"
+                                value="True"
+                                class="w-4 h-4 rounded text-primary focus:ring-primary/20 border-slate-300 cursor-pointer"
+                                {% if form.is_active.value %}checked{% endif %}
+                            >    
+                        </div>
+                        <div class="flex flex-col"><label class="text-sm font-semibold text-slate-900 cursor-pointer"
+                            for="{{ form.is_active.id_for_label }}">Is active</label>
+                            <p class="text-xs text-slate-500 mt-0.5">Enable this schedule slot immediately upon saving.
+                            </p>
+                        </div>
+                    </div>
+                    {% for error in form.is_active.errors %}
+                        <p class="text-sm text-rose-600 mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <!-- GENERAL FORM ERRORS -->
+                {% if form.non_field_errors %}
+                    <div class="rounded-lg bg-rose-50 border border-rose-200 p-3">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-sm text-rose-700">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div
+                    class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button
+                        class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-200"
+                        type="button" onclick="window.history.back()">Cancel</button><button
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-container hover:bg-primary text-on-primary font-medium text-sm rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        type="submit"><span class="material-symbols-outlined text-[18px]">check</span><span>Save
+                            Schedule</span></button></div>
+            </form>
+        </div>
     </div>
-    {% endfor %}
+</main>
 
-    <div class="flex gap-3">
-        <button type="submit"
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg">
-            Save Schedule
-        </button>
-
-        <a href="{% url 'doctors:schedule' %}"
-           class="px-4 py-2 bg-slate-200 rounded-lg">
-            Cancel
-        </a>
-    </div>
-</form>
-
-
-</div>
 {% endblock %}

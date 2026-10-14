@@ -28,7 +28,16 @@
                 
             </div>
             <!-- Booking Form -->
-            <form class="space-y-6" id="appointmentForm" method="post">
+            <form
+                class="space-y-6"
+                id="appointmentForm"
+                method="post"
+                data-availability-form
+                data-dates-url="{% url 'appointments:available-dates' %}"
+                data-times-url="{% url 'appointments:available-times' %}"
+                data-selected-date="{{ form.appointment_date.value|default:'' }}"
+                data-selected-time="{{ form.appointment_time.value|default:'' }}"
+            >
                 {% csrf_token %}
                 {% if form.non_field_errors %}
                 <div class="rounded-lg border border-error/30 bg-error/5 p-4 text-error" role="alert">
@@ -93,38 +102,51 @@
                     <div class="space-y-2">
                         <label
                             class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant"
-                            for="appointmentDate">
+                            for="id_appointment_date">
                             Appointment Date <span class="text-error">*</span>
                         </label>
                         <div class="relative">
-                            <input
+                            <select
                                 class="w-full h-11 px-4 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                id="appointmentDate"  name="{{ form.appointment_date.html_name }}" type="date"
-                                    value="{{ form.appointment_date.value|default:'' }}" required />
+                                id="id_appointment_date"
+                                name="{{ form.appointment_date.html_name }}"
+                                required
+                                disabled
+                            >
+                                <option value="">Select a doctor first</option>
+                            </select>
                         </div>
-                        {% for error in form.appointment_date.errors %}
-                        <p class="font-body-sm text-body-sm text-error">{{ error }}</p>
-                        {% endfor %}
+                        <div
+                            id="availability-message"
+                            class="text-sm text-on-surface-variant"
+                            role="status"
+                            aria-live="polite"
+                        ></div>
                     </div>
                     <!-- Appointment Time -->
                     <div class="space-y-2">
                         <label
                             class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant"
-                            for="appointmentTime">
+                            for="id_appointment_time">
                             Appointment Time <span class="text-error">*</span>
                         </label>
                         <div class="relative">
-                            <input
-                                class="w-full h-11 pl-4 pr-10 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer"
-                                id="appointmentTime"  name="{{ form.appointment_time.html_name }}" type="time"
-                                    value="{{ form.appointment_time.value|default:'' }}" required>
-                               
-                            </input>
-                            
+                            <select
+                                class="w-full h-11 pl-4 pr-10 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                id="id_appointment_time"
+                                name="{{ form.appointment_time.html_name }}"
+                                required
+                                disabled
+                            >
+                                <option value="">Select a date first</option>
+                            </select>
                         </div>
-                        {% for error in form.appointment_time.errors %}
-                        <p class="font-body-sm text-body-sm text-error">{{ error }}</p>
-                        {% endfor %}
+                        <div
+                            id="availability-message"
+                            class="text-sm text-on-surface-variant"
+                            role="status"
+                            aria-live="polite"
+                        ></div>
                     </div>
                 </div>
                 <!-- 4. Reason for Visit -->
@@ -270,5 +292,5 @@
     </div>
 
 </main> {% endcomment %}
-
+{% include "appointments/_availability_script.html" %}
 {% endblock %}

@@ -4,11 +4,21 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db import IntegrityError
 from datetime import date,timedelta
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.utils.dateparse import parse_date
+from django.views.decorators.http import require_GET
+
 from core.decorators import role_required
 from accounts.choices import UserRole
 from .models import Appointment, AppointmentStatus
 from .forms import AppointmentForm, AppointmentUpdateForm, PatientAppointmentForm
 from .services import AppointmentService
+from doctors.models import Doctor
+from .availability import (
+    get_available_dates,
+    get_available_slots,
+)
 
 
 @role_required(
@@ -657,4 +667,86 @@ def my_cancel_appointment(request, pk):
         {
             "appointment": appointment,
         },
+    )
+
+
+@login_required
+@require_GET
+def available_dates_api(request):
+
+    doctor_id = request.GET.get("doctor_id")
+
+    if not doctor_id:
+        return JsonResponse(
+            {
+                "dates": [],
+                "message": "Please select a doctor first.",
+            },
+            status=400,
+        )
+
+    doctor = get_object_or_404(
+        Doctor.objects.select_related("user"),
+        pk=doctor_id,
+    )
+
+    available_dates = get_available_dates(doctor)
+
+    return JsonResponse(
+        {
+            "dates": [
+                {
+                    "value": available_date.isoformat(),
+                    "label": available_date.strftime(
+                        "%a, %d %b %Y"
+                    ),
+                }
+                for available_date in available_dates
+            ],
+        }
+    )
+
+
+@login_required
+@require_GET
+def available_times_api(request):
+
+    doctor_id = request.GET.get("doctor_id")
+    selected_date = parse_date(
+        request.GET.get("date", "")
+    )
+    exclude_appointment_id = request.GET.get(
+        "exclude_appointment_id"
+    )
+
+    if not doctor_id or not selected_date:
+        return JsonResponse(
+            {
+                "times": [],
+                "message": "Select a doctor and date.",
+            },
+            status=400,
+        )
+
+    doctor = get_object_or_404(
+        Doctor.objects.select_related("user"),
+        pk=doctor_id,
+    )
+
+    available_slots = get_available_slots(
+        doctor=doctor,
+        appointment_date=selected_date,
+        exclude_appointment_id=exclude_appointment_id,
+    )
+
+    return JsonResponse(
+        {
+            "times": [
+                {
+                    "value": slot.strftime("%H:%M"),
+                    "label": slot.strftime("%I:%M %p"),
+                }
+                for slot in available_slots
+            ],
+        }
     )
