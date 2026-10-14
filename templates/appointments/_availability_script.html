@@ -1,74 +1,68 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.querySelector(
-        "[data-availability-form]"
-    );
+    // Find the appointment form on the current page.
+    const form = document.querySelector("[data-availability-form]");
 
     if (!form) {
         return;
     }
 
-    const doctorSelect = form.querySelector(
-        '[name="doctor"]'
-    );
-
+    // Booking page has a doctor dropdown.
+    // Reschedule page uses a fixed doctor ID from the form.
+    const doctorSelect = form.querySelector('[name="doctor"]');
     const fixedDoctorId = form.dataset.doctorId || "";
 
-    const dateSelect = form.querySelector(
-        '[name="appointment_date"]'
-    );
-
-    const timeSelect = form.querySelector(
-        '[name="appointment_time"]'
-    );
+    const dateSelect = form.querySelector('[name="appointment_date"]');
+    const timeSelect = form.querySelector('[name="appointment_time"]');
 
     const excludeAppointmentId =
         form.dataset.excludeAppointmentId || "";
 
-    const message = document.getElementById(
-        "availability-message"
-    );
-
-    if ((!doctorSelect && !fixedDoctorId) || !dateSelect || !timeSelect) {
-        return;
-    }
-
     const datesUrl = form.dataset.datesUrl;
     const timesUrl = form.dataset.timesUrl;
 
-    const initialDate = (
-        form.dataset.selectedDate || ""
-    ).trim();
+    const message = document.getElementById("availability-message");
 
-    const initialTime = (
-        form.dataset.selectedTime || ""
-    ).trim().slice(0, 5);
+    // Preserve the existing appointment's date and time on reschedule.
+    const initialDate = (form.dataset.selectedDate || "").trim();
+    const initialTime = (form.dataset.selectedTime || "").trim().slice(0, 5);
+
+    if (!dateSelect || !timeSelect) {
+        console.error(
+            "Availability form requires appointment_date and appointment_time fields."
+        );
+        return;
+    }
+
+    if (!datesUrl || !timesUrl) {
+        console.error("Availability API URLs are missing from the form.");
+        showMessage("Availability configuration is missing.");
+        return;
+    }
+
+    if (!doctorSelect && !fixedDoctorId) {
+        console.error("No doctor dropdown or fixed doctor ID was found.");
+        showMessage("Doctor information is missing.");
+        return;
+    }
 
     let requestNumber = 0;
 
     function showMessage(text) {
-
         if (message) {
             message.textContent = text;
         }
     }
 
-    function resetSelect(
-        select,
-        placeholder,
-        disabled = true
-    ) {
-
+    function resetSelect(select, placeholder, disabled = true) {
         select.innerHTML = "";
 
         const option = document.createElement("option");
-
         option.value = "";
         option.textContent = placeholder;
 
         select.appendChild(option);
-
         select.disabled = disabled;
     }
 
@@ -78,21 +72,15 @@ document.addEventListener("DOMContentLoaded", function () {
         placeholder,
         selectedValue = ""
     ) {
-
-        resetSelect(
-            select,
-            placeholder,
-            false
-        );
+        resetSelect(select, placeholder, false);
 
         items.forEach(function (item) {
-
             const option = document.createElement("option");
 
-            option.value = item.value;
+            option.value = String(item.value);
             option.textContent = item.label;
 
-            if (item.value === selectedValue) {
+            if (String(item.value) === String(selectedValue)) {
                 option.selected = true;
             }
 
@@ -100,23 +88,54 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (items.length === 0) {
-            resetSelect(
-                select,
-                placeholder,
-                true
-            );
+            resetSelect(select, placeholder, true);
         }
     }
 
-    async function loadDates(
-        selectedDate = "",
-        selectedTime = ""
-    ) {
+    function getDoctorId() {
+        if (doctorSelect) {
+            return doctorSelect.value || "";
+        }
 
-        const doctorId = doctorSelect
-            ? doctorSelect.value
-            : fixedDoctorId;
+        return fixedDoctorId;
+    }
 
+    function buildApiUrl(baseUrl) {
+        return new URL(baseUrl, window.location.origin);
+    }
+
+    async function fetchJson(url) {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "Accept": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            const responseText = await response.text();
+
+            console.error(
+                "Availability API error:",
+                response.status,
+                responseText
+            );
+
+            throw new Error(
+                "The server could not load availability (HTTP " +
+                response.status +
+                ")."
+            );
+        }
+
+        return response.json();
+    }
+
+    // Load dates for the selected/fixed doctor.
+    async function loadDates(selectedDate = "", selectedTime = "") {
+
+        const doctorId = getDoctorId();
         const currentRequest = ++requestNumber;
 
         resetSelect(
@@ -132,92 +151,97 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         if (!doctorId) {
-
             resetSelect(
                 dateSelect,
                 "Select a doctor first",
                 true
             );
 
-            showMessage(
-                "Select a doctor to see available dates."
-            );
-
+            showMessage("Select a doctor to see available dates.");
             return;
         }
 
         showMessage("Loading available dates...");
 
         try {
+            const url = buildApiUrl(datesUrl);
 
-            const url = new URL(
-                datesUrl,
-                window.location.origin
-            );
+            url.searchParams.set("doctor_id", doctorId);
 
-            url.searchParams.set(
-                "doctor_id",
-                doctorId
-            );
-
-            const response = await fetch(url, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(
-                    "Unable to load available dates."
+            // Needed when the date API supports excluding
+            // the current appointment during rescheduling.
+            if (excludeAppointmentId) {
+                url.searchParams.set(
+                    "exclude_appointment_id",
+                    excludeAppointmentId
                 );
             }
 
-            const data = await response.json();
+            const data = await fetchJson(url);
 
             if (currentRequest !== requestNumber) {
                 return;
             }
 
+            const dates = Array.isArray(data.dates) ? data.dates : [];
+
             addOptions(
                 dateSelect,
-                data.dates,
+                dates,
                 "Select an available date",
                 selectedDate
             );
 
-            if (data.dates.length === 0) {
+            if (dates.length === 0) {
+                resetSelect(
+                    dateSelect,
+                    "No available dates",
+                    true
+                );
+
+                resetSelect(
+                    timeSelect,
+                    "No available times",
+                    true
+                );
 
                 showMessage(
+                    data.message ||
                     "No available dates found for this doctor."
                 );
 
                 return;
             }
 
-            showMessage(
-                "Select a date to see available time slots."
-            );
+            const selectedDateExists = dates.some(function (item) {
+                return String(item.value) === String(selectedDate);
+            });
 
-            // Load time slots if the selected date is still available.
-            if (
-                selectedDate &&
-                data.dates.some(
-                    item => item.value === selectedDate
-                )
-            ) {
+            if (selectedDate && selectedDateExists) {
+                dateSelect.value = selectedDate;
 
-                await loadTimes(
-                    selectedDate,
-                    selectedTime
+                await loadTimes(selectedDate, selectedTime);
+            } else {
+                dateSelect.value = "";
+
+                resetSelect(
+                    timeSelect,
+                    "Select a date first",
+                    true
                 );
 
-            } else {
-
-                dateSelect.value = "";
+                if (selectedDate) {
+                    showMessage(
+                        "Your existing date is not currently available. Please choose another date."
+                    );
+                } else {
+                    showMessage(
+                        "Select a date to see available time slots."
+                    );
+                }
             }
 
         } catch (error) {
-
             if (currentRequest !== requestNumber) {
                 return;
             }
@@ -235,32 +259,26 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             showMessage(
-                "Could not load availability. Refresh the page and try again."
+                "Could not load available dates. Refresh the page and try again."
             );
 
             console.error(error);
         }
     }
 
-    async function loadTimes(
-        selectedDate,
-        selectedTime = ""
-    ) {
+    // Load available time slots for a selected date.
+    async function loadTimes(selectedDate, selectedTime = "") {
 
-        const doctorId = doctorSelect
-            ? doctorSelect.value
-            : fixedDoctorId;
+        const doctorId = getDoctorId();
+
         if (!doctorId || !selectedDate) {
-
             resetSelect(
                 timeSelect,
                 "Select a date first",
                 true
             );
-
             return;
         }
-        
 
         const currentRequest = ++requestNumber;
 
@@ -273,11 +291,11 @@ document.addEventListener("DOMContentLoaded", function () {
         showMessage("Loading available time slots...");
 
         try {
+            const url = buildApiUrl(timesUrl);
 
-            const url = new URL(
-                timesUrl,
-                window.location.origin
-            );
+            url.searchParams.set("doctor_id", doctorId);
+            url.searchParams.set("date", selectedDate);
+
             if (excludeAppointmentId) {
                 url.searchParams.set(
                     "exclude_appointment_id",
@@ -285,68 +303,57 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
             }
 
-            url.searchParams.set(
-                "doctor_id",
-                doctorId
-            );
-
-            url.searchParams.set(
-                "date",
-                selectedDate
-            );
-
-            const response = await fetch(url, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            });
-           
-
-            if (!response.ok) {
-                throw new Error(
-                    "Unable to load available time slots."
-                );
-            }
-
-            const data = await response.json();
+            const data = await fetchJson(url);
 
             if (currentRequest !== requestNumber) {
                 return;
             }
 
+            const times = Array.isArray(data.times) ? data.times : [];
+
             addOptions(
                 timeSelect,
-                data.times,
+                times,
                 "Select an available time",
                 selectedTime
             );
 
-            if (data.times.length === 0) {
+            if (times.length === 0) {
+                resetSelect(
+                    timeSelect,
+                    "No available times",
+                    true
+                );
 
                 showMessage(
-                    "No available time slots on this date."
+                    data.message ||
+                    "No available time slots for this date. Please choose another date."
                 );
 
                 return;
             }
 
-            showMessage(
-                data.times.length +
-                " available time slot(s) found."
-            );
+            const selectedTimeExists = times.some(function (item) {
+                return String(item.value).slice(0, 5) ===
+                    String(selectedTime).slice(0, 5);
+            });
 
-            // Clear a stale selected time if it has been booked.
-            if (
-                selectedTime &&
-                !data.times.some(
-                    item => item.value === selectedTime
-                )
-            ) {
+            if (selectedTime && selectedTimeExists) {
+                timeSelect.value = selectedTime;
+            } else {
                 timeSelect.value = "";
+
+                if (selectedTime) {
+                    showMessage(
+                        "Your existing time is unavailable. Please choose another time."
+                    );
+                    return;
+                }
             }
 
-        } catch (error) {
+            showMessage("Available time slots loaded.");
 
+        } catch (error) {
             if (currentRequest !== requestNumber) {
                 return;
             }
@@ -365,47 +372,38 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Booking page: reload dates when doctor changes.
     if (doctorSelect) {
-        doctorSelect.addEventListener(
-            "change",
-            function () {
-                loadDates();
-            }
-        );
+        doctorSelect.addEventListener("change", function () {
+            loadDates();
+        });
     }
 
-    dateSelect.addEventListener(
-        "change",
-        function () {
+    // Both pages: reload times when the date changes.
+    dateSelect.addEventListener("change", function () {
 
+        const selectedDate = dateSelect.value;
+
+        if (!selectedDate) {
             resetSelect(
                 timeSelect,
-                "Select an available time",
+                "Select a date first",
                 true
             );
 
-            if (!dateSelect.value) {
-                showMessage(
-                    "Select an available date."
-                );
-
-                return;
-            }
-
-            loadTimes(dateSelect.value);
+            showMessage("Select a date to see available times.");
+            return;
         }
-    );
 
-    // On initial load, restore a valid previous selection if possible.
-    if (doctorSelect.value) {
+        loadTimes(selectedDate);
+    });
 
-        loadDates(
-            initialDate,
-            initialTime
-        );
-
+    // Initial load:
+    // Booking page waits for a doctor selection.
+    // Reschedule page already has a fixed doctor ID.
+    if (getDoctorId()) {
+        loadDates(initialDate, initialTime);
     } else {
-
         resetSelect(
             dateSelect,
             "Select a doctor first",
@@ -418,22 +416,8 @@ document.addEventListener("DOMContentLoaded", function () {
             true
         );
 
-        showMessage(
-            "Select a doctor to see available dates."
-        );
+        showMessage("Select a doctor to see available dates.");
     }
 
-if (doctorSelect && doctorSelect.value) {
-    loadDates(initialDate, initialTime);
-} else if (fixedDoctorId) {
-    loadDates(initialDate, initialTime);
-} else {
-    resetSelect(dateSelect, "Select a doctor first", true);
-    resetSelect(timeSelect, "Select a date first", true);
-    showMessage("Select a doctor to see available dates.");
-}
-
 });
-
-
 </script>
