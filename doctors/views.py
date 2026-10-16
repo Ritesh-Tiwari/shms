@@ -116,6 +116,7 @@ def register_doctor(request):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.RECEPTIONIST
 )
 def doctor_list(request):
 
@@ -174,6 +175,7 @@ def doctor_list(request):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.RECEPTIONIST
 )
 def doctor_detail(request, pk):
 

@@ -1,11 +1,67 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Delete Receptionist | SHMS
+Delete Receptionist | SHMS
 {% endblock %}
 
 {% block content %}
 
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full">
+        <div class="w-full max-w-2xl mx-auto py-4 sm:py-8 lg:py-12 px-2 sm:px-4">
+            <!-- Breadcrumb / Back Link -->
+            <div class="mb-6 sm:mb-8">
+                <a class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors group"
+                    href="{% url 'receptionist:detail' receptionist.pk %}">
+                    <span
+                        class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-1">arrow_back</span>
+                    <span class="font-label-md text-label-md">Back to Receptionist Details</span>
+                </a>
+            </div>
+            <!-- Header Section -->
+            <div class="mb-8">
+
+                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-2">
+                    Delete Receptionist
+                </h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">This action permanently deletes the
+                    associated user account and receptionist profile. The user will no longer be able to log in.</p>
+            </div>
+            <!-- Main Confirmation Card -->
+            <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6 sm:p-8 space-y-6">
+                <div class="bg-surface-container-low rounded-xl p-5 flex items-center justify-between">
+                    <div class="flex flex-col min-w-0"><span
+                            class="font-title-md text-title-md text-on-surface font-semibold"> {{receptionist.user.get_full_name}} </span>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm mt-0.5">
+                            <span class="material-symbols-outlined text-[16px] text-outline shrink-0">mail</span><span
+                                class="truncate">{{receptionist.user.email}}</span></div>
+                    </div><span
+                        class="px-2.5 py-1 rounded bg-surface-container text-primary font-label-sm text-label-sm font-semibold tracking-wide shrink-0">{{receptionist.receptionist_id}}</span>
+                </div>
+                <form method="post" class="pt-2" id="delete-receptionist-form">
+                    {% csrf_token %}
+
+                    <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3">
+                        <button
+                            class="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors text-center inline-flex items-center justify-center"
+                            onclick="window.history.back()" type="button">Cancel</button>
+                        <button
+                            class="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-error hover:bg-error/90 text-on-error font-label-md text-label-md font-semibold transition-all shadow-sm hover:shadow-md inline-flex items-center justify-center gap-2 active:scale-[0.99]"
+                            id="submit-delete-btn" type="submit"><span
+                                class="material-symbols-outlined text-[18px]">delete</span><span class="">Confirm
+                                Delete</span></button>
+                    </div>
+                </form>
+            </div>
+            <!-- Administrative Note Footer -->
+
+        </div>
+    </div>
+   
+</main>
+
+{% comment %} 
 <div class="mx-auto max-w-xl">
 
     <div class="rounded-xl border border-red-200
@@ -51,21 +107,15 @@
             {% csrf_token %}
 
 
-            <button
-                type="submit"
-                class="rounded-lg bg-red-600 px-5 py-3
+            <button type="submit" class="rounded-lg bg-red-600 px-5 py-3
                        font-semibold text-white
-                       hover:bg-red-700"
-            >
+                       hover:bg-red-700">
                 Confirm Delete
             </button>
 
 
-            <a
-                href="{% url 'receptionist:detail' receptionist.pk %}"
-                class="rounded-lg border border-slate-300
-                       px-5 py-3 font-semibold text-slate-700"
-            >
+            <a href="{% url 'receptionist:detail' receptionist.pk %}" class="rounded-lg border border-slate-300
+                       px-5 py-3 font-semibold text-slate-700">
                 Cancel
             </a>
 
@@ -73,6 +123,6 @@
 
     </div>
 
-</div>
+</div> {% endcomment %}
 
 {% endblock %}

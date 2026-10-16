@@ -266,7 +266,7 @@ def register_patient(request):
 
 
 
-@role_required(UserRole.ADMIN)
+@role_required(UserRole.ADMIN, UserRole.RECEPTIONIST)
 def patient_list(request):
 
     query = request.GET.get("q", "").strip()
@@ -323,6 +323,7 @@ def patient_list(request):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.RECEPTIONIST,
 )
 def patient_detail(request, pk):
 
@@ -352,6 +353,7 @@ def patient_detail(request, pk):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.RECEPTIONIST,
 )
 def update_patient(request, pk):
 
@@ -418,6 +420,7 @@ def update_patient(request, pk):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.RECEPTIONIST
 )
 def delete_patient(request, pk):
 

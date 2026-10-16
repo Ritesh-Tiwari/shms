@@ -104,9 +104,6 @@ class ReceptionistService:
         # automatically through CASCADE.
         user.delete()
 
-
-class ReceptionistService:
-
     @staticmethod
     @transaction.atomic
     def check_in_appointment(*, appointment_id):

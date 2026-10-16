@@ -129,17 +129,27 @@ doctors
                                         title="View Profile">
                                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                                     </a>
-                                    <a href="{% url 'doctors:update' doctor.pk %}"
+                                    <a href="{% url 'doctors:schedule'%}"
                                         class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
-                                        title="Edit Schedule">
+                                        title="View Schedule">
                                         <span
                                             class="material-symbols-outlined text-[20px]">calendar_month</span>
                                     </a>
+                                    
+                                    {% if user.role == 'ADMIN' %}
+                                    <a href="{% url 'doctors:update' doctor.pk %}"
+                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                                        title="Edit">
+                                        <span
+                                            class="material-symbols-outlined text-[20px]">edit</span>
+                                    </a>
+                                    
                                     <button
                                         class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
                                         title="More Actions">
                                         <span class="material-symbols-outlined text-[20px]">more_vert</span>
                                     </button>
+                                    {% endif %}
                                 </div>
                                 <button
                                     class="p-2 text-on-surface-variant sm:hidden group-hover:hidden transition-opacity">

@@ -12,6 +12,8 @@ from django.views.decorators.http import (
     require_POST,require_http_methods,
 )
 from django.utils import timezone
+import logging
+
 
 from accounts.choices import UserRole
 from appointments.models import (
@@ -87,6 +89,7 @@ def receptionist_list(request):
 
 @role_required(UserRole.ADMIN)
 def create_receptionist(request):
+    logger = logging.getLogger(__name__)
 
     if request.method == "POST":
 
@@ -117,6 +120,9 @@ def create_receptionist(request):
 
             except IntegrityError:
 
+                logger.exception(
+                    "Receptionist creation failed due to IntegrityError"
+                )
                 user_form.add_error(
                     None,
                     (
@@ -149,7 +155,7 @@ def create_receptionist(request):
 
     return render(
         request,
-        "receptionist/register.html",
+        "receptionist/form.html",
         {
             "user_form": user_form,
             "profile_form": profile_form,
@@ -339,7 +345,6 @@ def dashboard(request):
 
     context = {
         "total_patients": Patient.objects.count(),
-
         "today_appointments": appointments.count(),
 
         "scheduled_count": appointments.filter(

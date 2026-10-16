@@ -95,21 +95,27 @@
 
                         <!-- ================= RECEPTIONIST ================= -->
                         {% if user.role == 'RECEPTIONIST' %}
-                        <div class="pt-lg px-md py-sm text-label-sm text-on-surface-variant uppercase tracking-widest opacity-60">
+                        {% comment %} <div class="pt-lg px-md py-sm text-label-sm text-on-surface-variant uppercase tracking-widest opacity-60">
                             Reception
                         </div>
-
-                        <a {% if request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'dashboard' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
-                            href="{% url 'receptionist:dashboard' %}">
-                            <span class="material-symbols-outlined text-[20px]">grid_view</span>
-                            <span>Dashboard</span>
-                        </a>
-
-                        <a {% if request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'appointments' or request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'check-in' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'appointments' or request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'check-in' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
+                         {% endcomment %}
+                         <a {% if request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'appointments' or request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'check-in' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'appointments' or request.resolver_match.namespace == 'receptionist' and request.resolver_match.url_name == 'check-in' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'receptionist:appointments' %}">
                             <span class="material-symbols-outlined text-[20px]">calendar_month</span>
-                            <span>Appointments &amp; Check-in</span>
+                            <span>Appointments </span>
                         </a>
+                       
+                        <a {% if request.resolver_match.namespace == 'patients' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'patients' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
+                            href="{% url 'patients:list' %}">
+                            <span class="material-symbols-outlined text-[20px]">person</span>
+                            <span>Patients</span>
+                        </a>  
+                        <a {% if request.resolver_match.namespace == 'doctors' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'doctors' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
+                            href="{% url 'doctors:list' %}">
+                            <span class="material-symbols-outlined text-[20px]">medical_services</span>
+                            <span>Doctors</span>   
+                        </a>
+
                         {% endif %}
 
                         <!-- ================= PATIENT ================= -->

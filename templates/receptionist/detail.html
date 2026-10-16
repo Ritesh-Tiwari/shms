@@ -1,11 +1,153 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Receptionist Details | SHMS
+Receptionist Details | SHMS
 {% endblock %}
 
 {% block content %}
 
+
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full">
+        <!-- Top Navigation & Header -->
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+            <div class="space-y-1">
+                <a class="inline-flex items-center gap-1.5 text-primary hover:text-primary-container font-label-md text-label-md transition-colors group mb-1"
+                    href="{% url "receptionist:list" %}">
+                    <span
+                        class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-0.5">arrow_back</span>
+                    Back to Receptionists
+                </a>
+                <h1 class="font-headline-lg text-headline-lg text-on-surface">Receptionist Details</h1>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">View staff account and employment
+                    information.</p>
+            </div>
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                <a class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all shadow-sm"
+                    href="{% url "receptionist:list" %}">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    Back
+                </a>
+                <a class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-all shadow-sm"
+                    href={% url 'receptionist:update' receptionist.pk %}>
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                    Edit Details
+                </a>
+            </div>
+        </div>
+        <!-- Main Details Container Card -->
+        <div class="bg-surface-container-lowest rounded-xl p-6 sm:p-8 shadow-sm space-y-8">
+            <!-- Top Identity Row -->
+            <div
+                class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 bg-surface-container-low/40 p-5 rounded-lg">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-14 h-14 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-title-md text-title-md font-semibold shadow-inner">
+                        {{ receptionist.user.first_name|slice:":1" }}{{ receptionist.user.last_name|slice:":1" }}
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <h2 class="font-title-md text-title-md text-on-surface">{{ receptionist.user.get_full_name}}</h2>
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm">
+                                <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                Active
+                            </span>
+                        </div>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">{{receptionist.user.username}}</p>
+                    </div>
+                </div>
+                <div class="flex items-center sm:self-center gap-2">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Staff
+                        ID</span>
+                    <span class="font-label-md text-label-md text-primary font-mono bg-primary/10 px-3 py-1 rounded-md">
+                        {{receptionist.receptionist_id}}
+                    </span>
+                </div>
+            </div>
+            <!-- Structured 3-Column Key-Value Grid -->
+            <div>
+                <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-4">Account
+                    &amp; Contact Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Receptionist ID -->
+                    <div class="space-y-1">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Receptionist ID</span>
+                        <p class="font-body-md text-body-md text-on-surface font-mono font-medium">{{receptionist.receptionist_id}}</p>
+                    </div>
+                    <!-- Full Name -->
+                    <div class="space-y-1">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Full Name</span>
+                        <p class="font-body-md text-body-md text-on-surface font-medium">{{receptionist.user.get_full_name}}</p>
+                    </div>
+                    <!-- Username -->
+                    <div class="space-y-1">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Username</span>
+                        <p class="font-body-md text-body-md text-on-surface font-medium">{{receptionist.user.username }}</p>
+                    </div>
+                    <!-- Email -->
+                    <div class="space-y-1">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Email Address</span>
+                        <p class="font-body-md text-body-md text-on-surface font-medium break-all">{{ receptionist.user.email}}</p>
+                    </div>
+                    <!-- Phone -->
+                    <div class="space-y-1">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Phone Number</span>
+                        <p class="font-body-md text-body-md text-on-surface font-medium"> {{receptionist.user.phone_number}} </p>
+                    </div>
+                    <!-- Joining Date -->
+                    <div class="space-y-1">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Joining Date</span>
+                        <p class="font-body-md text-body-md text-on-surface font-medium">{{ receptionist.joining_date|date:'d M Y'}}</p>
+                    </div>
+                    <!-- Account Status -->
+                    <div class="space-y-1">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Account Status</span>
+                        <div class="flex items-center gap-1.5 pt-0.5">
+                            <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                            {% if receptionist.user.is_active %}
+                            <span class="font-body-md text-body-md text-secondary font-medium">Active</span>
+                            {% else %}                            
+                            <span class="font-body-md text-body-md text-red font-medium">Inactive</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Created At -->
+                    <div class="space-y-1">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Created At</span>
+                        <p class="font-body-md text-body-md text-on-surface font-medium"> {{receptionist.created_at|date:"d M Y, h:i A" }} </p>
+                    </div>
+                    <!-- Last Updated -->
+                    <div class="space-y-1">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Last Updated</span>
+                        <p class="font-body-md text-body-md text-on-surface font-medium">{{ receptionist.updated_at|date:"d M Y, h:i A" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Danger / Action Zone -->
+        <div class="mt-8 bg-surface-container-lowest rounded-xl p-6 sm:p-8 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <h4 class="font-title-md text-title-md text-error">Danger Zone</h4>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Permanently delete this receptionist account and remove all related access credentials.
+                    </p>
+                </div>
+                <a href="{% url 'receptionist:delete' receptionist.pk %}"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-error-container hover:bg-error hover:text-on-error text-on-error-container font-label-md text-label-md transition-colors shadow-sm whitespace-nowrap self-start sm:self-auto"
+                >
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                    Delete Receptionist Account
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% comment %} 
 <div class="mx-auto max-w-4xl space-y-6">
 
     <div class="flex flex-wrap items-center justify-between gap-4">
@@ -25,20 +167,14 @@
 
         <div class="flex gap-3">
 
-            <a
-                href="{% url 'receptionist:update' receptionist.pk %}"
-                class="rounded-lg bg-blue-600 px-4 py-3
-                       font-semibold text-white"
-            >
+            <a href="{% url 'receptionist:update' receptionist.pk %}" class="rounded-lg bg-blue-600 px-4 py-3
+                       font-semibold text-white">
                 Edit
             </a>
 
 
-            <a
-                href="{% url 'receptionist:list' %}"
-                class="rounded-lg border px-4 py-3
-                       font-semibold text-slate-700"
-            >
+            <a href="{% url 'receptionist:list' %}" class="rounded-lg border px-4 py-3
+                       font-semibold text-slate-700">
                 Back
             </a>
 
@@ -138,19 +274,19 @@
 
                 {% if receptionist.user.is_active %}
 
-                    <span class="mt-1 inline-block rounded-full
+                <span class="mt-1 inline-block rounded-full
                                  bg-emerald-100 px-3 py-1
                                  text-emerald-700">
-                        Active
-                    </span>
+                    Active
+                </span>
 
                 {% else %}
 
-                    <span class="mt-1 inline-block rounded-full
+                <span class="mt-1 inline-block rounded-full
                                  bg-red-100 px-3 py-1
                                  text-red-700">
-                        Inactive
-                    </span>
+                    Inactive
+                </span>
 
                 {% endif %}
 
@@ -188,10 +324,7 @@
 
         <div class="mt-8 border-t pt-5">
 
-            <a
-                href="{% url 'receptionist:delete' receptionist.pk %}"
-                class="font-semibold text-red-600"
-            >
+            <a href="{% url 'receptionist:delete' receptionist.pk %}" class="font-semibold text-red-600">
                 Delete Receptionist Account
             </a>
 
@@ -199,6 +332,6 @@
 
     </div>
 
-</div>
+</div> {% endcomment %}
 
 {% endblock %}

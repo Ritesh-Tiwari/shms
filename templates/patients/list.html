@@ -69,12 +69,6 @@ Patients
                     <thead
                         class="sticky top-0 bg-surface-container-lowest z-10 after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-surface-variant">
                         <tr>
-                            <th
-                                class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold w-12 text-center">
-                                <input
-                                    class="rounded text-primary focus:ring-primary accent-primary w-4 h-4 cursor-pointer"
-                                    type="checkbox" />
-                            </th>
                             <th class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold">
                                 Patient ID</th>
                             <th class="py-sm px-md font-label-sm text-label-sm text-on-surface-variant font-semibold">
@@ -97,11 +91,6 @@ Patients
 
                         <tr
                             class="hover:bg-surface-container/50 transition-colors group cursor-pointer border-b border-surface-variant/50 last:border-0">
-                            <td class="py-sm px-md text-center">
-                                <input
-                                    class="rounded text-primary focus:ring-primary accent-primary w-4 h-4 cursor-pointer"
-                                    type="checkbox" />
-                            </td>
                             <td class="py-sm px-md">
                                 <a href="{% url 'patients:detail' patient.pk %}">
                                     <span
@@ -151,10 +140,17 @@ Patients
                                 </div>
                             </td>
                             <td class="py-sm px-md">
+                                {% if patient.user.is_active%}
                                 <span
                                     class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container/20 text-on-secondary-container font-label-sm text-label-sm">
                                     <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
                                 </span>
+                                {% else %}
+                                <span
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-variant/50 text-on-surface-variant font-label-sm text-label-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Inactive
+                                </span>
+                                {% endif %}
                             </td>
                             <td class="py-sm px-md text-right">
                                 <div
@@ -187,75 +183,7 @@ Patients
                             </td>
 
                         </tr>
-
                         {% endfor %}
-
-                        <tr
-                            class="hover:bg-surface-container/50 transition-colors group cursor-pointer border-b border-surface-variant/50 last:border-0">
-                            <td class="py-sm px-md text-center">
-                                <input
-                                    class="rounded text-primary focus:ring-primary accent-primary w-4 h-4 cursor-pointer"
-                                    type="checkbox" />
-                            </td>
-                            <td class="py-sm px-md">
-                                <span
-                                    class="font-label-md text-label-md text-primary font-mono bg-primary/10 px-2 py-1 rounded">SHMS-2492</span>
-                            </td>
-                            <td class="py-sm px-md">
-                                <div class="flex items-center gap-sm">
-                                    <img class="w-8 h-8 rounded-full object-cover"
-                                        data-alt="Professional headshot of an elderly Indian woman, neutral background, clinical lighting, high quality."
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnKfEVElpDZfB8P_E7xTm5ygvp55DaFcIGWHI6B31sjCjU0l7KXxDngeRYS6Jun59DVTmFV8PrcAjF-NdvrMl4ocWXnR1JmorwNHPP7zwA1dFbbDU9wNJobeh1Va4dP96QuCLHvWpzZxHySJKRP-yOpFm3pBcDMQr8A9yTw52t_4OQuGYsfuYf2No0JCy-0zPi9rbppklZ-Bq2dSSa3f0YIHVby1W4yf9_nfTVCqmeOI-qQXphxc_P" />
-                                    <div class="flex flex-col">
-                                        <span class="font-label-md text-label-md text-on-surface font-medium">Sunita
-                                            Sharma</span>
-                                        <span class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">+91
-                                            98765 43211</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="py-sm px-md">
-                                <span class="font-body-sm text-body-sm text-on-surface-variant">62 yrs,
-                                    Female</span>
-                            </td>
-                            <td class="py-sm px-md">
-                                <span
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">B-</span>
-                            </td>
-                            <td class="py-sm px-md">
-                                <div class="flex flex-col">
-                                    <span class="font-body-sm text-body-sm text-on-surface">10 Oct, 2023</span>
-                                    <span class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">Dr.
-                                        A. Patel</span>
-                                </div>
-                            </td>
-                            <td class="py-sm px-md">
-                                <span
-                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-variant/50 text-on-surface-variant font-label-sm text-label-sm">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Inactive
-                                </span>
-                            </td>
-                            <td class="py-sm px-md text-right">
-                                <div
-                                    class="flex items-center justify-end gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button
-                                        class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary-container/20 rounded-full transition-colors"
-                                        title="View Patient">
-                                        <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                    </button>
-                                    <button
-                                        class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary-container/20 rounded-full transition-colors"
-                                        title="Edit Details">
-                                        <span class="material-symbols-outlined text-[18px]">edit</span>
-                                    </button>
-                                    <button
-                                        class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-full transition-colors"
-                                        title="Delete Patient">
-                                        <span class="material-symbols-outlined text-[18px]">delete</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>

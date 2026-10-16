@@ -60,6 +60,42 @@ class ReceptionistServiceTests(TestCase):
             )
         )
 
+    def test_admin_can_create_receptionist_from_form(self):
+
+        self.client.force_login(
+            self.admin
+        )
+
+        response = self.client.post(
+            reverse("receptionist:create"),
+            {
+                "username": "formreception01",
+                "first_name": "Riya",
+                "last_name": "Sharma",
+                "email": "formreception01@example.com",
+                "phone_number": "9876543211",
+                "password": "FormReceptionPassword123!",
+                "joining_date": "2026-10-15",
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302,
+        )
+
+        receptionist = Receptionist.objects.get(
+            user__username="formreception01",
+        )
+
+        self.assertTrue(
+            receptionist.receptionist_id.startswith("REC")
+        )
+        self.assertEqual(
+            receptionist.user.role,
+            UserRole.RECEPTIONIST,
+        )
+
     def test_receptionist_profile_has_unique_user(self):
 
         user = User.objects.create_user(

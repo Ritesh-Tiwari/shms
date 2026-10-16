@@ -48,16 +48,18 @@ Doctor Details
                             <h1 class="font-display-lg text-on-surface m-0 leading-none">Dr. {{ doctor.user.get_full_name }}</h1>
                         </div>
                         <div class="flex items-center gap-sm mt-4 md:mt-0">
+                            {% if user.role == "ADMIN" %}
                             <a href="{% url 'doctors:update' doctor.pk %}"
                                 class="bg-surface text-on-surface hover:bg-surface-container-high px-md py-sm rounded-lg font-label-md shadow-sm transition-all flex items-center gap-sm">
                                 <span class="material-symbols-outlined text-[18px]">edit</span>
                                 Edit Profile
                             </a>
-                            <button
+                            
+                            <a href="{% url "doctors:schedule" %}"
                                 class="bg-primary text-on-primary hover:bg-primary/90 px-md py-sm rounded-lg font-label-md shadow-md transition-all flex items-center gap-sm">
                                 <span class="material-symbols-outlined text-[18px]">calendar_month</span>
                                 View Schedule
-                            </button>
+                            </a>                            
                             <!-- Danger Zone Dropdown / Icon Button -->
                             <div class="relative group">
                                 <button type="button" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors">
@@ -82,6 +84,7 @@ Doctor Details
                                 </form>
                                 </div>
                             </div>
+                            {% endif %}
                                                         
                         </div>
                     </div>

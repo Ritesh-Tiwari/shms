@@ -123,6 +123,7 @@ def my_appointments(request):
 @role_required(
     UserRole.ADMIN,
     UserRole.DOCTOR,
+    UserRole.RECEPTIONIST,
 )
 def appointment_list(request):
 
@@ -220,6 +221,7 @@ def appointment_list(request):
 @role_required(
     UserRole.ADMIN,
     UserRole.DOCTOR,
+    UserRole.RECEPTIONIST
 )
 def appointment_detail(request, pk):
 
@@ -286,6 +288,7 @@ def my_appointment_detail(request, pk):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.RECEPTIONIST
 )
 def update_appointment(request, pk):
 
@@ -417,6 +420,7 @@ def my_reschedule_appointment(request, pk):
 @role_required(
     UserRole.ADMIN,
     UserRole.DOCTOR,
+    UserRole.RECEPTIONIST
 )
 def cancel_appointment(request, pk):
 
@@ -477,6 +481,7 @@ def cancel_appointment(request, pk):
 @role_required(
     UserRole.ADMIN,
     UserRole.DOCTOR,
+    UserRole.RECEPTIONIST
 )
 def update_appointment_status(request, pk):
 

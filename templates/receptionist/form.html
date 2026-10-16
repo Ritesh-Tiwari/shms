@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ page_title }} | SHMS
+{% endblock %}
+
+{% block content %}
+
+
+
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full">
+        <div class="max-w-3xl w-full mx-auto space-y-6">
+            <!-- Back Link Navigation -->
+            <div>
+                <a class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md group"
+                    href="{% url "receptionist:list" %}">
+                    <span
+                        class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-1">arrow_back</span>
+                    <span>Back to Receptionists</span>
+                </a>
+            </div>
+            <!-- Page Heading -->
+            <div class="space-y-1">
+                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">{{ page_title }} </h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">Manage receptionist account and employment
+                    details.</p>
+            </div>
+            <!-- Form Container Card -->
+            <div class="bg-surface-container-lowest rounded-xl shadow-sm p-6 sm:p-8">
+                
+                
+                <form method="post" class="space-y-8" id="create-receptionist-form">
+                    {% csrf_token %}
+                    {% if user_form.non_field_errors %}
+
+                    <div class="rounded-lg bg-red-50 p-4 text-red-700">
+
+                        {% for error in user_form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+
+                    </div>
+                    {% endif %}
+
+                    {% if profile_form.non_field_errors %}
+
+                    <div class="rounded-lg bg-red-50 p-4 text-red-700">
+
+                        {% for error in profile_form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+                    <!-- Section 1: Account Information -->
+                    <section class="space-y-5">
+                        <div class="pb-1">
+                            <h2 class="font-title-md text-title-md text-on-surface">Account Information</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- Username -->
+                            <div class="space-y-1.5">
+                                <label class="block font-label-md text-label-md text-on-surface" for="username">
+                                    Username 
+                                    <span class="text-error">* {% if user_form.username.errors %}{{ user_form.username.errors.0 }}{% endif %}</span></label>
+                                </label>
+                                <input
+                                    class="w-full h-10 px-3.5 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all"
+                                    id="username" name="username" pattern="^[a-zA-Z0-9@.+_-]+$"
+                                    placeholder="e.g. priya.sharma" required="" type="text"
+                                    value="{{user_form.username.value|default:'' }}"    
+                                />
+                                
+                            </div>
+                            <!-- First Name & Last Name (2-col grid) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                                <div class="space-y-1.5">
+                                    <label class="block font-label-md text-label-md text-on-surface" for="first_name">
+                                        First name
+                                        <span class="text-error"> {% if user_form.first_name.errors %}{{ user_form.first_name.errors.0 }}{% endif %}</span>
+
+                                    </label>
+                                    <input
+                                        class="w-full h-10 px-3.5 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all"
+                                        id="first_name" name="first_name" placeholder="e.g. Priya" type="text" value="{{ user_form.first_name.value|default:''}}" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="block font-label-md text-label-md text-on-surface" for="last_name">
+                                        Last name
+                                        <span class="text-error"> {% if user_form.last_name.errors %}{{ user_form.last_name.errors.0 }}{% endif %}</span>
+
+                                    </label>
+                                    <input
+                                        class="w-full h-10 px-3.5 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all"
+                                        id="last_name" name="last_name" placeholder="e.g. Sharma" type="text" value="{{ user_form.last_name.value|default:''}}" />
+                                </div>
+                            </div>
+                            <!-- Email & Phone number (2-col grid) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                                <div class="space-y-1.5">
+                                    <label class="block font-label-md text-label-md text-on-surface" for="email">
+                                        Email 
+                                        <span class="text-error"> {% if user_form.email.errors %}{{ user_form.email.errors.0 }}{% endif %}</span>
+
+                                    </label>
+                                    <input
+                                        class="w-full h-10 px-3.5 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all"
+                                        id="email" name="email" placeholder="e.g. priya.reception@shms.org" required=""
+                                        type="email" 
+                                        value="{{ user_form.email.value|default:''}}"
+                                    />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="block font-label-md text-label-md text-on-surface" for="phone_number">
+                                        Phone number
+                                        <span class="text-error"> {% if user_form.phone_number.errors %}{{ user_form.phone_number.errors.0 }}{% endif %}</span>
+
+                                    </label>
+                                    <input
+                                        class="w-full h-10 px-3.5 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all"
+                                        id="phone_number" name="phone_number" placeholder="e.g. +91 98765 43210"
+                                        type="tel" 
+                                        value="{{user_form.phone_number.value|default:''}}"    
+                                    />
+                                </div>
+                            </div>
+                            <!-- Password -->
+                            <div class="space-y-1.5">
+                                <label class="block font-label-md text-label-md text-on-surface" for="password">
+                                    Password 
+                                    <span class="text-error">* {% if user_form.password.errors %}{{ user_form.password.errors.0 }}{% endif %}</span></label>
+
+                                </label>
+                                <div class="relative">
+                                    <input
+                                        class="w-full h-10 pl-3.5 pr-10 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all"
+                                        id="password" name="password" placeholder="Enter temporary password" required=""
+                                        type="password" 
+                                        value="{{user_form.password.value|default:''}}"    
+                                    />
+                                    <button aria-label="Toggle password visibility"
+                                        class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-outline hover:text-on-surface transition-colors"
+                                        id="toggle-password-btn" onclick="togglePasswordVisibility()" type="button">
+                                        <span class="material-symbols-outlined text-[20px]"
+                                            id="password-visibility-icon">visibility</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section 2: Employment Information -->
+                    <section class="space-y-5 pt-2">
+                        <div class="pb-1">
+                            <h2 class="font-title-md text-title-md text-on-surface">Employment Information</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- Joining date -->
+                            <div class="space-y-1.5 max-w-sm">
+                                <label class="block font-label-md text-label-md text-on-surface" for="joining_date">
+                                    Joining date
+                                    <span class="text-error">* {% if profile_form.joining_date.errors %}{{ profile_form.joining_date.errors.0 }}{% endif %}</span></label>
+
+                                </label>
+                                <input
+                                    class="w-full h-10 px-3.5 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all"
+                                    id="joining_date" name="joining_date" required="" type="date" 
+                                    value="{% if profile_form.joining_date.value %}{{ profile_form.joining_date.value|date:'Y-m-d' }}{% else %}{% now 'Y-m-d' %}{% endif %}"    
+                                />
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Form Actions / Footer -->
+                    <div class="pt-6 flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
+                        <button class="w-full sm:w-auto h-10 px-5 inline-flex items-center justify-center rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors text-center"
+                            type="button" onclick="window.history.back()">
+                            Cancel
+                        </button>
+                        <button
+                            class="w-full sm:w-auto h-10 px-6 inline-flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all"
+                            id="submit-btn" type="submit">
+                            <span class="material-symbols-outlined text-[18px]">person_add</span>
+                            <span>{{button_text}}</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+            function togglePasswordVisibility() {
+                const pwdInput = document.getElementById('password');
+                const icon = document.getElementById('password-visibility-icon');
+                if (!pwdInput || !icon) return;
+
+                if (pwdInput.type === 'password') {
+                    pwdInput.type = 'text';
+                    icon.textContent = 'visibility_off';
+                } else {
+                    pwdInput.type = 'password';
+                    icon.textContent = 'visibility';
+                }
+            }
+
+            {% comment %} function handleFormSubmit() {
+                const btn = document.getElementById('submit-btn');
+                if (!btn) return;
+
+                const originalContent = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span><span>Creating...</span>';
+
+                setTimeout(() => {
+                    btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span><span>Created Successfully</span>';
+                    btn.classList.remove('bg-primary', 'hover:bg-primary-container');
+                    btn.classList.add('bg-secondary');
+
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalContent;
+                        btn.classList.remove('bg-secondary');
+                        btn.classList.add('bg-primary', 'hover:bg-primary-container');
+                    }, 2200);
+                }, 700);
+            } {% endcomment %}
+        </script>
+    </div>
+</main>
+
+
+{% comment %} 
+<div class="mx-auto max-w-3xl space-y-6">
+
+    <div>
+        <h1 class="text-2xl font-bold text-slate-900">
+            {{ page_title }}
+        </h1>
+
+        <p class="mt-2 text-sm text-slate-500">
+            Manage receptionist account and employment details.
+        </p>
+    </div>
+
+
+    {% if messages %}
+
+    {% for message in messages %}
+
+    <div class="rounded-lg border border-emerald-200
+                        bg-emerald-50 p-4 text-emerald-700">
+        {{ message }}
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+
+    <form method="post" class="space-y-6 rounded-xl border
+               border-slate-200 bg-white p-6">
+
+        {% csrf_token %}
+
+
+        {% if user_form.non_field_errors %}
+
+        <div class="rounded-lg bg-red-50 p-4 text-red-700">
+
+            {% for error in user_form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        {% if profile_form.non_field_errors %}
+
+        <div class="rounded-lg bg-red-50 p-4 text-red-700">
+
+            {% for error in profile_form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        <section class="space-y-4">
+
+            <h2 class="border-b pb-3 text-lg font-semibold">
+                Account Information
+            </h2>
+
+
+            {% for field in user_form %}
+
+            <div class="space-y-2">
+
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-slate-700">
+                    {{ field.label }}
+
+                    {% if field.field.required %}
+                    <span class="text-red-600">*</span>
+                    {% endif %}
+                </label>
+
+
+                {{ field }}
+
+
+                {% if field.help_text %}
+
+                <p class="text-xs text-slate-500">
+                    {{ field.help_text }}
+                </p>
+
+                {% endif %}
+
+
+                {% for error in field.errors %}
+
+                <p class="text-sm text-red-600">
+                    {{ error }}
+                </p>
+
+                {% endfor %}
+
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+
+        <section class="space-y-4">
+
+            <h2 class="border-b pb-3 text-lg font-semibold">
+                Employment Information
+            </h2>
+
+
+            {% for field in profile_form %}
+
+            <div class="space-y-2">
+
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-slate-700">
+                    {{ field.label }}
+
+                    {% if field.field.required %}
+                    <span class="text-red-600">*</span>
+                    {% endif %}
+                </label>
+
+
+                {{ field }}
+
+
+                {% for error in field.errors %}
+
+                <p class="text-sm text-red-600">
+                    {{ error }}
+                </p>
+
+                {% endfor %}
+
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+
+        <div class="flex flex-wrap gap-3 border-t pt-5">
+
+            <button type="submit" class="rounded-lg bg-blue-600 px-5 py-3
+                       font-semibold text-white
+                       hover:bg-blue-700">
+                {{ button_text }}
+            </button>
+
+
+            <a href="{% url 'receptionist:list' %}" class="rounded-lg border border-slate-300
+                       px-5 py-3 font-semibold text-slate-700
+                       hover:bg-slate-50">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div> {% endcomment %}
+
+{% endblock %}

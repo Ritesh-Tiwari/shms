@@ -57,6 +57,7 @@ class Receptionist(models.Model):
             # First save creates the database primary key.
             if not self.pk:
                 super().save(*args, **kwargs)
+                kwargs.pop("force_insert", None)
 
             # Generate a stable business identifier.
             self.receptionist_id = (

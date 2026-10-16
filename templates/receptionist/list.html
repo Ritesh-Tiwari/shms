@@ -1,11 +1,369 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Receptionists | SHMS
+Receptionists | SHMS
 {% endblock %}
 
 {% block content %}
 
+
+<!-- Main Content Body -->
+<main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
+    <div class="flex flex-col w-full space-y-6">
+        <!-- Top Header Action Area -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-on-surface tracking-tight">Receptionist Management
+                </h1>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Create and manage receptionist
+                    accounts.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="{% url "receptionist:create" %}"
+                    class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container shadow-sm hover:shadow transition-all duration-200"
+                    type="button">
+                    <span class="material-symbols-outlined text-[20px]">add</span>
+                    <span class="">Add Receptionist</span>
+                </a>
+            </div>
+        </div>
+        <!-- Search & Filter Controls -->
+        <div class="bg-surface-container-lowest rounded-xl p-4 sm:p-5 shadow-sm border border-slate-200/80">
+            <form method='get' class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3" id="receptionist-search-form">
+                <div class="relative flex-1">
+                    <span
+                        class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px] pointer-events-none">search</span>
+                    <input
+                        class="w-full pl-10 pr-4 py-2.5 bg-surface-container-low/60 border border-outline-variant/60 rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                        id="receptionist-search-input" placeholder="Search receptionists by name, ID, or email..."
+                        type="search" name="q" value="{{ query }}">
+                </div>
+                <div class="flex items-center gap-2 self-end lg:self-auto w-full sm:w-auto">
+                    <button
+                        class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container shadow-sm transition-all"
+                        id="btn-search" type="submit">
+                        <span class="material-symbols-outlined text-[18px]">search</span>
+                        <span class="">Search</span>
+                    </button>
+                    <a href="{% url "receptionist:list" %}"
+                        class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface border border-outline-variant/60 transition-all"
+                        id="btn-reset">
+                        <span class="material-symbols-outlined text-[18px]">restart_alt</span>
+                        <span class="">Reset</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+        <!-- Receptionists Data Table Card -->
+        <div class="flex flex-col space-y-4">
+            <div id="receptionist-list-container" class="">
+                <div
+                    class="hidden md:block bg-surface-container-lowest rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead
+                                class="bg-surface-container-low border-b border-slate-200/80 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                                <tr>                                    
+                                    <th class="py-3.5 px-4 font-semibold text-on-surface-variant" scope="col">Name</th>
+                                    <th class="py-3.5 px-4 font-semibold text-on-surface-variant" scope="col">CONTACT
+                                    </th>
+                                    <th class="py-3.5 px-4 font-semibold text-on-surface-variant" scope="col">Joining
+                                        Date</th>
+                                    <th class="py-3.5 px-4 font-semibold text-on-surface-variant" scope="col">
+                                        Status</th>
+                                    <th class="py-3.5 px-4 font-semibold text-on-surface-variant text-right pr-6"
+                                        scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-body-sm text-body-sm text-on-surface"
+                                id="receptionist-table-body">
+                                {% for receptionist in page_obj %}
+                                <tr class="hover:bg-surface-container-low transition-colors duration-200">
+                                    <td class="py-4 px-4 whitespace-nowrap">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-xs flex items-center justify-center flex-shrink-0">
+                                                {{receptionist.user.first_name|slice:":1"}}{{receptionist.user.last_name|slice:":1"}}
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-on-surface">{{receptionist.user.get_full_name}}</div>
+                                                <div class="text-xs text-on-surface-variant"> ID: {{receptionist.receptionist_id}} </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4 whitespace-nowrap text-on-surface-variant">
+                                        <div class="flex flex-col"><span
+                                                class="text-on-surface font-medium">{{receptionist.user.email}}</span><span
+                                                class="font-mono text-xs text-on-surface-variant mt-0.5">{{receptionist.user.phone_number}}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4 whitespace-nowrap text-on-surface-variant">{{ receptionist.joining_date|date:"d M Y"}}</td>
+                                    <td class="py-4 px-4 whitespace-nowrap">
+                                        {% if receptionist.user.is_active%}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
+                                            <span
+                                                class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>Active
+                                        </span>
+                                        {% else %}
+                                        <span
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-variant/50 text-on-surface-variant font-label-sm text-label-sm">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Inactive
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-4 px-4 whitespace-nowrap text-right pr-6">
+                                        <div class="flex items-center justify-end gap-1.5">
+                                            <a href="{% url "receptionist:detail" receptionist.pk %}"
+                                                class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all"
+                                                title="View details" aria-label="View details"><span
+                                                    class="material-symbols-outlined text-[18px]">visibility</span>
+                                            </a>
+                                            <a href="{% url "receptionist:update" receptionist.pk %}"
+                                                class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all"
+                                                title="Edit account" aria-label="Edit account"><span
+                                                    class="material-symbols-outlined text-[18px]">edit</span>
+                                            </a>
+                                            <a href="{% url "receptionist:delete" receptionist.pk %}"
+                                                class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-slate-500 hover:text-error hover:border-rose-200 hover:bg-rose-50 transition-all"
+                                                title="Delete account" aria-label="Delete account"><span
+                                                    class="material-symbols-outlined text-[18px]">delete</span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}                                
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="block md:hidden space-y-4" id="receptionist-mobile-cards">
+                    {% for receptionist in page_obj %}
+                    <div class="bg-surface-container-lowest rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between receptionist-mobile-card">
+                        <div class="space-y-4">
+                            <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div
+                                        class="w-11 h-11 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-sm flex items-center justify-center flex-shrink-0">
+                                        {{receptionist.user.first_name|slice:":1"}}{{receptionist.user.last_name|slice:":1"}}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h2 class="font-label-md text-base font-semibold text-on-surface truncate">
+                                                {{receptionist.user.get_full_name}}</h2><span
+                                                class="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-mono text-[11px] font-semibold tracking-wide">{{receptionist.receptionist_id}}</span>
+                                        </div>
+                                        <p class="text-xs text-on-surface-variant mt-0.5">{{receptionist.user.role|title}} Staff</p>
+                                    </div>
+                                </div>
+                                
+                                {% if receptionist.user.is_active%}
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
+                                    <span
+                                        class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>Active
+                                </span>
+                                {% else %}
+                                <span
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-variant/50 text-on-surface-variant font-label-sm text-label-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Inactive
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="space-y-2.5 text-sm">
+                                <div class="flex items-center gap-3 text-on-surface-variant"><span
+                                        class="material-symbols-outlined text-[19px] text-slate-400">mail</span><span
+                                        class="truncate font-body-sm text-body-sm text-on-surface">{{receptionist.user.email}}</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-on-surface-variant"><span
+                                        class="material-symbols-outlined text-[19px] text-slate-400">call</span><span
+                                        class="font-mono font-body-sm text-body-sm text-on-surface">{{receptionist.user.phone_number}}</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-on-surface-variant"><span
+                                        class="material-symbols-outlined text-[19px] text-slate-400">calendar_today</span><span
+                                        class="font-body-sm text-body-sm text-on-surface">Joined {{receptionist.joining_date|date:"d M Y"}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <a href="{% url 'receptionist:detail' receptionist.pk %}"
+                                    class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all"
+                                    title="View details" aria-label="View details" type="button"><span
+                                        class="material-symbols-outlined text-[18px]">visibility</span>
+                                </a>
+                                <a href="{% url "receptionist:update" receptionist.pk %}"
+                                    class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all"
+                                    title="Edit account" aria-label="Edit account" type="button"><span
+                                        class="material-symbols-outlined text-[18px]">edit</span>
+                                </a>
+                            </div>
+                            <a href="{% url "receptionist:delete" receptionist.pk %}"
+                                class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-slate-500 hover:text-error hover:border-rose-200 hover:bg-rose-50 transition-all"
+                                title="Delete account" aria-label="Delete account" type="button"><span
+                                    class="material-symbols-outlined text-[18px]">delete</span>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="bg-surface-container-lowest rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between receptionist-mobile-card">
+                        <div class="space-y-4">
+                            <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div
+                                        class="w-11 h-11 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-sm flex items-center justify-center flex-shrink-0">
+                                        PV</div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h2 class="font-label-md text-base font-semibold text-on-surface truncate">
+                                                Priya Verma</h2><span
+                                                class="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-mono text-[11px] font-semibold tracking-wide">REC000005</span>
+                                        </div>
+                                        <p class="text-xs text-on-surface-variant mt-0.5">Reception Staff</p>
+                                    </div>
+                                </div><span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 flex-shrink-0"><span
+                                        class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>Active</span>
+                            </div>
+                            <div class="space-y-2.5 text-sm">
+                                <div class="flex items-center gap-3 text-on-surface-variant"><span
+                                        class="material-symbols-outlined text-[19px] text-slate-400">mail</span><span
+                                        class="truncate font-body-sm text-body-sm text-on-surface">priya@gmail.com</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-on-surface-variant"><span
+                                        class="material-symbols-outlined text-[19px] text-slate-400">call</span><span
+                                        class="font-mono font-body-sm text-body-sm text-on-surface">9123456789</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-on-surface-variant"><span
+                                        class="material-symbols-outlined text-[19px] text-slate-400">calendar_today</span><span
+                                        class="font-body-sm text-body-sm text-on-surface">Joined 15 Oct 2026</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2"><button
+                                    class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all"
+                                    title="View details" aria-label="View details" type="button"><span
+                                        class="material-symbols-outlined text-[18px]">visibility</span></button><button
+                                    class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all"
+                                    title="Edit account" aria-label="Edit account" type="button"><span
+                                        class="material-symbols-outlined text-[18px]">edit</span></button></div><button
+                                class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-slate-500 hover:text-error hover:border-rose-200 hover:bg-rose-50 transition-all"
+                                title="Delete account" aria-label="Delete account" type="button"><span
+                                    class="material-symbols-outlined text-[18px]">delete</span></button>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-container-lowest rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between receptionist-mobile-card"
+                        data-card-id="REC000007" data-search="amit kumar rec000007 amit.recp@example.com 9876543211">
+                        <div class="space-y-4">
+                            <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div
+                                        class="w-11 h-11 rounded-full bg-surface-container-high text-on-surface-variant font-bold text-sm flex items-center justify-center flex-shrink-0">
+                                        AK</div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h2 class="font-label-md text-base font-semibold text-on-surface truncate">
+                                                Amit Kumar</h2><span
+                                                class="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-mono text-[11px] font-semibold tracking-wide">REC000007</span>
+                                        </div>
+                                        <p class="text-xs text-on-surface-variant mt-0.5">Reception Staff</p>
+                                    </div>
+                                </div><span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 flex-shrink-0"><span
+                                        class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>Active</span>
+                            </div>
+                            <div class="space-y-2.5 text-sm">
+                                <div class="flex items-center gap-3 text-on-surface-variant"><span
+                                        class="material-symbols-outlined text-[19px] text-slate-400">mail</span><span
+                                        class="truncate font-body-sm text-body-sm text-on-surface">amit.recp@example.com</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-on-surface-variant"><span
+                                        class="material-symbols-outlined text-[19px] text-slate-400">call</span><span
+                                        class="font-mono font-body-sm text-body-sm text-on-surface">9876543211</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-on-surface-variant"><span
+                                        class="material-symbols-outlined text-[19px] text-slate-400">calendar_today</span><span
+                                        class="font-body-sm text-body-sm text-on-surface">Joined 15 Oct 2026</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2"><button
+                                    class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all"
+                                    title="View details" aria-label="View details" type="button"><span
+                                        class="material-symbols-outlined text-[18px]">visibility</span></button><button
+                                    class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all"
+                                    title="Edit account" aria-label="Edit account" type="button"><span
+                                        class="material-symbols-outlined text-[18px]">edit</span></button></div><button
+                                class="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200/80 text-slate-500 hover:text-error hover:border-rose-200 hover:bg-rose-50 transition-all"
+                                title="Delete account" aria-label="Delete account" type="button"><span
+                                    class="material-symbols-outlined text-[18px]">delete</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-surface-container-lowest rounded-xl border border-slate-200/80 px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+                <div class="font-body-sm text-body-sm text-on-surface-variant text-center sm:text-left"
+                    id="pagination-summary">Showing <span class="font-semibold text-on-surface">{{ page_obj.start_index }}</span> to <span
+                        class="font-semibold text-on-surface">{{ page_obj.end_index }}</span> of <span
+                        class="font-semibold text-on-surface">{{ page_obj.paginator.count }}</span> receptionists</div>
+                <div class="flex items-center gap-2">
+                    <span class="font-body-sm text-body-sm text-on-surface-variant mr-1">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                     <!-- Previous -->
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                            aria-label="Previous page"
+                            class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/60 text-outline opacity-40 cursor-not-allowed"
+                            type="button"><span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                        </a>
+                    {% else %}
+                        <button
+                            aria-label="Previous page"
+                            class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/60 text-outline opacity-40 cursor-not-allowed"
+                            disabled="" type="button"><span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                        </button>
+                    {% endif %}
+
+                    <!-- Page Numbers -->
+                    {% for num in page_obj.paginator.page_range %}
+
+                        {% if page_obj.number == num %}
+
+                            <button
+                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm font-semibold"
+                                type="button">{{ num }} 
+                            </button>    
+                        {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}    
+                            <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm font-semibold"
+                                type="button">{{ num }} 
+                            </a>    
+                         {% endif %}
+                    {% endfor %}
+
+                    <!-- Next -->
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Next page"
+                            class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/60 text-outline opacity-40 cursor-not-allowed"
+                            type="button"><span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                        </a>                        
+                    {% else %}
+                        <button aria-label="Next page"
+                            class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/60 text-outline opacity-40 cursor-not-allowed"
+                            disabled="" type="button"><span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                        </button>
+                    {% endif %}                
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</main>
+
+{% comment %} 
 <div class="space-y-6">
 
     <div class="flex flex-wrap items-center justify-between gap-4">
@@ -23,62 +381,31 @@
         </div>
 
 
-        <a
-            href="{% url 'receptionist:create' %}"
-            class="rounded-lg bg-blue-600 px-5 py-3
-                   font-semibold text-white hover:bg-blue-700"
-        >
+        <a href="{% url 'receptionist:create' %}" class="rounded-lg bg-blue-600 px-5 py-3
+                   font-semibold text-white hover:bg-blue-700">
             + Add Receptionist
         </a>
 
     </div>
 
 
-    {% if messages %}
 
-        {% for message in messages %}
+    <form method="get" class="flex flex-col gap-3 rounded-xl border
+               border-slate-200 bg-white p-5 sm:flex-row">
 
-            <div class="rounded-lg border border-emerald-200
-                        bg-emerald-50 p-4 text-emerald-700">
-                {{ message }}
-            </div>
-
-        {% endfor %}
-
-    {% endif %}
-
-
-    <form
-        method="get"
-        class="flex flex-col gap-3 rounded-xl border
-               border-slate-200 bg-white p-5 sm:flex-row"
-    >
-
-        <input
-            type="search"
-            name="q"
-            value="{{ query }}"
-            maxlength="100"
-            placeholder="Search ID, name, email, phone..."
+        <input type="search" name="q" value="{{ query }}" maxlength="100" placeholder="Search ID, name, email, phone..."
             class="w-full rounded-lg border border-slate-300
-                   px-4 py-3 text-sm"
-        >
+                   px-4 py-3 text-sm">
 
 
-        <button
-            type="submit"
-            class="rounded-lg bg-slate-900 px-5 py-3
-                   font-semibold text-white hover:bg-slate-700"
-        >
+        <button type="submit" class="rounded-lg bg-slate-900 px-5 py-3
+                   font-semibold text-white hover:bg-slate-700">
             Search
         </button>
 
 
-        <a
-            href="{% url 'receptionist:list' %}"
-            class="rounded-lg border border-slate-300
-                   px-5 py-3 text-center font-semibold"
-        >
+        <a href="{% url 'receptionist:list' %}" class="rounded-lg border border-slate-300
+                   px-5 py-3 text-center font-semibold">
             Reset
         </a>
 
@@ -131,108 +458,99 @@
 
                 {% for receptionist in page_obj %}
 
-                    <tr>
+                <tr>
 
-                        <td class="px-5 py-4 font-semibold">
-                            {{ receptionist.receptionist_id }}
-                        </td>
-
-
-                        <td class="px-5 py-4">
-
-                            {{ receptionist.user.get_full_name }}
-
-                        </td>
+                    <td class="px-5 py-4 font-semibold">
+                        {{ receptionist.receptionist_id }}
+                    </td>
 
 
-                        <td class="px-5 py-4">
+                    <td class="px-5 py-4">
 
-                            {{ receptionist.user.email }}
+                        {{ receptionist.user.get_full_name }}
 
-                        </td>
-
-
-                        <td class="px-5 py-4">
-
-                            {{ receptionist.user.phone_number|default:"—" }}
-
-                        </td>
+                    </td>
 
 
-                        <td class="px-5 py-4">
+                    <td class="px-5 py-4">
 
-                            {{ receptionist.joining_date|date:"d M Y" }}
+                        {{ receptionist.user.email }}
 
-                        </td>
+                    </td>
 
 
-                        <td class="px-5 py-4">
+                    <td class="px-5 py-4">
 
-                            {% if receptionist.user.is_active %}
+                        {{ receptionist.user.phone_number|default:"—" }}
 
-                                <span class="rounded-full bg-emerald-100
+                    </td>
+
+
+                    <td class="px-5 py-4">
+
+                        {{ receptionist.joining_date|date:"d M Y" }}
+
+                    </td>
+
+
+                    <td class="px-5 py-4">
+
+                        {% if receptionist.user.is_active %}
+
+                        <span class="rounded-full bg-emerald-100
                                              px-3 py-1 text-emerald-700">
-                                    Active
-                                </span>
+                            Active
+                        </span>
 
-                            {% else %}
+                        {% else %}
 
-                                <span class="rounded-full bg-red-100
+                        <span class="rounded-full bg-red-100
                                              px-3 py-1 text-red-700">
-                                    Inactive
-                                </span>
+                            Inactive
+                        </span>
 
-                            {% endif %}
+                        {% endif %}
 
-                        </td>
-
-
-                        <td class="px-5 py-4">
-
-                            <div class="flex flex-wrap gap-3">
-
-                                <a
-                                    href="{% url 'receptionist:detail' receptionist.pk %}"
-                                    class="font-semibold text-blue-600"
-                                >
-                                    View
-                                </a>
+                    </td>
 
 
-                                <a
-                                    href="{% url 'receptionist:update' receptionist.pk %}"
-                                    class="font-semibold text-emerald-700"
-                                >
-                                    Edit
-                                </a>
+                    <td class="px-5 py-4">
+
+                        <div class="flex flex-wrap gap-3">
+
+                            <a href="{% url 'receptionist:detail' receptionist.pk %}"
+                                class="font-semibold text-blue-600">
+                                View
+                            </a>
 
 
-                                <a
-                                    href="{% url 'receptionist:delete' receptionist.pk %}"
-                                    class="font-semibold text-red-600"
-                                >
-                                    Delete
-                                </a>
+                            <a href="{% url 'receptionist:update' receptionist.pk %}"
+                                class="font-semibold text-emerald-700">
+                                Edit
+                            </a>
 
-                            </div>
 
-                        </td>
+                            <a href="{% url 'receptionist:delete' receptionist.pk %}"
+                                class="font-semibold text-red-600">
+                                Delete
+                            </a>
 
-                    </tr>
+                        </div>
+
+                    </td>
+
+                </tr>
 
                 {% empty %}
 
-                    <tr>
+                <tr>
 
-                        <td
-                            colspan="7"
-                            class="px-5 py-10 text-center text-slate-500"
-                        >
-                            No receptionists found.
+                    <td colspan="7" class="px-5 py-10 text-center text-slate-500">
+                        No receptionists found.
 
-                        </td>
+                    </td>
 
-                    </tr>
+                </tr>
 
                 {% endfor %}
 
@@ -257,24 +575,19 @@
 
             {% if page_obj.has_previous %}
 
-                <a
-                    href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}"
-                    class="rounded-lg border px-4 py-2"
-                >
-                    Previous
-                </a>
+            <a href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}"
+                class="rounded-lg border px-4 py-2">
+                Previous
+            </a>
 
             {% endif %}
 
 
             {% if page_obj.has_next %}
 
-                <a
-                    href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}"
-                    class="rounded-lg border px-4 py-2"
-                >
-                    Next
-                </a>
+            <a href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}" class="rounded-lg border px-4 py-2">
+                Next
+            </a>
 
             {% endif %}
 
@@ -282,6 +595,6 @@
 
     </div>
 
-</div>
+</div> {% endcomment %}
 
 {% endblock %}
