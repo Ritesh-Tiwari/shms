@@ -153,3 +153,4 @@ class ReceptionistServiceTests(TestCase):
             response.status_code,
             403,
         )
+
