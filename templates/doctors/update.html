@@ -75,219 +75,219 @@ Update doctor
             <div class="lg:col-span-8 flex flex-col gap-lg">
                 <form method='POST' id="update_doctor_form">
                     {% csrf_token %}
-                <!-- Account Information Section -->
-                <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
-                    <div class="px-lg py-md bg-surface-container-low flex items-center gap-md">
-                        <span class="material-symbols-outlined text-primary">manage_accounts</span>
-                        <h2 class="font-title-md text-title-md text-on-surface">Account Information</h2>
+                    <!-- Account Information Section -->
+                    <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+                        <div class="px-lg py-md bg-surface-container-low flex items-center gap-md">
+                            <span class="material-symbols-outlined text-primary">manage_accounts</span>
+                            <h2 class="font-title-md text-title-md text-on-surface">Account Information</h2>
+                        </div>
+                        <div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-lg">
+                            <!-- Username -->
+                            <div class="flex flex-col gap-sm md:col-span-2">
+                                <label class="font-label-md text-label-md text-on-surface-variant" for="username">Username
+                                    *</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">alternate_email</span>
+                                    <input name="username"
+                                        class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
+                                        id="username" placeholder="username" type="text" value='{{ user_form.username.value | default:""}}' required="">
+                                </div>
+                                <p class="font-body-sm text-body-sm text-outline">150 characters or fewer.
+                                    Letters, digits and @/./+/-/_ only.</p>
+                            </div>
+                            <!-- First Name -->
+                            <div class="flex flex-col gap-sm">
+                                <label class="font-label-md text-label-md text-on-surface-variant" for="firstName">First
+                                    Name</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">person</span>
+                                    <input name="first_name"
+                                        class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
+                                        id="first_name"  type="text" value='{{user_form.first_name.value |default:""}}'>
+                                </div>
+                            </div>
+                            <!-- Last Name -->
+                            <div class="flex flex-col gap-sm">
+                                <label class="font-label-md text-label-md text-on-surface-variant" for="lastName">Last
+                                    Name</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">person</span>
+                                    <input name="last_name"
+                                        class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
+                                        id="last_name" placeholder="Wilson" type="text" value='{{ user_form.last_name.value|default:""}}'>
+                                </div>
+                            </div>
+                            <!-- Email Address -->
+                            <div class="flex flex-col gap-sm">
+                                <label class="font-label-md text-label-md text-on-surface-variant" for="email">Email
+                                    *</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">mail</span>
+                                    <input name="email"
+                                        class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
+                                        id="email" type="email" value='{{ user_form.email.value|default:""}}' required="">
+                                </div>
+                            </div>
+                            <!-- Phone Number -->
+                            <div class="flex flex-col gap-sm">
+                                <label class="font-label-md text-label-md text-on-surface-variant" for="phone">Phone
+                                    Number</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">call</span>
+                                    <input name="phone_number"
+                                        class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
+                                        id="phone" type="tel" value='{{user_form.phone_number.value|default:""}}'>
+                                </div>
+                            </div>
+                            <!-- Password -->
+                            <div class="flex flex-col gap-sm md:col-span-2">
+                                <label class="font-label-md text-label-md text-on-surface-variant"
+                                    for="password">Password</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">lock</span>
+                                    <input name="password"
+                                        class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
+                                        id="password" value='{{ user_form.password.value |default:""}}' type="password">
+                                </div>
+                                <p class="font-body-sm text-body-sm text-outline">Leave blank to keep current
+                                    password.</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-lg">
-                        <!-- Username -->
-                        <div class="flex flex-col gap-sm md:col-span-2">
-                            <label class="font-label-md text-label-md text-on-surface-variant" for="username">Username
-                                *</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">alternate_email</span>
-                                <input name="username"
-                                    class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
-                                    id="username" placeholder="username" type="text" value='{{ user_form.username.value | default:""}}' required="">
-                            </div>
-                            <p class="font-body-sm text-body-sm text-outline">150 characters or fewer.
-                                Letters, digits and @/./+/-/_ only.</p>
+                
+                    <!-- Professional Information Section -->
+                    <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+                        <div class="px-lg py-md bg-surface-container-low flex items-center gap-md">
+                            <span class="material-symbols-outlined text-primary">medical_information</span>
+                            <h2 class="font-title-md text-title-md text-on-surface">Professional Information
+                            </h2>
                         </div>
-                        <!-- First Name -->
-                        <div class="flex flex-col gap-sm">
-                            <label class="font-label-md text-label-md text-on-surface-variant" for="firstName">First
-                                Name</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">person</span>
-                                <input name="first_name"
-                                    class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
-                                    id="first_name"  type="text" value='{{user_form.first_name.value |default:""}}'>
-                            </div>
-                        </div>
-                        <!-- Last Name -->
-                        <div class="flex flex-col gap-sm">
-                            <label class="font-label-md text-label-md text-on-surface-variant" for="lastName">Last
-                                Name</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">person</span>
-                                <input name="last_name"
-                                    class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
-                                    id="last_name" placeholder="Wilson" type="text" value='{{ user_form.last_name.value|default:""}}'>
-                            </div>
-                        </div>
-                        <!-- Email Address -->
-                        <div class="flex flex-col gap-sm">
-                            <label class="font-label-md text-label-md text-on-surface-variant" for="email">Email
-                                *</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">mail</span>
-                                <input name="email"
-                                    class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
-                                    id="email" type="email" value='{{ user_form.email.value|default:""}}' required="">
-                            </div>
-                        </div>
-                        <!-- Phone Number -->
-                        <div class="flex flex-col gap-sm">
-                            <label class="font-label-md text-label-md text-on-surface-variant" for="phone">Phone
-                                Number</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">call</span>
-                                <input name="phone_number"
-                                    class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
-                                    id="phone" type="tel" value='{{user_form.phone_number.value|default:""}}'>
-                            </div>
-                        </div>
-                        <!-- Password -->
-                        <div class="flex flex-col gap-sm md:col-span-2">
-                            <label class="font-label-md text-label-md text-on-surface-variant"
-                                for="password">Password</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">lock</span>
-                                <input name="password"
-                                    class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
-                                    id="password" value='{{ user_form.password.value |default:""}}' type="password">
-                            </div>
-                            <p class="font-body-sm text-body-sm text-outline">Leave blank to keep current
-                                password.</p>
-                        </div>
-                    </div>
-                </div>
-            
-                <!-- Professional Information Section -->
-                <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
-                    <div class="px-lg py-md bg-surface-container-low flex items-center gap-md">
-                        <span class="material-symbols-outlined text-primary">medical_information</span>
-                        <h2 class="font-title-md text-title-md text-on-surface">Professional Information
-                        </h2>
-                    </div>
-                    <div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-lg">
-                        <!-- Specialization -->
-                        <div class="flex flex-col gap-sm">
-                            <label class="font-label-md text-label-md text-on-surface-variant"
-                                for="specialization">Specialization *</label>
-                            <div class="relative">
-                                <select
-                                    class="w-full h-[40px] px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow appearance-none cursor-pointer"
-                                    id="specialization"
-                                    name="specialization"
-                                required>
-                                    <option value="" disabled
-                                    {% if not doctor_form.specialization.value %}
-                                        selected
-                                    {% endif %}
-                                    >
-                                      Select specialization...
-                                </option>
-
-                                {% for value, label in doctor_form.fields.specialization.choices %}
-                                    <option
-                                        value="{{ value }}"
-                                        {% if doctor_form.specialization.value == value %}
+                        <div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-lg">
+                            <!-- Specialization -->
+                            <div class="flex flex-col gap-sm">
+                                <label class="font-label-md text-label-md text-on-surface-variant"
+                                    for="specialization">Specialization *</label>
+                                <div class="relative">
+                                    <select
+                                        class="w-full h-[40px] px-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow appearance-none cursor-pointer"
+                                        id="specialization"
+                                        name="specialization"
+                                    required>
+                                        <option value="" disabled
+                                        {% if not doctor_form.specialization.value %}
                                             selected
                                         {% endif %}
-                                    >
-                                        {{ label }}
+                                        >
+                                        Select specialization...
                                     </option>
-                                {% endfor %}
-                            </select>
-                                <span
-                                    class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-outline pointer-events-none">arrow_drop_down</span>
-                            </div>
-                        </div>
-                        <!-- Qualification -->
-                        <div class="flex flex-col gap-sm">
-                            <label class="font-label-md text-label-md text-on-surface-variant"
-                                for="qualification">Qualification</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">school</span>
-                                <input name="qualification"
-                                    class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
-                                    id="qualification" type="text" value='{{ doctor_form.qualification.value |default:""}}'>
-                            </div>
-                        </div>
-                        <!-- Experience -->
-                        <div class="flex flex-col gap-sm">
-                            <label class="font-label-md text-label-md text-on-surface-variant" for="experience">Years of
-                                Experience</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">work_history</span>
-                                <input name="experience"
-                                    class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
-                                    id="experience" type="number" value='{{ doctor_form.experience.value | default:""}}'>
-                            </div>
-                        </div>
-                        <!-- Consultation Fee -->
-                        <div class="flex flex-col gap-sm">
-                            <label class="font-label-md text-label-md text-on-surface-variant" for="fee">Consultation
-                                Fee</label>
-                            <div class="relative">
-                                <span
-                                    class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">payments</span>
-                                <input
-                                    class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
-                                    id="fee" type="text" name ="consultation_fee" value='{{ doctor_form.consultation_fee.value |default:""}}'>
-                            </div>
-                        </div>
-                        <!-- Availability -->
-                        <div class="flex flex-col gap-sm md:col-span-2">
-                            <label class="font-label-md text-label-md text-on-surface-variant">Availability</label>
-                            <div class="flex gap-lg mt-xs">
-                                {% for value, label in doctor_form.fields.availability.choices %}
 
-                                <label class="relative flex cursor-pointer items-center gap-xs">
-                                <span class="text-error"> {% if doctor_form.availability.errors %}{{ doctor_form.availability.errors.0 }}{% endif %}</span>
-
-
-                                    <input
-                                        class="peer sr-only"
-                                        name="availability"
-                                        type="radio"
-                                        value="{{ value }}"
-                                        {% if doctor_form.availability.value == value %}
-                                            checked
-                                        {% endif %}
-                                    />
-
-                                    <div
-                                        class="h-5 w-5 rounded-full border-2 border-outline-variant peer-checked:border-primary flex items-center justify-center transition-colors"
-                                    >
-                                        <div
-                                            class="h-2.5 w-2.5 rounded-full bg-primary scale-0 peer-checked:scale-100 transition-transform"
-                                        ></div>
-                                    </div>
-
+                                    {% for value, label in doctor_form.fields.specialization.choices %}
+                                        <option
+                                            value="{{ value }}"
+                                            {% if doctor_form.specialization.value == value %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
                                     <span
-                                        class="text-body-md font-body-md text-on-surface-variant peer-checked:text-on-surface transition-colors"
-                                    >
-                                        {{ label }}
-                                    </span>
-
-                                </label>
-
-                            {% endfor %}
+                                        class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-outline pointer-events-none">arrow_drop_down</span>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Address -->
-                        <div class="flex flex-col gap-sm md:col-span-2">
-                            <label class="font-label-md text-label-md text-on-surface-variant"
-                                for="address">Address</label>
-                            <textarea
-                                class="w-full p-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70 resize-y"
-                                id="address" rows="3" name="address" >{{ doctor_form.address.value|default:"" }}</textarea>
+                            <!-- Qualification -->
+                            <div class="flex flex-col gap-sm">
+                                <label class="font-label-md text-label-md text-on-surface-variant"
+                                    for="qualification">Qualification</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">school</span>
+                                    <input name="qualification"
+                                        class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
+                                        id="qualification" type="text" value='{{ doctor_form.qualification.value |default:""}}'>
+                                </div>
+                            </div>
+                            <!-- Experience -->
+                            <div class="flex flex-col gap-sm">
+                                <label class="font-label-md text-label-md text-on-surface-variant" for="experience">Years of
+                                    Experience</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">work_history</span>
+                                    <input name="experience"
+                                        class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
+                                        id="experience" type="number" value='{{ doctor_form.experience.value | default:""}}'>
+                                </div>
+                            </div>
+                            <!-- Consultation Fee -->
+                            <div class="flex flex-col gap-sm">
+                                <label class="font-label-md text-label-md text-on-surface-variant" for="fee">Consultation
+                                    Fee</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">payments</span>
+                                    <input
+                                        class="w-full h-[40px] pl-[44px] pr-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70"
+                                        id="fee" type="text" name ="consultation_fee" value='{{ doctor_form.consultation_fee.value |default:""}}'>
+                                </div>
+                            </div>
+                            <!-- Availability -->
+                            <div class="flex flex-col gap-sm md:col-span-2">
+                                <label class="font-label-md text-label-md text-on-surface-variant">Availability</label>
+                                <div class="flex gap-lg mt-xs">
+                                    {% for value, label in doctor_form.fields.availability.choices %}
+
+                                    <label class="relative flex cursor-pointer items-center gap-xs">
+                                    <span class="text-error"> {% if doctor_form.availability.errors %}{{ doctor_form.availability.errors.0 }}{% endif %}</span>
+
+
+                                        <input
+                                            class="peer sr-only"
+                                            name="availability"
+                                            type="radio"
+                                            value="{{ value }}"
+                                            {% if doctor_form.availability.value == value %}
+                                                checked
+                                            {% endif %}
+                                        />
+
+                                        <div
+                                            class="h-5 w-5 rounded-full border-2 border-outline-variant peer-checked:border-primary flex items-center justify-center transition-colors"
+                                        >
+                                            <div
+                                                class="h-2.5 w-2.5 rounded-full bg-primary scale-0 peer-checked:scale-100 transition-transform"
+                                            ></div>
+                                        </div>
+
+                                        <span
+                                            class="text-body-md font-body-md text-on-surface-variant peer-checked:text-on-surface transition-colors"
+                                        >
+                                            {{ label }}
+                                        </span>
+
+                                    </label>
+
+                                {% endfor %}
+                                </div>
+                            </div>
+                            <!-- Address -->
+                            <div class="flex flex-col gap-sm md:col-span-2">
+                                <label class="font-label-md text-label-md text-on-surface-variant"
+                                    for="address">Address</label>
+                                <textarea
+                                    class="w-full p-md rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-shadow placeholder:text-outline/70 resize-y"
+                                    id="address" rows="3" name="address" >{{ doctor_form.address.value|default:"" }}</textarea>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
             </div>
             <!-- Context/Profile Preview Column -->
             <div class="lg:col-span-4 flex flex-col gap-lg">
@@ -312,9 +312,10 @@ Update doctor
                     <div class="w-full flex flex-col gap-sm mt-md pt-md border-t border-outline-variant/30">
                         <div class="flex justify-between items-center">
                             <span class="font-body-sm text-body-sm text-on-surface-variant">Status</span>
-                            <span class="flex items-center gap-xs font-label-sm text-label-sm text-secondary">
-                                <span class="w-2 h-2 rounded-full bg-secondary"></span> Active
-                            </span>
+                            <span class="flex items-center gap-1 font-medium text-sm {% if doctor.user.is_active %}text-emerald-700{% else %}text-rose-700{% endif %}">
+                            <span class="w-2 h-2 rounded-full {% if doctor.user.is_active %}bg-emerald-500{% else %}bg-rose-700{% endif %}"></span> 
+                            {% if doctor.user.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="font-body-sm text-body-sm text-on-surface-variant">Joined</span>
@@ -329,9 +330,9 @@ Update doctor
                 {% if user.role == "ADMIN" %}
                 <!-- Status Toggle Card -->
                 <form method="post"
-                    action="{% url 'dashboard:toggle-status' doctor.pk %}"
+                    action="{% url 'dashboard:toggle-status' doctor.user.pk %}"
                     class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col gap-md"
-                >
+                    >
                     {% csrf_token %}
 
                     <h3 class="font-title-md text-title-md text-on-surface">Account Status</h3>
@@ -341,8 +342,8 @@ Update doctor
                         class="flex items-center justify-between cursor-pointer mt-sm p-sm rounded-lg hover:bg-surface-container-low transition-colors -mx-sm">
                         <span class="font-label-md text-label-md text-on-surface">Active Account</span>
                         <div class="relative">
-                            <input checked="" class="sr-only peer"
-                                {% if doctor.is_active %}checked{% endif %}
+                            <input class="sr-only peer"
+                                {% if doctor.user.is_active %}checked{% endif %}
                                 onchange="this.form.requestSubmit()" type="checkbox">
                             <div
                                 class="w-11 h-6 bg-outline-variant rounded-full peer peer-focus:ring-2 peer-focus:ring-primary/50 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
