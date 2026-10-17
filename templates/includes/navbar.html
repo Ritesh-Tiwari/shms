@@ -33,6 +33,18 @@
                         <!-- ================= ADMIN ================= -->
 
                         {% if user.role == "ADMIN" %}
+                        <a href="{% url 'dashboard:accounts' %}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg
+                                    text-on-surface-variant hover:bg-surface-container-low
+                                    font-medium text-sm transition-all
+                                    {% if request.resolver_match.namespace == 'dashboard' %}
+                                        bg-primary-container text-white
+                                    {% endif %}">
+                                <span class="material-symbols-outlined text-[20px]">
+                                    manage_accounts
+                                </span>
+                                <span>Account Management</span>
+                            </a>
 
                         <a {% if request.resolver_match.namespace == 'doctors' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'doctors' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'doctors:list' %}">

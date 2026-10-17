@@ -326,8 +326,14 @@ Update doctor
                         </div>
                     </div>
                 </div>
+                {% if user.role == "ADMIN" %}
                 <!-- Status Toggle Card -->
-                <div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col gap-md">
+                <form method="post"
+                    action="{% url 'dashboard:toggle-status' doctor.pk %}"
+                    class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col gap-md"
+                >
+                    {% csrf_token %}
+
                     <h3 class="font-title-md text-title-md text-on-surface">Account Status</h3>
                     <p class="font-body-sm text-body-sm text-on-surface-variant">Deactivating an account
                         will prevent the doctor from logging in and remove them from active schedules.</p>
@@ -335,13 +341,16 @@ Update doctor
                         class="flex items-center justify-between cursor-pointer mt-sm p-sm rounded-lg hover:bg-surface-container-low transition-colors -mx-sm">
                         <span class="font-label-md text-label-md text-on-surface">Active Account</span>
                         <div class="relative">
-                            <input checked="" class="sr-only peer" type="checkbox">
+                            <input checked="" class="sr-only peer"
+                                {% if doctor.is_active %}checked{% endif %}
+                                onchange="this.form.requestSubmit()" type="checkbox">
                             <div
                                 class="w-11 h-6 bg-outline-variant rounded-full peer peer-focus:ring-2 peer-focus:ring-primary/50 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
                             </div>
                         </div>
                     </label>
-                </div>
+                </form>
+                {% endif %}
             </div>
         </div>
     </div>
