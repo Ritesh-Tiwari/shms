@@ -5,7 +5,640 @@ Doctor Details
 {% endblock %}
 
 {% block content %}
+<main class="relative min-h-screen bg-background">
+    <div class="flex flex-col w-full relative min-h-full">
+        <!-- Header Background Decor -->
+        <div
+            class="absolute top-0 left-0 right-0 h-64 bg-surface-container-high rounded-b-[2rem] overflow-hidden -z-10">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
+            <div
+                class="absolute -right-32 -top-32 w-[32rem] h-[32rem] bg-primary-fixed/30 rounded-full blur-3xl opacity-50">
+            </div>
+        </div>
+        <div
+            class="px-4 sm:px-lg lg:px-xl pt-lg pb-xxl max-w-7xl mx-auto w-full flex flex-col gap-lg lg:gap-xl">
+            <!-- Profile Header: Stacks gracefully on mobile, responsive avatar and wrap actions -->
+            <div
+                class="flex flex-col sm:flex-row items-start sm:items-end gap-md sm:gap-lg pt-6 sm:pt-10 relative">
+                <div class="relative group mx-auto sm:mx-0 flex-shrink-0">
+                    <div
+                        class="w-28 h-28 sm:w-36 sm:h-36 lg:w-40 lg:h-40 rounded-2xl overflow-hidden shadow-lg border-4 border-surface bg-surface flex-shrink-0 z-10 transition-transform duration-300 group-hover:scale-105">
+                    {% if doctor.user.profile_picture %}
+                        <img
+                            alt="Dr. {{ doctor.user.get_full_name }}"
+                            class="w-full h-full object-cover"
+                            src="{{ doctor.user.profile_picture.url }}">
+                    {% else %}
+                        <img
+                            alt="Dr. {{ doctor.user.get_full_name }}"
+                            class="w-full h-full object-cover"
+                            src="https://png.pngtree.com/png-vector/20260125/ourmid/pngtree-confident-and-smiling-female-doctor-in-a-white-lab-coat-blue-png-image_18627514.webp">
+                    {% endif %}
+                        
+                    </div>
+                    <div
+                        class="absolute -bottom-2 -right-2 bg-secondary text-on-secondary px-sm py-xs rounded-full flex items-center gap-xs shadow-md border-2 border-surface z-20">
+                        <span class="material-symbols-outlined text-[14px] sm:text-[16px]">verified</span>
+                         {% if doctor.user.is_active %}                            
+                            <span class="font-label-sm uppercase tracking-wider">Active</span>
+                        {% else %}
+                            <span class="font-label-sm uppercase tracking-wider">Inactive</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex-1 w-full flex flex-col justify-end text-center sm:text-left pb-sm">
+                    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-md mb-xs">
+                        <div>
+                            <div class="flex items-center justify-center sm:justify-start gap-sm mb-1">
+                                <span
+                                    class="font-label-md text-primary bg-primary/10 px-sm py-0.5 rounded-md text-xs sm:text-sm font-semibold">{{doctor.doctor_id}}</span>
+                                <span
+                                    class="font-label-sm text-on-surface-variant uppercase tracking-widest opacity-80 text-xs"> {{doctor.get_specialization_lable|title}} </span>
+                            </div>
+                            <h1
+                                class="text-2xl sm:text-3xl lg:text-display-lg text-on-surface font-bold m-0 leading-tight">
+                                Dr. {{doctor.user.get_full_name}}</h1>
+                        </div>
+                        <div
+                            class="flex flex-wrap items-center justify-center sm:justify-start gap-sm mt-2 xl:mt-0">
+                            {% if user.role == "ADMIN" %}
+                            <a href="{% url 'doctors:update' doctor.pk %}"
+                                class="bg-surface text-on-surface hover:bg-surface-container-high px-md py-sm rounded-lg font-label-md shadow-sm transition-all flex items-center gap-sm">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                                Edit Profile
+                            </a>
+                            
+                            <a href="{% url "doctors:schedule" %}"
+                                class="bg-primary text-on-primary hover:bg-primary/90 px-md py-sm rounded-lg font-label-md shadow-md transition-all flex items-center gap-sm">
+                                <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                                View Schedule
+                            </a>                            
+                            <!-- Danger Zone Dropdown / Icon Button -->
+                            <div class="relative group">
+                                <button type="button" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors">
+                                <span class="material-symbols-outlined">more_vert</span>
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div class="hidden group-hover:block absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-10">
+                                <form method="post" action="{% url 'doctors:toggle-active' doctor.pk %}">
+                                    {% csrf_token %}
+                                    {% if doctor.user.is_active %}
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center">
+                                    <span class="material-symbols-outlined text-[16px] mr-2">block</span>
+                                    Deactivate Account
+                                    </button>
+                                    {% else %}
+                                     <button type="submit" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center">
+                                    <span class="material-symbols-outlined text-[16px] mr-2">lock_open</span>
+                                    Activate Account
+                                    </button>
+                                    {% endif %}
+                                </form>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-body-sm sm:text-body-md text-on-surface-variant font-medium mt-1">
+                        {{ doctor.get_specialization_display }} · {{ doctor.qualification }} </div>
+                </div>
+            </div>
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-md w-full">
+                <div
+                    class="bg-surface rounded-xl p-md flex items-center gap-md shadow-sm border border-outline-variant/20 relative overflow-hidden group hover:shadow-md transition-shadow">
+                    <div
+                        class="absolute -right-4 -top-4 w-16 h-16 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors">
+                    </div>
+                    <div
+                        class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-[20px] sm:text-[24px]">work_history</span>
+                    </div>
+                    <div>
+                        <div
+                            class="text-[11px] sm:text-label-sm text-on-surface-variant uppercase tracking-wider mb-0.5 sm:mb-1">
+                            Experience</div>
+                        <div class="text-base sm:text-title-md font-semibold text-on-surface">{{ doctor.experience }} Yrs</div>
+                    </div>
+                </div>
+                <div
+                    class="bg-surface rounded-xl p-md flex items-center gap-md shadow-sm border border-outline-variant/20 relative overflow-hidden group hover:shadow-md transition-shadow">
+                    <div
+                        class="absolute -right-4 -top-4 w-16 h-16 bg-tertiary/5 rounded-full blur-xl group-hover:bg-tertiary/10 transition-colors">
+                    </div>
+                    <div
+                        class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-[20px] sm:text-[24px]">payments</span>
+                    </div>
+                    <div>
+                        <div
+                            class="text-[11px] sm:text-label-sm text-on-surface-variant uppercase tracking-wider mb-0.5 sm:mb-1">
+                            Consult Fee</div>
+                        <div class="text-base sm:text-title-md font-semibold text-on-surface">₹{{ doctor.consultation_fee }}</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Content Area -->
+            <div class="w-full flex flex-col gap-lg">
+                <div class="border-b border-outline-variant/30 w-full">
+                    <div
+                        class="flex items-center gap-2 sm:gap-md overflow-x-auto no-scrollbar scroll-smooth pb-0 -mb-[1px]">
+                        <button
+                            class="px-md py-sm font-label-md text-primary border-b-2 border-primary whitespace-nowrap transition-colors flex items-center gap-xs"
+                            id="tab-btn-overview" onclick="switchDoctorTab('overview')"><span
+                                class="material-symbols-outlined text-[18px]">info</span>Overview</button><button
+                            class="px-md py-sm font-label-md text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors whitespace-nowrap flex items-center gap-xs"
+                            id="tab-btn-appointments" onclick="switchDoctorTab('appointments')"><span
+                                class="material-symbols-outlined text-[18px]">calendar_today</span>Appointments<span
+                                class="ml-1 bg-surface-container px-1.5 py-0.5 rounded-full text-[11px] font-semibold text-on-surface-variant"
+                                id="appts-count-badge">{{ appointment_count }}</span></button><button
+                            class="px-md py-sm font-label-md text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors whitespace-nowrap flex items-center gap-xs"
+                            id="tab-btn-patients" onclick="switchDoctorTab('patients')"><span
+                                class="material-symbols-outlined text-[18px]">group</span>My Patients<span
+                                class="ml-1 bg-surface-container px-1.5 py-0.5 rounded-full text-[11px] font-semibold text-on-surface-variant"
+                                id="patients-count-badge">{{ patient_count }}</span></button><button
+                            class="px-md py-sm font-label-md text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors whitespace-nowrap flex items-center gap-xs"
+                            id="tab-btn-availability" onclick="switchDoctorTab('availability')"><span
+                                class="material-symbols-outlined text-[18px]">schedule</span>Availability</button>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row gap-lg lg:gap-xl w-full">
+                    <div class="flex-1 flex flex-col gap-lg min-w-0">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-lg" id="tab-pane-overview">
+                            <div class="flex flex-col gap-lg">
+                                <div
+                                    class="bg-surface rounded-xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col gap-md">
+                                    <h2 class="font-title-md text-title-md text-on-surface">Professional Summary
+                                    </h2>
+                                    <p class="text-body-md text-on-surface-variant leading-relaxed">
+                                        Dr. {{ doctor.user.get_full_name }} is a
+                                        {{ doctor.get_specialization_display }} with
+                                        {{ doctor.experience }} years of experience.
+                                        Qualification: {{ doctor.qualification }}.
+                                    </p>
+                                    <div class="pt-sm border-t border-outline-variant/30">
+                                        <div class="text-label-sm text-on-surface-variant mb-xs font-medium">
+                                            Specializations</div>
+                                        <div class="flex flex-wrap gap-xs"><span
+                                                class="bg-surface-container text-on-surface px-sm py-1 rounded text-body-sm">Interventional
+                                                Cardiology</span><span
+                                                class="bg-surface-container text-on-surface px-sm py-1 rounded text-body-sm">Heart
+                                                Failure Management</span><span
+                                                class="bg-surface-container text-on-surface px-sm py-1 rounded text-body-sm">Preventive
+                                                Cardiology</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-lg">
+                                <div
+                                    class="bg-surface rounded-xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col gap-md">
+                                    <div
+                                        class="flex justify-between items-center border-b border-outline-variant/20 pb-sm">
+                                        <h2 class="font-title-md text-title-md text-on-surface">Today's Schedule
+                                        </h2><span class="text-body-sm text-on-surface-variant">Oct 24,
+                                            2023</span>
+                                    </div>
+                                    <div class="flex flex-col gap-sm" id="overview-schedule-list">
+                                        {% for appointment in today_appointments %}
+                                            <div class="flex items-center justify-between py-2 border-b border-outline-variant/20">
+                                                <div class="flex items-center gap-md">
+                                                    <span class="font-medium text-body-md text-on-surface w-16">
+                                                        {{ appointment.appointment_time|time:"g:i A" }}
+                                                    </span>
+                                                    <div>
+                                                        <div class="font-label-md text-on-surface">
+                                                            {{ appointment.patient.user.get_full_name }}
+                                                        </div>
+                                                        <div class="text-body-sm text-on-surface-variant">
+                                                            {{ appointment.reason_for_visit }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <span class="text-label-sm text-primary font-medium bg-primary/10 px-2 py-0.5 rounded">
+                                                    {{ appointment.get_status_display }}
+                                                </span>
+                                            </div>
+                                        {% empty %}
+                                            <p class="text-body-sm text-on-surface-variant">
+                                                No appointments scheduled for today.
+                                            </p>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="pt-2 flex items-center justify-between"><a
+                                            href="#schedule-details"
+                                            class="w-full py-2.5 px-4 text-xs font-semibold text-primary hover:bg-primary/5 rounded-lg border border-primary/30 flex items-center justify-center gap-1.5 transition-colors"><span
+                                                class="">View Full Schedule</span><span
+                                                class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden flex-col gap-lg" id="tab-pane-appointments">
+                            <div
+                                class="bg-surface rounded-xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col gap-md">
+                                <div
+                                    class="flex flex-col sm:flex-row justify-between sm:items-center gap-sm border-b border-outline-variant/20 pb-md">
+                                    <div>
+                                        <h3 class="font-title-md text-title-md text-on-surface">Appointments
+                                        </h3>
+                                        <p class="text-body-sm text-on-surface-variant">Scheduled patient
+                                            consultations for {{ today|date:"M d, Y" }}</p>
+                                    </div><button
+                                        class="bg-primary text-on-primary px-md py-sm rounded-lg font-label-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-xs self-start sm:self-auto"><span
+                                            class="material-symbols-outlined text-[18px]">add</span><span
+                                            class="">New Appointment</span></button>
+                                </div>
+                                <div class="hidden md:block overflow-x-auto">
+                                    <table class="w-full text-left text-body-sm">
+                                        <thead
+                                            class="text-label-sm text-on-surface-variant border-b border-outline-variant/30">
+                                            <tr>
+                                                <th class="py-sm pr-md font-medium">Patient</th>
+                                                <th class="py-sm px-md font-medium">Appointment ID</th>
+                                                <th class="py-sm px-md font-medium">Date &amp; Time</th>
+                                                <th class="py-sm px-md font-medium">Type</th>
+                                                <th class="py-sm px-md font-medium">Status</th>
+                                                <th class="py-sm pl-md font-medium text-right">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-outline-variant/20" id="appointments-table-body">
+                                            {% for appointment in appointments %}
+                                                <tr class="hover:bg-surface-container-low transition-colors">
+                                                    <td class="py-3 pr-md font-medium text-on-surface">
+                                                        {{ appointment.patient.user.get_full_name }}
+                                                    </td>
+                                                    <td class="py-3 px-md text-on-surface-variant">
+                                                        {{ appointment.appointment_id }}
+                                                    </td>
+                                                    <td class="py-3 px-md text-on-surface-variant">
+                                                        {{ appointment.appointment_date|date:"M d, Y" }} ·
+                                                        {{ appointment.appointment_time|time:"g:i A" }}
+                                                    </td>
+                                                    <td class="py-3 px-md text-on-surface-variant">
+                                                        {{ appointment.reason_for_visit }}
+                                                    </td>
+                                                    <td class="py-3 px-md">
+                                                        <span class="text-label-sm font-medium px-2 py-0.5 rounded
+                                                            {{ appointment.status_color_classes.bg }}
+                                                            {{ appointment.status_color_classes.text }}">
+                                                            {{ appointment.get_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td class="py-3 pl-md text-right">
+                                                        <a class="text-primary hover:underline font-label-md"
+                                                        href="{% url 'appointments:detail' appointment.pk %}">
+                                                            View
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% empty %}
+                                                <tr>
+                                                    <td colspan="6" class="py-4 text-center text-on-surface-variant">
+                                                        No appointments found.
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="block md:hidden flex flex-col gap-sm" id="mobile-appointments-container">
+                                    {% for appointment in appointments %}
+                                        <div class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
+                                            <div class="flex items-center justify-between">
+                                                <span class="font-medium text-on-surface">
+                                                    {{ appointment.patient.user.get_full_name }}
+                                                </span>
+                                                <span class="text-label-sm font-medium px-2 py-0.5 rounded
+                                                    {{ appointment.status_color_classes.bg }}
+                                                    {{ appointment.status_color_classes.text }}">
+                                                    {{ appointment.get_status_display }}
+                                                </span>
+                                            </div>
+                                            <div class="flex items-center justify-between text-body-sm text-on-surface-variant">
+                                                <span>
+                                                    {{ appointment.appointment_id }} · {{ appointment.reason_for_visit }}
+                                                </span>
+                                                <span class="text-xs">
+                                                    {{ appointment.appointment_date|date:"M d" }}
+                                                    · {{ appointment.appointment_time|time:"g:i A" }}
+                                                </span>
+                                            </div>
+                                            <div class="pt-xs text-right">
+                                                <a class="text-primary font-label-md text-xs hover:underline"
+                                                href="{% url 'appointments:detail' appointment.pk %}">
+                                                    View Details →
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <p class="text-body-sm text-on-surface-variant">
+                                            No appointments found.
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                                <div class="pt-xs flex justify-center"><a href="{% url "appointments:list" %}"
+                                        class="w-full sm:w-auto px-lg py-2.5 text-label-md font-semibold text-primary hover:bg-primary/5 rounded-lg border border-primary/30 flex items-center justify-center gap-2 transition-colors"><span
+                                            class="">View All Appointments</span><span
+                                            class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden flex-col gap-lg" id="tab-pane-patients">
+                            <div
+                                class="bg-surface rounded-xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col gap-md">
+                                <div
+                                    class="flex flex-col sm:flex-row justify-between sm:items-center gap-sm border-b border-outline-variant/20 pb-md">
+                                    <div>
+                                        <h3 class="font-title-md text-title-md text-on-surface">Assigned
+                                            Patients</h3>
+                                        <p class="text-body-sm text-on-surface-variant">Active cardiac patients
+                                            under Dr. Wilson's care</p>
+                                    </div><span
+                                        class="text-body-sm text-on-surface-variant bg-surface-container px-3 py-1 rounded-full self-start sm:self-auto font-medium">Total:
+                                        {{ patient_count }}</span>
+                                </div>
+                                <div class="hidden md:block overflow-x-auto">
+                                    <table class="w-full text-left text-body-sm">
+                                        <thead
+                                            class="text-label-sm text-on-surface-variant border-b border-outline-variant/30">
+                                            <tr>
+                                                <th class="py-sm pr-md font-medium">Patient ID</th>
+                                                <th class="py-sm px-md font-medium">Patient Name</th>
+                                                <th class="py-sm px-md font-medium">Age / Gender</th>
+                                                <th class="py-sm px-md font-medium">Last Visit</th>
+                                                <th class="py-sm pl-md font-medium text-right">Action</th>
+                                            </tr>
+                                        </thead>
+                                       <tbody class="divide-y divide-outline-variant/20">
+                                            {% for patient in patients %}
+                                                <tr class="hover:bg-surface-container-low transition-colors">
+                                                    <td class="py-3 pr-md text-primary font-medium">
+                                                        {{ patient.patient_id }}
+                                                    </td>
+                                                    <td class="py-3 px-md font-medium text-on-surface">
+                                                        {{ patient.user.get_full_name }}
+                                                    </td>
+                                                    <td class="py-3 px-md text-on-surface-variant">
+                                                        {{ patient.age }} Yrs · {{ patient.get_gender_display }}
+                                                    </td>
+                                                    <td class="py-3 px-md text-on-surface-variant">
+                                                        {% if patient.last_visit %}
+                                                            {{ patient.last_visit|date:"M d, Y" }}
+                                                        {% else %}
+                                                            No completed visit
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="py-3 pl-md text-right">
+                                                        <a class="text-primary hover:underline font-label-md"
+                                                        href="{% url 'patients:detail' patient.pk %}">
+                                                            View Profile
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% empty %}
+                                                <tr>
+                                                    <td colspan="5" class="py-4 text-center text-on-surface-variant">
+                                                        No patients found for this doctor.
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="block md:hidden flex flex-col gap-sm">
+                                    <div
+                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
+                                        <div class="flex items-center justify-between"><span
+                                                class="font-medium text-on-surface">Ritesh Tiwari</span><span
+                                                class="text-xs font-semibold text-primary">PAT000001</span>
+                                        </div>
+                                        <div class="text-body-sm text-on-surface-variant">48 Yrs · Male · Last
+                                            Visit: Oct 10, 2023</div>
+                                        <div class="pt-xs text-right"><a
+                                                class="text-primary font-label-md text-xs hover:underline"
+                                                href="#">View Profile →</a></div>
+                                    </div>
+                                    <div
+                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
+                                        <div class="flex items-center justify-between"><span
+                                                class="font-medium text-on-surface">Ananya Sen</span><span
+                                                class="text-xs font-semibold text-primary">PAT000002</span>
+                                        </div>
+                                        <div class="text-body-sm text-on-surface-variant">34 Yrs · Female · Last
+                                            Visit: Sep 28, 2023</div>
+                                        <div class="pt-xs text-right"><a
+                                                class="text-primary font-label-md text-xs hover:underline"
+                                                href="#">View Profile →</a></div>
+                                    </div>
+                                    <div
+                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
+                                        <div class="flex items-center justify-between"><span
+                                                class="font-medium text-on-surface">Sunita Patel</span><span
+                                                class="text-xs font-semibold text-primary">PAT000005</span>
+                                        </div>
+                                        <div class="text-body-sm text-on-surface-variant">62 Yrs · Female · Last
+                                            Visit: Oct 24, 2023</div>
+                                        <div class="pt-xs text-right"><a
+                                                class="text-primary font-label-md text-xs hover:underline"
+                                                href="#">View Profile →</a></div>
+                                    </div>
+                                    <div
+                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
+                                        <div class="flex items-center justify-between"><span
+                                                class="font-medium text-on-surface">Rajesh Kumar</span><span
+                                                class="text-xs font-semibold text-primary">PAT000014</span>
+                                        </div>
+                                        <div class="text-body-sm text-on-surface-variant">51 Yrs · Male · Last
+                                            Visit: Oct 24, 2023</div>
+                                        <div class="pt-xs text-right"><a
+                                                class="text-primary font-label-md text-xs hover:underline"
+                                                href="#">View Profile →</a></div>
+                                    </div>
+                                </div>
+                                <div class="pt-xs flex justify-center"><a href="{% url "patients:list" %}"
+                                        class="w-full sm:w-auto px-lg py-2.5 text-label-md font-semibold text-primary hover:bg-primary/5 rounded-lg border border-primary/30 flex items-center justify-center gap-2 transition-colors"><span
+                                            class="">View All Patients</span><span
+                                            class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden flex-col gap-lg" id="tab-pane-availability">
+                            <div
+                                class="bg-surface rounded-xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col gap-md">
+                                <div
+                                    class="flex flex-col sm:flex-row justify-between sm:items-center gap-sm border-b border-outline-variant/20 pb-md">
+                                    <div>
+                                        <h3 class="font-title-md text-title-md text-on-surface">Weekly OPD
+                                            Schedule</h3>
+                                        <p class="text-body-sm text-on-surface-variant">Consultation timings and
+                                            room allocations</p>
+                                    </div><span
+                                        class="text-label-sm font-medium text-secondary bg-secondary/10 px-md py-1 rounded-full self-start sm:self-auto">Available
+                                        Today</span>
+                                </div>
+                                <div class="hidden md:block overflow-x-auto">
+                                    <table class="w-full text-left text-body-sm">
+                                        <thead
+                                            class="text-label-sm text-on-surface-variant border-b border-outline-variant/30">
+                                            <tr>
+                                                <th class="py-sm pr-md font-medium">Day</th>
+                                                <th class="py-sm px-md font-medium">Shift &amp; Timings</th>
+                                                <th class="py-sm px-md font-medium">Location</th>
+                                                <th class="py-sm pl-md font-medium text-right">Status</th>
+                                            </tr>
+                                        </thead>
+                                       <tbody class="divide-y divide-outline-variant/20">
+                                            {% for schedule in schedules %}
+                                                <tr class="hover:bg-surface-container-low transition-colors">
+                                                    <td class="py-3 pr-md font-medium text-on-surface">
+                                                        {{ schedule.get_weekday_display }}
+                                                    </td>
+                                                    <td class="py-3 px-md text-on-surface-variant">
+                                                        {{ schedule.start_time|time:"g:i A" }} –
+                                                        {{ schedule.end_time|time:"g:i A" }}
+                                                    </td>
+                                                    <td class="py-3 pl-md text-right">
+                                                        <span class="text-label-sm text-secondary font-medium bg-secondary/10 px-2 py-0.5 rounded">
+                                                            Active
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            {% empty %}
+                                                <tr>
+                                                    <td colspan="3" class="py-4 text-center text-on-surface-variant">
+                                                        No active schedule has been added.
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="block md:hidden flex flex-col gap-sm">
+                                    <div
+                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
+                                        <div class="flex items-center justify-between"><span
+                                                class="font-medium text-on-surface">Mon, Wed, Fri</span><span
+                                                class="text-label-sm text-secondary font-medium bg-secondary/10 px-2 py-0.5 rounded">Available</span>
+                                        </div>
+                                        <div class="text-body-sm text-on-surface">09:00 AM – 01:30 PM &amp;
+                                            04:00 PM – 07:00 PM</div>
+                                        <div class="text-xs text-on-surface-variant">OPD Room 204</div>
+                                    </div>
+                                    <div
+                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
+                                        <div class="flex items-center justify-between"><span
+                                                class="font-medium text-on-surface">Tue, Thu</span><span
+                                                class="text-label-sm text-secondary font-medium bg-secondary/10 px-2 py-0.5 rounded">Available</span>
+                                        </div>
+                                        <div class="text-body-sm text-on-surface">10:00 AM – 03:00 PM</div>
+                                        <div class="text-xs text-on-surface-variant">Cardiac Wing OPD 2</div>
+                                    </div>
+                                    <div
+                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
+                                        <div class="flex items-center justify-between"><span
+                                                class="font-medium text-on-surface">Saturday</span><span
+                                                class="text-label-sm text-tertiary font-medium bg-tertiary-container/20 px-2 py-0.5 rounded">Half
+                                                Day</span></div>
+                                        <div class="text-body-sm text-on-surface">09:30 AM – 01:00 PM</div>
+                                        <div class="text-xs text-on-surface-variant">Emergency On-Call</div>
+                                    </div>
+                                    <div
+                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
+                                        <div class="flex items-center justify-between"><span
+                                                class="font-medium text-on-surface-variant">Sunday</span><span
+                                                class="text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">Off</span>
+                                        </div>
+                                        <div class="text-body-sm text-on-surface-variant">—</div>
+                                        <div class="text-xs text-on-surface-variant">Off Duty (Emergency code
+                                            calls only)</div>
+                                    </div>
+                                </div>
+                                <div class="pt-xs flex justify-center"><a href="{% url "doctors:schedule" %}"
+                                        class="w-full sm:w-auto px-lg py-2.5 text-label-md font-semibold text-primary hover:bg-primary/5 rounded-lg border border-primary/30 flex items-center justify-center gap-2 transition-colors"><span
+                                            class="">View Full Monthly Roster &amp; Special Slots</span><span
+                                            class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-80 flex flex-col gap-lg flex-shrink-0">
+                        <div
+                            class="bg-surface rounded-xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col gap-md">
+                            <h3
+                                class="font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                                Contact &amp; Info</h3>
+                            <div class="space-y-md">
+                                <div>
+                                    <div
+                                        class="text-label-sm text-on-surface-variant mb-xs flex items-center gap-xs">
+                                        <span class="material-symbols-outlined text-[16px]">mail</span> Work
+                                        Email</div>
+                                    <div class="font-body-md text-on-surface break-all">{{doctor.user.email}}</div>
+                                </div>
+                                <div>
+                                    <div
+                                        class="text-label-sm text-on-surface-variant mb-xs flex items-center gap-xs">
+                                        <span class="material-symbols-outlined text-[16px]">phone</span>
+                                        Extension / Phone</div>
+                                    <div class="font-body-md text-on-surface"> +91 {{doctor.user.phone_number}}
+                                    </div>
+                                </div>
+                                <div class="pt-sm border-t border-outline-variant/30">
+                                    <div
+                                        class="text-label-sm text-on-surface-variant mb-xs flex items-center gap-xs">
+                                        <span class="material-symbols-outlined text-[16px]">translate</span>
+                                        Languages</div>
+                                    <div class="font-body-md text-on-surface">English, Hindi, Bengali</div>
+                                </div>
+                                <div class="pt-sm border-t border-outline-variant/30">
+                                    <div
+                                        class="text-label-sm text-on-surface-variant mb-xs flex items-center gap-xs">
+                                        <span class="material-symbols-outlined text-[16px]">room</span>
+                                        Department &amp; Floor</div>
+                                    <div class="font-body-md text-on-surface">
+                                        {{doctor.address}}
+                                        {% comment %} Cardiology Wing · Level 2, Room {% endcomment %}
+                                        204</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+// Tab Switching
+        function switchDoctorTab(tabKey) {
+            var tabs = ['overview', 'appointments', 'patients', 'availability'];
+            tabs.forEach(function (key) {
+                var btn = document.getElementById('tab-btn-' + key);
+                var pane = document.getElementById('tab-pane-' + key);
+                if (!btn || !pane) return;
+                if (key === tabKey) {
+                    btn.className = 'px-md py-sm font-label-md text-primary border-b-2 border-primary whitespace-nowrap transition-colors flex items-center gap-xs';
+                    pane.classList.remove('hidden');
+                    if (key === 'overview') {
+                        pane.classList.add('grid');
+                        pane.classList.remove('flex');
+                    } else {
+                        pane.classList.add('flex');
+                        pane.classList.remove('grid');
+                    }
+                } else {
+                    btn.className = 'px-md py-sm font-label-md text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors whitespace-nowrap flex items-center gap-xs';
+                    pane.classList.add('hidden');
+                    pane.classList.remove('grid', 'flex');
+                }
+            });
+        }
 
+</script>
+
+
+{% comment %} 
 
 <main class="relative min-h-screen bg-background">
     <div class="flex flex-col w-full relative min-h-full">
@@ -313,6 +946,6 @@ Doctor Details
     Delete
 
 </a>
-
+ {% endcomment %}
 
 {% endblock %}

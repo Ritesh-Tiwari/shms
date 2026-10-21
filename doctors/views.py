@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
+from django.db.models import Max, Q
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.utils import timezone
@@ -175,22 +175,65 @@ def doctor_list(request):
 
 @role_required(
     UserRole.ADMIN,
-    UserRole.RECEPTIONIST
+    UserRole.RECEPTIONIST,
 )
 def doctor_detail(request, pk):
-
     doctor = get_object_or_404(
         Doctor.objects.select_related("user"),
         pk=pk,
     )
 
-    return render(
-        request,
-        "doctors/detail.html",
-        {
-            "doctor": doctor,
-        },
+    today = timezone.localdate()
+
+    appointments = (
+        Appointment.objects
+        .filter(doctor=doctor)
+        .select_related("patient__user")
+        .order_by("-appointment_date", "-appointment_time")
     )
+
+    today_appointments = (
+        appointments
+        .filter(appointment_date=today)
+        .exclude(status=AppointmentStatus.CANCELLED)
+        .order_by("appointment_time")
+    )
+
+    patients = (
+        Patient.objects
+        .filter(appointments__doctor=doctor)
+        .select_related("user")
+        .annotate(
+            last_visit=Max(
+                "appointments__appointment_date",
+                filter=Q(
+                    appointments__doctor=doctor,
+                    appointments__status=AppointmentStatus.COMPLETED,
+                ),
+            ),
+        )
+        .distinct()
+        .order_by("user__first_name", "user__last_name")
+    )
+
+    schedules = (
+        DoctorSchedule.objects
+        .filter(doctor=doctor, is_active=True)
+        .order_by("weekday", "start_time")
+    )
+
+    context = {
+        "doctor": doctor,
+        "today": today,
+        "appointments": appointments,
+        "today_appointments": today_appointments,
+        "patients": patients,
+        "schedules": schedules,
+        "appointment_count": appointments.count(),
+        "patient_count": patients.count(),
+    }
+
+    return render(request, "doctors/detail.html", context)
 
 @role_required(
     UserRole.ADMIN,

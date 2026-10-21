@@ -27,7 +27,7 @@ class UserRegistrationForm(forms.ModelForm):
             "last_name",
             "email",
             "phone_number",
-            "password",
+            "password",            
         ]
 
         widgets = {
