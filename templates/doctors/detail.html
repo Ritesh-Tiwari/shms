@@ -196,8 +196,7 @@ Doctor Details
                                     <div
                                         class="flex justify-between items-center border-b border-outline-variant/20 pb-sm">
                                         <h2 class="font-title-md text-title-md text-on-surface">Today's Schedule
-                                        </h2><span class="text-body-sm text-on-surface-variant">Oct 24,
-                                            2023</span>
+                                        </h2><span class="text-body-sm text-on-surface-variant">{{today|date:"M d, Y"}}</span>
                                     </div>
                                     <div class="flex flex-col gap-sm" id="overview-schedule-list">
                                         {% for appointment in today_appointments %}
@@ -337,7 +336,7 @@ Doctor Details
                                         </p>
                                     {% endfor %}
                                 </div>
-                                <div class="pt-xs flex justify-center"><a href="{% url "appointments:list" %}"
+                                <div class="pt-xs flex justify-center"><a href="{% url "appointments:list" %}?doctor={{ doctor.doctor_id }}"
                                         class="w-full sm:w-auto px-lg py-2.5 text-label-md font-semibold text-primary hover:bg-primary/5 rounded-lg border border-primary/30 flex items-center justify-center gap-2 transition-colors"><span
                                             class="">View All Appointments</span><span
                                             class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
@@ -353,7 +352,7 @@ Doctor Details
                                         <h3 class="font-title-md text-title-md text-on-surface">Assigned
                                             Patients</h3>
                                         <p class="text-body-sm text-on-surface-variant">Active cardiac patients
-                                            under Dr. Wilson's care</p>
+                                            under Dr. {{ doctor.user.last_name }}'s care</p>
                                     </div><span
                                         class="text-body-sm text-on-surface-variant bg-surface-container px-3 py-1 rounded-full self-start sm:self-auto font-medium">Total:
                                         {{ patient_count }}</span>
@@ -407,56 +406,31 @@ Doctor Details
                                     </table>
                                 </div>
                                 <div class="block md:hidden flex flex-col gap-sm">
+                                    {% for patient in patients %}
                                     <div
                                         class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
                                         <div class="flex items-center justify-between"><span
-                                                class="font-medium text-on-surface">Ritesh Tiwari</span><span
-                                                class="text-xs font-semibold text-primary">PAT000001</span>
+                                                class="font-medium text-on-surface">{{patient.user.get_full_name}}</span><span
+                                                class="text-xs font-semibold text-primary">{{patient.patient_id}}</span>
                                         </div>
-                                        <div class="text-body-sm text-on-surface-variant">48 Yrs · Male · Last
-                                            Visit: Oct 10, 2023</div>
+                                        <div class="text-body-sm text-on-surface-variant">{{patient.age}} Yrs · {{patient.get_gender_display}} Male · Last
+                                            Visit: {{ patient.last_visit|date:"M d, Y" }} </div>
                                         <div class="pt-xs text-right"><a
                                                 class="text-primary font-label-md text-xs hover:underline"
-                                                href="#">View Profile →</a></div>
+                                                href="{% url 'patients:detail' patient.pk %}">View Profile →</a></div>
                                     </div>
+                                    {% empty %}
                                     <div
                                         class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
-                                        <div class="flex items-center justify-between"><span
-                                                class="font-medium text-on-surface">Ananya Sen</span><span
-                                                class="text-xs font-semibold text-primary">PAT000002</span>
+                                        <div class="text-body-sm text-on-surface-variant">
+                                             No patients found for this doctor.
                                         </div>
-                                        <div class="text-body-sm text-on-surface-variant">34 Yrs · Female · Last
-                                            Visit: Sep 28, 2023</div>
-                                        <div class="pt-xs text-right"><a
-                                                class="text-primary font-label-md text-xs hover:underline"
-                                                href="#">View Profile →</a></div>
+                                        
                                     </div>
-                                    <div
-                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
-                                        <div class="flex items-center justify-between"><span
-                                                class="font-medium text-on-surface">Sunita Patel</span><span
-                                                class="text-xs font-semibold text-primary">PAT000005</span>
-                                        </div>
-                                        <div class="text-body-sm text-on-surface-variant">62 Yrs · Female · Last
-                                            Visit: Oct 24, 2023</div>
-                                        <div class="pt-xs text-right"><a
-                                                class="text-primary font-label-md text-xs hover:underline"
-                                                href="#">View Profile →</a></div>
-                                    </div>
-                                    <div
-                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
-                                        <div class="flex items-center justify-between"><span
-                                                class="font-medium text-on-surface">Rajesh Kumar</span><span
-                                                class="text-xs font-semibold text-primary">PAT000014</span>
-                                        </div>
-                                        <div class="text-body-sm text-on-surface-variant">51 Yrs · Male · Last
-                                            Visit: Oct 24, 2023</div>
-                                        <div class="pt-xs text-right"><a
-                                                class="text-primary font-label-md text-xs hover:underline"
-                                                href="#">View Profile →</a></div>
-                                    </div>
+                                    {% endfor %}
+                                    
                                 </div>
-                                <div class="pt-xs flex justify-center"><a href="{% url "patients:list" %}"
+                                <div class="pt-xs flex justify-center"><a href="{% url "patients:list" %}?doctor={{ doctor.doctor_id }}"
                                         class="w-full sm:w-auto px-lg py-2.5 text-label-md font-semibold text-primary hover:bg-primary/5 rounded-lg border border-primary/30 flex items-center justify-center gap-2 transition-colors"><span
                                             class="">View All Patients</span><span
                                             class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
@@ -498,6 +472,9 @@ Doctor Details
                                                         {{ schedule.start_time|time:"g:i A" }} –
                                                         {{ schedule.end_time|time:"g:i A" }}
                                                     </td>
+                                                    <td class="py-3 px-md text-on-surface-variant">
+                                                        {{doctor.address}}
+                                                    </td>
                                                     <td class="py-3 pl-md text-right">
                                                         <span class="text-label-sm text-secondary font-medium bg-secondary/10 px-2 py-0.5 rounded">
                                                             Active
@@ -515,44 +492,27 @@ Doctor Details
                                     </table>
                                 </div>
                                 <div class="block md:hidden flex flex-col gap-sm">
+                                    {% for schedule in schedules %}
                                     <div
                                         class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
                                         <div class="flex items-center justify-between"><span
-                                                class="font-medium text-on-surface">Mon, Wed, Fri</span><span
+                                                class="font-medium text-on-surface">{{ schedule.get_weekday_display }}</span><span
                                                 class="text-label-sm text-secondary font-medium bg-secondary/10 px-2 py-0.5 rounded">Available</span>
                                         </div>
-                                        <div class="text-body-sm text-on-surface">09:00 AM – 01:30 PM &amp;
-                                            04:00 PM – 07:00 PM</div>
-                                        <div class="text-xs text-on-surface-variant">OPD Room 204</div>
-                                    </div>
-                                    <div
-                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
-                                        <div class="flex items-center justify-between"><span
-                                                class="font-medium text-on-surface">Tue, Thu</span><span
-                                                class="text-label-sm text-secondary font-medium bg-secondary/10 px-2 py-0.5 rounded">Available</span>
+                                        <div class="text-body-sm text-on-surface">
+                                            {{ schedule.start_time|time:"g:i A" }} –
+                                            {{ schedule.end_time|time:"g:i A" }}
                                         </div>
-                                        <div class="text-body-sm text-on-surface">10:00 AM – 03:00 PM</div>
-                                        <div class="text-xs text-on-surface-variant">Cardiac Wing OPD 2</div>
+                                        <div class="text-xs text-on-surface-variant"> {{doctor.address}}</div>
                                     </div>
+                                    {% empty %}
                                     <div
                                         class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
-                                        <div class="flex items-center justify-between"><span
-                                                class="font-medium text-on-surface">Saturday</span><span
-                                                class="text-label-sm text-tertiary font-medium bg-tertiary-container/20 px-2 py-0.5 rounded">Half
-                                                Day</span></div>
-                                        <div class="text-body-sm text-on-surface">09:30 AM – 01:00 PM</div>
-                                        <div class="text-xs text-on-surface-variant">Emergency On-Call</div>
+                                        <div class="text-body-sm text-on-surface">No active schedule has been added.</div>
+                                        
                                     </div>
-                                    <div
-                                        class="bg-surface-container-low/60 p-sm rounded-lg border border-outline-variant/30 flex flex-col gap-xs">
-                                        <div class="flex items-center justify-between"><span
-                                                class="font-medium text-on-surface-variant">Sunday</span><span
-                                                class="text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">Off</span>
-                                        </div>
-                                        <div class="text-body-sm text-on-surface-variant">—</div>
-                                        <div class="text-xs text-on-surface-variant">Off Duty (Emergency code
-                                            calls only)</div>
-                                    </div>
+                                    {% endfor %}                                    
+                                 
                                 </div>
                                 <div class="pt-xs flex justify-center"><a href="{% url "doctors:schedule" %}"
                                         class="w-full sm:w-auto px-lg py-2.5 text-label-md font-semibold text-primary hover:bg-primary/5 rounded-lg border border-primary/30 flex items-center justify-center gap-2 transition-colors"><span
@@ -599,7 +559,8 @@ Doctor Details
                                     <div class="font-body-md text-on-surface">
                                         {{doctor.address}}
                                         {% comment %} Cardiology Wing · Level 2, Room {% endcomment %}
-                                        204</div>
+                                        {% comment %} 204 {% endcomment %}
+                                    </div>
                                 </div>
                             </div>
                         </div>

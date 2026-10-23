@@ -270,7 +270,7 @@ def register_patient(request):
 def patient_list(request):
 
     query = request.GET.get("q", "").strip()
-
+    doctor_id = request.GET.get('doctor')
     last_appointments = (
         Appointment.objects
         .select_related("doctor__user")
@@ -288,6 +288,7 @@ def patient_list(request):
             )
         )
     )
+   
 
     if query:
 
@@ -317,6 +318,9 @@ def patient_list(request):
             "patients": page_obj,
             "page_obj": page_obj,
             "query": query,
+            "doctor_id":doctor_id,
+            
+
         },
     )
 

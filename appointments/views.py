@@ -126,6 +126,7 @@ def my_appointments(request):
     UserRole.RECEPTIONIST,
 )
 def appointment_list(request):
+    doctor_id = request.GET.get('doctor')
 
     search = request.GET.get(
         "search",
@@ -213,6 +214,7 @@ def appointment_list(request):
             "search": search,
             "status": status,
             "date": date,
+            "doctor_id":doctor_id,
             "status_choices": AppointmentStatus.choices,
         },
     )
