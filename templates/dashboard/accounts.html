@@ -1,10 +1,337 @@
-
 {% extends "base.html" %}
 
 {% block title %}Manage Accounts | SHMS{% endblock %}
 
 {% block content %}
-<section class="p-5 md:p-8 space-y-6">
+<main class="relative min-h-screen bg-background">
+    <div class="flex flex-col w-full">
+        <div class="px-md md:px-xl py-lg space-y-lg max-w-7xl mx-auto w-full">
+            <!-- Top Header & Primary Action Buttons -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-md pb-xs">
+                <div>
+                    <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Account Management</h1>
+                    <p class="font-body-md text-body-md text-on-surface-variant mt-xs">Manage Patient, Doctor and
+                        Receptionist accounts.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-sm sm:gap-md">
+                    <a href="{% url 'patients:register' %}"
+                        class="flex items-center gap-xs px-md py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md shadow-sm transition-all active:scale-[0.98]">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        <span class="">Patient</span>
+                    </a>
+                    <a href="{% url 'doctors:register' %}"
+                        class="flex items-center gap-xs px-md py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md shadow-sm transition-all active:scale-[0.98]">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        <span class="">Doctor</span>
+                    </a>
+                    <a href="{% url 'receptionist:create' %}"
+                        class="flex items-center gap-xs px-md py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md shadow-sm transition-all active:scale-[0.98]">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        <span class="">Receptionist</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Metric Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
+                <!-- Total Accounts -->
+                <div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-on-surface-variant mb-sm">
+                        <span class="font-label-md text-label-md">Total Accounts</span>
+                        <span class="material-symbols-outlined text-outline">group</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-on-surface font-bold leading-none"> {{ total_accounts }}</div>
+                </div>
+                <!-- Active Accounts -->
+                <div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-on-surface-variant mb-sm">
+                        <span class="font-label-md text-label-md">Active Accounts</span>
+                        <span class="material-symbols-outlined text-secondary">check_circle</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-secondary font-bold leading-none"> {{ active_accounts }}</div>
+                </div>
+                <!-- Inactive Accounts -->
+                <div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-on-surface-variant mb-sm">
+                        <span class="font-label-md text-label-md">Inactive Accounts</span>
+                        <span class="material-symbols-outlined text-error">cancel</span>
+                    </div>
+                    <div class="font-display-lg text-display-lg text-error font-bold leading-none">{{ inactive_accounts }}</div>
+                </div>
+            </div>
+            <!-- Filter & Search Controls Bar -->
+            <div class="bg-surface-container-lowest rounded-xl p-md sm:p-lg shadow-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-md items-center">
+                    <!-- Search Input -->
+                    <div class="lg:col-span-5 relative">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+                        <input
+                            type="search"
+                            name="q"
+                            value="{{ query }}"
+                            placeholder="Search name, email, phone..."
+                            class="w-full bg-surface-container-low rounded-lg py-2 pl-10 pr-md text-body-sm font-body-sm text-on-surface placeholder-on-surface-variant/70 outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all"
+                        >
+                    </div>
+                    <!-- Role Select -->
+                    <div class="lg:col-span-3 relative">
+                        <select
+                            class="w-full appearance-none bg-surface-container-low rounded-lg py-2 pl-md pr-10 text-body-sm font-body-sm text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
+                            <option value="">All roles</option>
+                            {% for value, label in role_choices %}
+                            <option value="{{ value }}"
+                                {% if selected_role == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <span
+                            class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline text-[20px] pointer-events-none">expand_more</span>
+                    </div>
+                    <!-- Status Select -->
+                    <div class="lg:col-span-2 relative">
+                        <select
+                            class="w-full appearance-none bg-surface-container-low rounded-lg py-2 pl-md pr-10 text-body-sm font-body-sm text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
+                            <option value="">All statuses</option>
+                            <option value="active"
+                            {% if selected_status == "active" %}selected{% endif %}>
+                                Active
+                            </option>
+                            <option value="inactive"
+                                {% if selected_status == "inactive" %}selected{% endif %}>
+                                Inactive
+                            </option>
+                        </select>
+                        <span
+                            class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline text-[20px] pointer-events-none">expand_more</span>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="lg:col-span-2 flex items-center gap-sm">
+                        <button type="submit"
+                            class="flex-1 py-2 px-md bg-inverse-surface hover:bg-on-surface text-inverse-on-surface font-label-md text-label-md rounded-lg transition-all text-center">
+                            Apply
+                        </button>
+                        <a href="{% url 'dashboard:accounts' %}"
+                            class="flex-1 py-2 px-md bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md rounded-lg transition-all text-center">
+                            Reset
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Accounts Content Area -->
+            <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+                <!-- Desktop & Tablet Table View -->
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead
+                            class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm tracking-wider uppercase">
+                            <tr>
+                                <th class="py-md px-lg" scope="col">Account</th>
+                                <th class="py-md px-lg" scope="col">Role</th>
+                                <th class="py-md px-lg" scope="col">Status</th>
+                                <th class="py-md px-lg text-right" scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y-0">
+                             {% for account in page_obj %}
+                            <!-- Row 1: Mohan Prashad -->
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="py-md px-lg">
+                                    <div class="font-title-md text-body-md font-semibold text-on-surface">{{ account.get_full_name|default:account.username }}
+                                    </div>
+                                    <div class="font-body-sm text-body-sm text-on-surface-variant">{{ account.email }}</div>
+                                    <div class="font-body-sm text-body-sm text-outline"> {{ account.phone_number|default:"No phone" }}</div>
+                                </td>
+                                <td class="py-md px-lg">
+                                    <span
+                                        class="px-sm py-1 rounded-md text-label-sm font-label-sm bg-surface-container-high text-primary font-medium">{{ account.get_role_display }}</span>
+                                </td>
+                                <td class="py-md px-lg">
+                                    {% if account.is_active %}
+                                    <span
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-secondary-container/40 text-on-secondary-container font-medium">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                        Active
+                                    </span>
+                                    {% else %}
+                                    <span
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-medium">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                        Inactive
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-md px-lg text-right">
+                                    
+                                    <div class="flex items-center justify-end gap-md">
+                                        {% if account.profile_urls %}
+                                        <a href="{{ account.profile_urls.detail_url }}"
+                                            class="font-label-md text-label-md text-primary hover:underline">View</a>
+                                        <a href="{{ account.profile_urls.edit_url }}"
+                                            class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:underline">Edit</a>
+                                        <a href="{{ account.profile_urls.delete_url }}"
+                                            class="font-label-md text-label-md text-error hover:underline">Delete</a>
+                                        {% else %}
+                                        <span class="text-amber-600">
+                                            Profile missing
+                                        </span>
+                                        {% endif %}
+                                         <form method="post"
+                                            action="{% url 'dashboard:toggle-status' account.pk %}">
+                                            {% csrf_token %}
+
+                                            <button
+                                                class="font-label-md text-label-md text-secondary font-semibold hover:underline">
+                                                {% if account.is_active %}
+                                                    Deactivate
+                                                {% else %}
+                                                    Activate
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <!-- Row 2: Rajesh Sharma -->
+                            <tr class="bg-surface-container-low/20 hover:bg-surface-container-low/60 transition-colors">
+                                <td colspan="4"
+                                    class="p-8 text-center text-slate-500">
+                                    No accounts found.
+                                </td>
+                            </tr>
+                            {% endfor %}                           
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Mobile Responsive Card View -->
+                <div class="block md:hidden p-md space-y-md">
+                    
+                    <!-- Mobile Card 1 -->
+                    <div class="p-md rounded-lg bg-surface-container-low space-y-sm">
+                        <div class="flex items-start justify-between gap-sm">
+                            <div>
+                                <div class="font-title-md text-body-md font-semibold text-on-surface">Mohan Prashad
+                                </div>
+                                <div class="font-body-sm text-body-sm text-on-surface-variant">mohan@gmail.com</div>
+                                <div class="font-body-sm text-body-sm text-outline">654646414156</div>
+                            </div>
+                            <span
+                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-medium">
+                                Inactive
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pt-sm">
+                            <span
+                                class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container-high text-primary font-medium">Doctor</span>
+                            <div class="flex items-center gap-md">
+                                <button class="font-label-md text-label-md text-primary">View</button>
+                                <button class="font-label-md text-label-md text-on-surface-variant">Edit</button>
+                                <button
+                                    class="font-label-md text-label-md text-secondary font-semibold">Activate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mobile Card 2 -->
+                    <div class="p-md rounded-lg bg-surface-container-low space-y-sm">
+                        <div class="flex items-start justify-between gap-sm">
+                            <div>
+                                <div class="font-title-md text-body-md font-semibold text-on-surface">Rajesh Sharma
+                                </div>
+                                <div class="font-body-sm text-body-sm text-on-surface-variant">rajesh@gmail.com</div>
+                                <div class="font-body-sm text-body-sm text-outline">9876543210</div>
+                            </div>
+                            <span
+                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-container/40 text-on-secondary-container font-medium">
+                                Active
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pt-sm">
+                            <span
+                                class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container-high text-primary font-medium">Doctor</span>
+                            <div class="flex items-center gap-md">
+                                <button class="font-label-md text-label-md text-primary">View</button>
+                                <button class="font-label-md text-label-md text-on-surface-variant">Edit</button>
+                                <button class="font-label-md text-label-md text-error">Deactivate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mobile Card 3: abc profile missing -->
+                    <div class="p-md rounded-lg bg-surface-container-low space-y-sm">
+                        <div class="flex items-start justify-between gap-sm">
+                            <div>
+                                <div class="font-title-md text-body-md font-semibold text-on-surface">abc</div>
+                                <div class="font-body-sm text-body-sm text-on-surface-variant">abc@gmail.com</div>
+                                <div class="font-body-sm text-body-sm text-outline">456431564</div>
+                            </div>
+                            <span
+                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-container/40 text-on-secondary-container font-medium">
+                                Active
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pt-sm">
+                            <span
+                                class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-on-surface-variant font-medium">Patient</span>
+                            <div class="flex items-center gap-sm">
+                                <span
+                                    class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-label-sm font-label-sm bg-tertiary-fixed text-tertiary-container font-semibold">
+                                    Missing
+                                </span>
+                                <button class="font-label-md text-label-md text-error">Deactivate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mobile Card 4: John Doe -->
+                    <div class="p-md rounded-lg bg-surface-container-low space-y-sm">
+                        <div class="flex items-start justify-between gap-sm">
+                            <div>
+                                <div class="font-title-md text-body-md font-semibold text-on-surface">John Doe</div>
+                                <div class="font-body-sm text-body-sm text-on-surface-variant">john.doe@example.com
+                                </div>
+                                <div class="font-body-sm text-body-sm text-outline/70 italic">No phone</div>
+                            </div>
+                            <span
+                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-medium">
+                                Inactive
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pt-sm">
+                            <span
+                                class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-on-surface-variant font-medium">Patient</span>
+                            <div class="flex items-center gap-md">
+                                <button class="font-label-md text-label-md text-primary">View</button>
+                                <button class="font-label-md text-label-md text-on-surface-variant">Edit</button>
+                                <button
+                                    class="font-label-md text-label-md text-secondary font-semibold">Activate</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pagination Footer -->
+                <div
+                    class="bg-surface-container-lowest px-lg py-md flex flex-col sm:flex-row items-center justify-between gap-md">
+                    <div class="font-body-sm text-body-sm text-on-surface-variant">
+                        Showing <span class="font-semibold text-on-surface">1</span> to <span
+                            class="font-semibold text-on-surface">10</span> of <span
+                            class="font-semibold text-on-surface">14</span> accounts
+                    </div>
+                    <div class="flex items-center gap-md">
+                        <span class="font-label-md text-label-md text-on-surface-variant">Page 1 of 2</span>
+                        <button
+                            class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-colors">
+                            <span class="">Next</span>
+                            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Reference original snapshot viewer container -->
+
+        </div>
+    </div>
+</main>
+
+{% comment %} <section class="p-5 md:p-8 space-y-6">
 
     <div class="flex flex-col sm:flex-row sm:items-center
                 sm:justify-between gap-4">
@@ -18,20 +345,17 @@
         </div>
 
         <div class="flex flex-wrap gap-2">
-            <a href="{% url 'patients:register' %}"
-               class="rounded-lg bg-blue-600 px-4 py-2.5
+            <a href="{% url 'patients:register' %}" class="rounded-lg bg-blue-600 px-4 py-2.5
                       text-sm font-semibold text-white">
                 + Patient
             </a>
 
-            <a href="{% url 'doctors:register' %}"
-               class="rounded-lg bg-blue-600 px-4 py-2.5
+            <a href="{% url 'doctors:register' %}" class="rounded-lg bg-blue-600 px-4 py-2.5
                       text-sm font-semibold text-white">
                 + Doctor
             </a>
 
-            <a href="{% url 'receptionist:create' %}"
-               class="rounded-lg bg-blue-600 px-4 py-2.5
+            <a href="{% url 'receptionist:create' %}" class="rounded-lg bg-blue-600 px-4 py-2.5
                       text-sm font-semibold text-white">
                 + Receptionist
             </a>
@@ -63,48 +387,37 @@
     </div>
 
     <!-- Search and filters -->
-    <form method="get"
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
+    <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
                  gap-3 rounded-xl border bg-white p-4">
 
-        <input type="search"
-               name="q"
-               value="{{ query }}"
-               placeholder="Search name, email, phone..."
-               class="rounded-lg border px-3 py-2.5 text-sm">
+        <input type="search" name="q" value="{{ query }}" placeholder="Search name, email, phone..."
+            class="rounded-lg border px-3 py-2.5 text-sm">
 
-        <select name="role"
-                class="rounded-lg border px-3 py-2.5 text-sm">
+        <select name="role" class="rounded-lg border px-3 py-2.5 text-sm">
             <option value="">All roles</option>
             {% for value, label in role_choices %}
-                <option value="{{ value }}"
-                    {% if selected_role == value %}selected{% endif %}>
-                    {{ label }}
-                </option>
+            <option value="{{ value }}" {% if selected_role==value %}selected{% endif %}>
+                {{ label }}
+            </option>
             {% endfor %}
         </select>
 
-        <select name="status"
-                class="rounded-lg border px-3 py-2.5 text-sm">
+        <select name="status" class="rounded-lg border px-3 py-2.5 text-sm">
             <option value="">All statuses</option>
-            <option value="active"
-                {% if selected_status == "active" %}selected{% endif %}>
+            <option value="active" {% if selected_status=="active" %}selected{% endif %}>
                 Active
             </option>
-            <option value="inactive"
-                {% if selected_status == "inactive" %}selected{% endif %}>
+            <option value="inactive" {% if selected_status=="inactive" %}selected{% endif %}>
                 Inactive
             </option>
         </select>
 
         <div class="flex gap-2">
-            <button type="submit"
-                    class="rounded-lg bg-slate-900 px-4 py-2
+            <button type="submit" class="rounded-lg bg-slate-900 px-4 py-2
                            text-sm font-semibold text-white">
                 Apply
             </button>
-            <a href="{% url 'dashboard:accounts' %}"
-               class="rounded-lg border px-4 py-2 text-sm">
+            <a href="{% url 'dashboard:accounts' %}" class="rounded-lg border px-4 py-2 text-sm">
                 Reset
             </a>
         </div>
@@ -143,51 +456,46 @@
 
                     <td class="p-4">
                         {% if account.is_active %}
-                            <span class="rounded-full bg-emerald-100
+                        <span class="rounded-full bg-emerald-100
                                          px-3 py-1 text-emerald-700">
-                                Active
-                            </span>
+                            Active
+                        </span>
                         {% else %}
-                            <span class="rounded-full bg-rose-100
+                        <span class="rounded-full bg-rose-100
                                          px-3 py-1 text-rose-700">
-                                Inactive
-                            </span>
+                            Inactive
+                        </span>
                         {% endif %}
                     </td>
 
                     <td class="p-4">
                         <div class="flex flex-wrap gap-3">
                             {% if account.profile_urls %}
-                                <a class="font-medium text-blue-600"
-                                   href="{{ account.profile_urls.detail_url }}">
-                                    View
-                                </a>
+                            <a class="font-medium text-blue-600" href="{{ account.profile_urls.detail_url }}">
+                                View
+                            </a>
 
-                                <a class="font-medium text-blue-600"
-                                   href="{{ account.profile_urls.edit_url }}">
-                                    Edit
-                                </a>
+                            <a class="font-medium text-blue-600" href="{{ account.profile_urls.edit_url }}">
+                                Edit
+                            </a>
 
-                                <a class="font-medium text-rose-600"
-                                   href="{{ account.profile_urls.delete_url }}">
-                                    Delete
-                                </a>
+                            <a class="font-medium text-rose-600" href="{{ account.profile_urls.delete_url }}">
+                                Delete
+                            </a>
                             {% else %}
-                                <span class="text-amber-600">
-                                    Profile missing
-                                </span>
+                            <span class="text-amber-600">
+                                Profile missing
+                            </span>
                             {% endif %}
 
-                            <form method="post"
-                                  action="{% url 'dashboard:toggle-status' account.pk %}">
+                            <form method="post" action="{% url 'dashboard:toggle-status' account.pk %}">
                                 {% csrf_token %}
 
-                                <button type="submit"
-                                        class="font-medium text-slate-700">
+                                <button type="submit" class="font-medium text-slate-700">
                                     {% if account.is_active %}
-                                        Deactivate
+                                    Deactivate
                                     {% else %}
-                                        Activate
+                                    Activate
                                     {% endif %}
                                 </button>
                             </form>
@@ -197,8 +505,7 @@
 
                 {% empty %}
                 <tr>
-                    <td colspan="4"
-                        class="p-8 text-center text-slate-500">
+                    <td colspan="4" class="p-8 text-center text-slate-500">
                         No accounts found.
                     </td>
                 </tr>
@@ -216,21 +523,21 @@
 
         <div class="flex gap-2">
             {% if page_obj.has_previous %}
-                <a class="rounded-lg border bg-white px-4 py-2 text-sm"
-                   href="?q={{ query|urlencode }}&role={{ selected_role|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}">
-                    Previous
-                </a>
+            <a class="rounded-lg border bg-white px-4 py-2 text-sm"
+                href="?q={{ query|urlencode }}&role={{ selected_role|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}">
+                Previous
+            </a>
             {% endif %}
 
             {% if page_obj.has_next %}
-                <a class="rounded-lg border bg-white px-4 py-2 text-sm"
-                   href="?q={{ query|urlencode }}&role={{ selected_role|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}">
-                    Next
-                </a>
+            <a class="rounded-lg border bg-white px-4 py-2 text-sm"
+                href="?q={{ query|urlencode }}&role={{ selected_role|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}">
+                Next
+            </a>
             {% endif %}
         </div>
     </div>
     {% endif %}
 
-</section>
+</section> {% endcomment %}
 {% endblock %}
