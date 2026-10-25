@@ -7,832 +7,933 @@ Patient Details
 {% block content %}
 
 
-<main class="flex-1 w-full bg-background"><div class="flex flex-col w-full h-full max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-lg">
-<!-- Header Section -->
-<div class="flex flex-col gap-md sm:gap-lg bg-surface-container rounded-2xl p-4 sm:p-6 lg:p-xl shadow-sm mb-lg relative overflow-hidden">
-<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
-<div class="flex items-start justify-between z-10 flex-col lg:flex-row gap-lg">
-<div class="flex gap-md sm:gap-xl items-center sm:items-start flex-col sm:flex-row text-center sm:text-left w-full sm:w-auto">
-<div class="relative shrink-0">
-<img class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover shadow-md border-4 border-surface" data-alt="Professional headshot of an Indian man in his mid-40s, looking approachable, bright studio lighting, subtle healthcare environment backdrop, soft focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYDeyN4R7DN5ifm_twyM6r2c9Sah63X9_ZRYM0nZghIQmp97reTpkM68P2wX7P-OBRnuwqIBgTfUG3rRmbVI8TDTZEb1yf84mJVWXvJ6D85ZF-lvV4VY0eXge5e728mkCW6KQDWXVxBn0-lsF6ImlPG5dOavlZ0Ow4S87hc-vQTj8TmqFg56JIn5Y3Kd448W8YsJOeblW6bs9-KNDOp8Z1obJ6EwhJzzW-HHnvN47yHf4jlZFYgy0w">
-<div class="absolute bottom-1 right-1 w-5 h-5 sm:w-6 sm:h-6 bg-secondary-fixed rounded-full border-2 border-surface flex items-center justify-center" title="Active Patient">
-<span class="material-symbols-outlined text-[12px] sm:text-[14px] text-on-secondary-fixed">check</span>
-</div>
-</div>
-<div class="flex flex-col gap-xs sm:gap-sm items-center sm:items-start">
-<h1 class="text-2xl sm:text-3xl lg:text-display-lg font-bold text-on-surface m-0 leading-tight">Rajesh Kumar</h1>
-<div class="flex items-center gap-xs sm:gap-md text-on-surface-variant font-body-sm sm:font-body-lg flex-wrap justify-center sm:justify-start">
-<span class="bg-primary/10 text-primary px-sm py-xs rounded-md font-label-sm text-label-sm uppercase tracking-wider font-semibold">ID: P-1029</span>
-<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[18px] sm:text-[20px]">cake</span> 45 yrs (Male)</span>
-<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[18px] sm:text-[20px]">water_drop</span> O+</span>
-</div>
-</div>
-</div>
-<div class="flex flex-col sm:flex-row gap-2.5 sm:gap-md w-full lg:w-auto z-10 shrink-0">
-<button class="flex items-center justify-center gap-sm px-md py-2.5 bg-surface text-primary rounded-lg font-label-md text-label-md shadow-sm hover:shadow-md transition-shadow w-full sm:w-auto">
-<span class="material-symbols-outlined text-[20px]">edit</span> Edit Profile
-</button>
-<button class="flex items-center justify-center gap-sm px-md py-2.5 bg-primary text-on-primary rounded-lg font-label-md text-label-md shadow-sm hover:shadow-md transition-shadow w-full sm:w-auto">
-<span class="material-symbols-outlined text-[20px]">add</span> New Appointment
-</button>
-</div>
-</div>
-<!-- Responsive Navigation Tabs -->
-<div class="flex gap-md sm:gap-lg border-b border-outline-variant/30 mt-xs sm:mt-md pb-1 z-10 overflow-x-auto whitespace-nowrap scrollbar-none" id="profile-tabs" role="tablist">
-<button class="tab-btn text-primary font-semibold border-b-2 border-primary pb-sm relative px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md" data-tab="overview" onclick="switchTab('overview')">Overview</button>
-<button class="tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md" data-tab="appointments" onclick="switchTab('appointments')">Appointments</button>
-<button class="tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md" data-tab="medical-history" onclick="switchTab('medical-history')">Medical History</button>
-<button class="tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md" data-tab="prescriptions" onclick="switchTab('prescriptions')">Prescriptions</button>
-<button class="tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md" data-tab="billing" onclick="switchTab('billing')">Billing</button>
-</div>
-</div>
-<!-- TAB 1: OVERVIEW PANEL -->
-<div class="tab-panel flex flex-col" id="tab-overview">
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
-<!-- Left Column: Details & Contacts -->
-<div class="col-span-1 lg:col-span-4 flex flex-col gap-lg order-2 lg:order-1">
-<!-- Contact Info Card -->
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm">
-<h3 class="font-title-md text-title-md text-on-surface mb-md flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary">contact_page</span> Contact Information
-</h3>
-<div class="flex flex-col gap-md">
-<div class="flex items-start gap-md">
-<div class="p-sm bg-surface-container rounded-lg text-primary shrink-0">
-<span class="material-symbols-outlined">call</span>
-</div>
-<div>
-<div class="font-label-sm text-label-sm text-on-surface-variant">Phone</div>
-<div class="font-body-md text-body-md text-on-surface">+91 98765 43210</div>
-</div>
-</div>
-<div class="flex items-start gap-md">
-<div class="p-sm bg-surface-container rounded-lg text-primary shrink-0">
-<span class="material-symbols-outlined">mail</span>
-</div>
-<div>
-<div class="font-label-sm text-label-sm text-on-surface-variant">Email</div>
-<div class="font-body-md text-body-md text-on-surface break-all">rajesh.k@example.com</div>
-</div>
-</div>
-<div class="flex items-start gap-md">
-<div class="p-sm bg-surface-container rounded-lg text-primary shrink-0">
-<span class="material-symbols-outlined">home</span>
-</div>
-<div>
-<div class="font-label-sm text-label-sm text-on-surface-variant">Address</div>
-<div class="font-body-md text-body-md text-on-surface">42, Residency Road,<br>Bengaluru, Karnataka 560025</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Emergency Contact Card -->
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border-l-4 border-error">
-<h3 class="font-title-md text-title-md text-on-surface mb-md flex items-center gap-sm">
-<span class="material-symbols-outlined text-error">emergency</span> Emergency Contact
-</h3>
-<div class="flex flex-col gap-sm">
-<div class="font-body-lg text-body-lg font-semibold text-on-surface">Priya Kumar</div>
-<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Spouse</div>
-<div class="flex items-center gap-sm mt-sm">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">call</span>
-<span class="font-body-md text-body-md text-on-surface">+91 98765 00000</span>
-</div>
-</div>
-</div>
-<!-- Allergies Card -->
-<div class="bg-error-container text-on-error-container rounded-2xl p-md sm:p-lg shadow-sm">
-<h3 class="font-title-md text-title-md mb-md flex items-center gap-sm">
-<span class="material-symbols-outlined">warning</span> Alerts &amp; Allergies
-</h3>
-<div class="flex flex-wrap gap-sm">
-<div class="px-md py-sm bg-surface/50 rounded-full font-label-md text-label-md flex items-center gap-sm">
-<span class="w-2 h-2 rounded-full bg-error shrink-0"></span>
-Penicillin (Severe)
-</div>
-<div class="px-md py-sm bg-surface/50 rounded-full font-label-md text-label-md flex items-center gap-sm">
-<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim shrink-0"></span>
-Peanuts (Mild)
-</div>
-</div>
-</div>
-</div>
-<!-- Right Column: Vitals & Recent Activity -->
-<div class="col-span-1 lg:col-span-8 flex flex-col gap-lg order-1 lg:order-2">
-<!-- Vitals Bento Grid -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-md">
-<div class="bg-surface-container-lowest rounded-2xl p-3 sm:p-md shadow-sm flex flex-col justify-between min-h-[120px] sm:aspect-square">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-primary bg-primary/10 p-2 sm:p-sm rounded-lg text-[20px] sm:text-[24px]">favorite</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Heart Rate</span>
-</div>
-<div class="mt-2 sm:mt-0">
-<div class="text-xl sm:text-headline-lg font-bold text-on-surface leading-tight">72 <span class="text-xs sm:text-body-sm text-on-surface-variant font-normal">bpm</span></div>
-<div class="text-label-sm font-label-sm text-secondary flex items-center gap-xs mt-0.5 sm:mt-xs">
-<span class="material-symbols-outlined text-[14px]">arrow_downward</span> Normal
-</div>
-</div>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl p-3 sm:p-md shadow-sm flex flex-col justify-between min-h-[120px] sm:aspect-square">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-2 sm:p-sm rounded-lg text-[20px] sm:text-[24px]">blood_pressure</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Blood Pressure</span>
-</div>
-<div class="mt-2 sm:mt-0">
-<div class="text-xl sm:text-headline-lg font-bold text-on-surface leading-tight">120/80</div>
-<div class="text-[11px] sm:text-label-sm text-on-surface-variant mt-0.5 sm:mt-xs">
-Last checked: 2h ago
-</div>
-</div>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl p-3 sm:p-md shadow-sm flex flex-col justify-between min-h-[120px] sm:aspect-square">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-primary bg-primary/10 p-2 sm:p-sm rounded-lg text-[20px] sm:text-[24px]">device_thermostat</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Temperature</span>
-</div>
-<div class="mt-2 sm:mt-0">
-<div class="text-xl sm:text-headline-lg font-bold text-on-surface leading-tight">98.6 <span class="text-xs sm:text-body-sm text-on-surface-variant font-normal">°F</span></div>
-<div class="text-label-sm font-label-sm text-secondary flex items-center gap-xs mt-0.5 sm:mt-xs">
-Normal
-</div>
-</div>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl p-3 sm:p-md shadow-sm flex flex-col justify-between min-h-[120px] sm:aspect-square">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-primary bg-primary/10 p-2 sm:p-sm rounded-lg text-[20px] sm:text-[24px]">monitor_weight</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">Weight</span>
-</div>
-<div class="mt-2 sm:mt-0">
-<div class="text-xl sm:text-headline-lg font-bold text-on-surface leading-tight">75 <span class="text-xs sm:text-body-sm text-on-surface-variant font-normal">kg</span></div>
-<div class="text-[11px] sm:text-label-sm text-on-surface-variant mt-0.5 sm:mt-xs">
-BMI: 24.2
-</div>
-</div>
-</div>
-</div>
-<!-- Recent Appointments & Notes -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm flex flex-col">
-<div class="flex justify-between items-center mb-md">
-<h3 class="font-title-md text-title-md text-on-surface">Recent Appointments</h3>
-<button class="text-primary font-label-sm text-label-sm hover:underline" onclick="switchTab('appointments')">View All</button>
-</div>
-<div class="flex flex-col gap-sm flex-1">
-<div class="p-md bg-surface-container rounded-xl flex items-center justify-between hover:bg-surface-container-high transition-colors cursor-pointer" onclick="switchTab('appointments')">
-<div class="flex gap-md items-center">
-<div class="w-12 h-12 bg-primary/10 rounded-lg flex flex-col items-center justify-center text-primary shrink-0">
-<span class="font-label-sm text-label-sm uppercase">Oct</span>
-<span class="font-title-md text-title-md leading-none">12</span>
-</div>
-<div>
-<div class="font-label-md text-label-md text-on-surface">General Checkup</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant">Dr. Sarah Wilson</div>
-</div>
-</div>
-<span class="bg-secondary/10 text-secondary px-sm py-xs rounded-md font-label-sm text-label-sm font-semibold shrink-0">Completed</span>
-</div>
-<div class="p-md bg-surface-container rounded-xl flex items-center justify-between hover:bg-surface-container-high transition-colors cursor-pointer" onclick="switchTab('appointments')">
-<div class="flex gap-md items-center">
-<div class="w-12 h-12 bg-outline-variant/20 rounded-lg flex flex-col items-center justify-center text-on-surface-variant shrink-0">
-<span class="font-label-sm text-label-sm uppercase">Sep</span>
-<span class="font-title-md text-title-md leading-none">05</span>
-</div>
-<div>
-<div class="font-label-md text-label-md text-on-surface">Cardiology Consult</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant">Dr. Anil Gupta</div>
-</div>
-</div>
-<span class="bg-secondary/10 text-secondary px-sm py-xs rounded-md font-label-sm text-label-sm font-semibold shrink-0">Completed</span>
-</div>
-</div>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm flex flex-col">
-<div class="flex justify-between items-center mb-md">
-<h3 class="font-title-md text-title-md text-on-surface">Clinical Notes</h3>
-<button class="text-primary hover:bg-primary/10 p-xs rounded-full transition-colors"><span class="material-symbols-outlined text-[20px]">add</span></button>
-</div>
-<div class="flex-1 bg-surface rounded-xl p-md border border-outline-variant/30">
-<div class="flex items-center justify-between mb-sm">
-<span class="font-label-sm text-label-sm text-on-surface-variant">Oct 12, 2023 - Dr. Wilson</span>
-<span class="material-symbols-outlined text-outline-variant text-[16px]">push_pin</span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface line-clamp-4">
-Patient reported mild chest discomfort during exertion over the last two weeks. BP normal today. ECG shows no acute changes compared to baseline. Advised stress test next week and to continue current medication. Follow up after test results.
-</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- TAB 2: APPOINTMENTS PANEL -->
-<div class="tab-panel hidden flex-col gap-lg" id="tab-appointments">
-<div class="flex items-center justify-between bg-surface-container-lowest p-md sm:p-lg rounded-2xl shadow-sm flex-wrap gap-md">
-<div>
-<h2 class="font-title-md text-title-md text-on-surface">Appointments Roster</h2>
-<p class="text-body-sm text-on-surface-variant">Scheduled visits, consultations, and completed sessions for Rajesh Kumar</p>
-</div>
-<div class="flex gap-sm w-full sm:w-auto">
-<button class="flex-1 sm:flex-initial flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
-</button>
-<button class="flex-1 sm:flex-initial flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow hover:shadow-md transition-shadow">
-<span class="material-symbols-outlined text-[18px]">calendar_add_on</span> Schedule Visit
-</button>
-</div>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-outline-variant/20">
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse min-w-[700px]">
-<thead>
-<tr class="bg-surface-container border-b border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-<th class="py-md px-lg">Appt ID</th>
-<th class="py-md px-lg">Doctor &amp; Specialty</th>
-<th class="py-md px-lg">Date &amp; Time</th>
-<th class="py-md px-lg">Reason</th>
-<th class="py-md px-lg">Status</th>
-<th class="py-md px-lg text-right">Actions</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-outline-variant/20 font-body-sm text-body-sm">
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">#APT-2023-1102</td>
-<td class="py-md px-lg">
-<div class="font-semibold text-on-surface">Dr. Anil Gupta</div>
-<div class="text-on-surface-variant text-[13px]">Cardiology (Room 304)</div>
-</td>
-<td class="py-md px-lg">
-<div class="font-medium text-on-surface">Nov 02, 2023</div>
-<div class="text-on-surface-variant text-[13px]">10:30 AM - 11:00 AM</div>
-</td>
-<td class="py-md px-lg text-on-surface">Follow-up Echo Review &amp; Stress Test evaluation</td>
-<td class="py-md px-lg">
-<span class="inline-flex items-center gap-xs px-sm py-xs rounded-full text-label-sm font-semibold bg-primary/10 text-primary">
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Scheduled
-</span>
-</td>
-<td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
-<button class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Reschedule</button>
-<button class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View Details</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">#APT-2023-1012</td>
-<td class="py-md px-lg">
-<div class="font-semibold text-on-surface">Dr. Sarah Wilson</div>
-<div class="text-on-surface-variant text-[13px]">Internal Medicine (OPD-2)</div>
-</td>
-<td class="py-md px-lg">
-<div class="font-medium text-on-surface">Oct 12, 2023</div>
-<div class="text-on-surface-variant text-[13px]">09:15 AM - 09:45 AM</div>
-</td>
-<td class="py-md px-lg text-on-surface">General Quarterly Checkup &amp; Vitals Evaluation</td>
-<td class="py-md px-lg">
-<span class="inline-flex items-center gap-xs px-sm py-xs rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Completed
-</span>
-</td>
-<td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
-<button class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Summary</button>
-<button class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View Details</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">#APT-2023-0905</td>
-<td class="py-md px-lg">
-<div class="font-semibold text-on-surface">Dr. Anil Gupta</div>
-<div class="text-on-surface-variant text-[13px]">Cardiology (Room 304)</div>
-</td>
-<td class="py-md px-lg">
-<div class="font-medium text-on-surface">Sep 05, 2023</div>
-<div class="text-on-surface-variant text-[13px]">04:00 PM - 04:30 PM</div>
-</td>
-<td class="py-md px-lg text-on-surface">Mild Exertional Chest Discomfort Consultation</td>
-<td class="py-md px-lg">
-<span class="inline-flex items-center gap-xs px-sm py-xs rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Completed
-</span>
-</td>
-<td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
-<button class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Summary</button>
-<button class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View Details</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">#APT-2023-0815</td>
-<td class="py-md px-lg">
-<div class="font-semibold text-on-surface">Pathology Central Lab</div>
-<div class="text-on-surface-variant text-[13px]">Diagnostics (Lab B-1)</div>
-</td>
-<td class="py-md px-lg">
-<div class="font-medium text-on-surface">Aug 15, 2023</div>
-<div class="text-on-surface-variant text-[13px]">08:00 AM - 08:30 AM</div>
-</td>
-<td class="py-md px-lg text-on-surface">Routine Fasting Lipid Profile &amp; HbA1c screening</td>
-<td class="py-md px-lg">
-<span class="inline-flex items-center gap-xs px-sm py-xs rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Completed
-</span>
-</td>
-<td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
-<button class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Reports</button>
-<button class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View Details</button>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<!-- TAB 3: MEDICAL HISTORY PANEL -->
-<div class="tab-panel hidden flex-col gap-lg" id="tab-medical-history">
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
-<!-- Chronic Conditions -->
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
-<div>
-<div class="flex items-center justify-between mb-md">
-<div class="flex items-center gap-sm">
-<div class="p-sm bg-primary/10 rounded-lg text-primary">
-<span class="material-symbols-outlined">clinical_notes</span>
-</div>
-<h3 class="font-title-md text-title-md text-on-surface">Chronic Conditions</h3>
-</div>
-<span class="px-sm py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">2 Active</span>
-</div>
-<ul class="space-y-sm">
-<li class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
-<div class="flex justify-between items-start">
-<h4 class="font-semibold text-on-surface">Primary Hypertension (Stage 1)</h4>
-<span class="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-medium shrink-0">Monitoring</span>
-</div>
-<p class="text-on-surface-variant text-body-sm mt-1">Diagnosed in March 2021 by Dr. Sarah Wilson. Regulated with daily Amlodipine 5mg.</p>
-</li>
-<li class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
-<div class="flex justify-between items-start">
-<h4 class="font-semibold text-on-surface">Mild Hyperlipidemia</h4>
-<span class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-medium shrink-0">Controlled</span>
-</div>
-<p class="text-on-surface-variant text-body-sm mt-1">Identified in August 2022. Fasting LDL maintained via statin regimen and dietary control.</p>
-</li>
-</ul>
-</div>
-<button class="mt-md w-full py-2 bg-surface-container hover:bg-surface-container-high rounded-lg text-primary font-label-md font-semibold transition-colors flex items-center justify-center gap-xs">
-<span class="material-symbols-outlined text-[18px]">add</span> Add Condition
-</button>
-</div>
-<!-- Past Surgeries -->
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
-<div>
-<div class="flex items-center justify-between mb-md">
-<div class="flex items-center gap-sm">
-<div class="p-sm bg-secondary/10 rounded-lg text-secondary">
-<span class="material-symbols-outlined">healing</span>
-</div>
-<h3 class="font-title-md text-title-md text-on-surface">Past Surgeries &amp; Procedures</h3>
-</div>
-<span class="px-sm py-0.5 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm font-semibold">1 Recorded</span>
-</div>
-<div class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
-<div class="flex items-center justify-between">
-<h4 class="font-semibold text-on-surface">Laparoscopic Appendectomy</h4>
-<span class="text-xs text-on-surface-variant font-medium">June 14, 2018</span>
-</div>
-<p class="text-on-surface-variant text-body-sm mt-1">Apollo Multispeciality Hospital, Bengaluru. Performed under general anesthesia. Fully recovered with no post-operative complications.</p>
-<div class="mt-2 text-[13px] text-primary flex items-center gap-xs cursor-pointer hover:underline">
-<span class="material-symbols-outlined text-[16px]">attachment</span> Discharge Summary.pdf
-</div>
-</div>
-</div>
-<button class="mt-md w-full py-2 bg-surface-container hover:bg-surface-container-high rounded-lg text-primary font-label-md font-semibold transition-colors flex items-center justify-center gap-xs">
-<span class="material-symbols-outlined text-[18px]">add</span> Record Surgery
-</button>
-</div>
-<!-- Family Medical History -->
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
-<div>
-<div class="flex items-center justify-between mb-md">
-<div class="flex items-center gap-sm">
-<div class="p-sm bg-tertiary-container/20 rounded-lg text-tertiary">
-<span class="material-symbols-outlined">family_restroom</span>
-</div>
-<h3 class="font-title-md text-title-md text-on-surface">Family Medical History</h3>
-</div>
-<span class="px-sm py-0.5 rounded-full bg-outline-variant/40 text-on-surface-variant font-label-sm text-label-sm font-semibold">Family Tree</span>
-</div>
-<ul class="space-y-sm">
-<li class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
-<div class="flex items-center justify-between">
-<span class="font-semibold text-on-surface">Father</span>
-<span class="text-xs px-2 py-0.5 rounded bg-error/15 text-error font-medium">High Risk</span>
-</div>
-<p class="text-on-surface-variant text-body-sm mt-1">Coronary Artery Disease &amp; Myocardial Infarction at age 58.</p>
-</li>
-<li class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
-<div class="flex items-center justify-between">
-<span class="font-semibold text-on-surface">Mother</span>
-<span class="text-xs px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-medium">Moderate</span>
-</div>
-<p class="text-on-surface-variant text-body-sm mt-1">Type 2 Diabetes Mellitus diagnosed at age 62, on oral hypoglycemics.</p>
-</li>
-</ul>
-</div>
-<button class="mt-md w-full py-2 bg-surface-container hover:bg-surface-container-high rounded-lg text-primary font-label-md font-semibold transition-colors flex items-center justify-center gap-xs">
-<span class="material-symbols-outlined text-[18px]">add</span> Add Family Record
-</button>
-</div>
-</div>
-<!-- Diagnostic Reports Timeline -->
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20">
-<div class="flex items-start sm:items-center justify-between mb-lg flex-col sm:flex-row gap-md">
-<div>
-<h3 class="font-title-md text-title-md text-on-surface flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary">biotech</span> Diagnostic Reports &amp; Labs Timeline
-</h3>
-<p class="text-body-sm text-on-surface-variant">Laboratory tests, pathology reports, imaging scans and diagnostics history</p>
-</div>
-<button class="w-full sm:w-auto px-md py-sm bg-primary text-on-primary rounded-lg font-label-md flex items-center justify-center gap-xs shadow hover:shadow-md transition-shadow">
-<span class="material-symbols-outlined text-[18px]">upload_file</span> Upload Report
-</button>
-</div>
-<div class="space-y-md">
-<!-- Report Item 1 -->
-<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-md bg-surface-container-low hover:bg-surface-container rounded-xl border border-outline-variant/30 transition-colors gap-md">
-<div class="flex items-center gap-md">
-<div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[24px]">ecg_heart</span>
-</div>
-<div>
-<div class="font-semibold text-on-surface">12-Lead Electrocardiogram (ECG)</div>
-<div class="text-body-sm text-on-surface-variant">Oct 12, 2023 • SHMS Cardiology Diagnostic Suite • Dr. Anil Gupta</div>
-</div>
-</div>
-<div class="flex items-center gap-md w-full sm:w-auto justify-between sm:justify-end">
-<span class="px-sm py-1 rounded bg-secondary/10 text-secondary font-label-sm font-semibold">Normal Sinus</span>
-<button class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined text-[16px]">download</span> Download PDF
-</button>
-</div>
-</div>
-<!-- Report Item 2 -->
-<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-md bg-surface-container-low hover:bg-surface-container rounded-xl border border-outline-variant/30 transition-colors gap-md">
-<div class="flex items-center gap-md">
-<div class="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[24px]">bloodtype</span>
-</div>
-<div>
-<div class="font-semibold text-on-surface">Comprehensive Lipid &amp; Metabolic Panel (HbA1c: 5.7%)</div>
-<div class="text-body-sm text-on-surface-variant">Aug 15, 2023 • Central Clinical Laboratory • Lab Tech: M. Fernandes</div>
-</div>
-</div>
-<div class="flex items-center gap-md w-full sm:w-auto justify-between sm:justify-end">
-<span class="px-sm py-1 rounded bg-blue-100 text-blue-800 font-label-sm font-semibold">Verified Normal</span>
-<button class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined text-[16px]">download</span> Download PDF
-</button>
-</div>
-</div>
-<!-- Report Item 3 -->
-<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-md bg-surface-container-low hover:bg-surface-container rounded-xl border border-outline-variant/30 transition-colors gap-md">
-<div class="flex items-center gap-md">
-<div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[24px]">radiology</span>
-</div>
-<div>
-<div class="font-semibold text-on-surface">Chest X-Ray (PA View)</div>
-<div class="text-body-sm text-on-surface-variant">May 19, 2023 • Apex Imaging &amp; Scans Bengaluru • Dr. K. Ramanathan</div>
-</div>
-</div>
-<div class="flex items-center gap-md w-full sm:w-auto justify-between sm:justify-end">
-<span class="px-sm py-1 rounded bg-secondary/10 text-secondary font-label-sm font-semibold">Clear Lung Fields</span>
-<button class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined text-[16px]">download</span> Download PDF
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- TAB 4: PRESCRIPTIONS PANEL -->
-<div class="tab-panel hidden flex-col gap-lg" id="tab-prescriptions">
-<!-- Active Medications Section -->
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20">
-<div class="flex items-center justify-between mb-lg flex-wrap gap-md">
-<div>
-<h3 class="font-title-md text-title-md text-on-surface flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary">medication</span> Active Medications
-</h3>
-<p class="text-body-sm text-on-surface-variant">Currently prescribed ongoing pharmaceutical courses for patient Rajesh Kumar</p>
-</div>
-<button class="w-full sm:w-auto flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow hover:shadow-md transition-shadow">
-<span class="material-symbols-outlined text-[18px]">add</span> Write New Prescription
-</button>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
-<!-- Medication Card 1 -->
-<div class="p-md sm:p-lg rounded-2xl bg-surface-container-low border border-outline-variant/30 flex flex-col justify-between">
-<div>
-<div class="flex justify-between items-start">
-<div>
-<span class="text-xs uppercase font-semibold tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded">Antihypertensive</span>
-<h4 class="font-title-md text-on-surface mt-1">Amlodipine 5 mg</h4>
-<p class="text-body-sm text-on-surface-variant">Oral Tablet • 1 tablet once daily in the morning</p>
-</div>
-<span class="px-sm py-xs rounded-full bg-secondary/10 text-secondary text-label-sm font-semibold flex items-center gap-xs shrink-0">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
-</span>
-</div>
-<div class="mt-md pt-md border-t border-outline-variant/20 grid grid-cols-1 sm:grid-cols-2 gap-sm text-body-sm">
-<div>
-<span class="text-on-surface-variant text-xs">Prescribed By:</span>
-<div class="font-medium text-on-surface">Dr. Sarah Wilson</div>
-</div>
-<div>
-<span class="text-on-surface-variant text-xs">Duration:</span>
-<div class="font-medium text-on-surface">Ongoing (90 days supply)</div>
-</div>
-<div>
-<span class="text-on-surface-variant text-xs">Refill Status:</span>
-<div class="font-medium text-secondary">2 Refills Remaining</div>
-</div>
-<div>
-<span class="text-on-surface-variant text-xs">Start Date:</span>
-<div class="font-medium text-on-surface">Oct 12, 2023</div>
-</div>
-</div>
-</div>
-<div class="mt-md flex gap-sm">
-<button class="flex-1 py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm font-semibold hover:bg-surface-container-high transition-colors">Request Refill</button>
-<button class="px-md py-1.5 rounded-lg bg-surface-container text-on-surface-variant font-label-sm hover:text-on-surface transition-colors">Edit Dosage</button>
-</div>
-</div>
-<!-- Medication Card 2 -->
-<div class="p-md sm:p-lg rounded-2xl bg-surface-container-low border border-outline-variant/30 flex flex-col justify-between">
-<div>
-<div class="flex justify-between items-start">
-<div>
-<span class="text-xs uppercase font-semibold tracking-wider text-tertiary bg-tertiary/10 px-2 py-0.5 rounded">Lipid Lowering</span>
-<h4 class="font-title-md text-on-surface mt-1">Atorvastatin 10 mg</h4>
-<p class="text-body-sm text-on-surface-variant">Oral Tablet • 1 tablet once daily at bedtime</p>
-</div>
-<span class="px-sm py-xs rounded-full bg-secondary/10 text-secondary text-label-sm font-semibold flex items-center gap-xs shrink-0">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
-</span>
-</div>
-<div class="mt-md pt-md border-t border-outline-variant/20 grid grid-cols-1 sm:grid-cols-2 gap-sm text-body-sm">
-<div>
-<span class="text-on-surface-variant text-xs">Prescribed By:</span>
-<div class="font-medium text-on-surface">Dr. Anil Gupta</div>
-</div>
-<div>
-<span class="text-on-surface-variant text-xs">Duration:</span>
-<div class="font-medium text-on-surface">Ongoing (60 days supply)</div>
-</div>
-<div>
-<span class="text-on-surface-variant text-xs">Refill Status:</span>
-<div class="font-medium text-amber-700">1 Refill Remaining</div>
-</div>
-<div>
-<span class="text-on-surface-variant text-xs">Start Date:</span>
-<div class="font-medium text-on-surface">Sep 05, 2023</div>
-</div>
-</div>
-</div>
-<div class="mt-md flex gap-sm">
-<button class="flex-1 py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm font-semibold hover:bg-surface-container-high transition-colors">Request Refill</button>
-<button class="px-md py-1.5 rounded-lg bg-surface-container text-on-surface-variant font-label-sm hover:text-on-surface transition-colors">Edit Dosage</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Past Prescriptions History Table -->
-<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-outline-variant/20">
-<div class="p-md sm:p-lg border-b border-outline-variant/20 flex items-center justify-between">
-<div>
-<h3 class="font-title-md text-title-md text-on-surface">Prescription History</h3>
-<p class="text-body-sm text-on-surface-variant">Archived prescription logs, completed courses, and modifications</p>
-</div>
-<span class="material-symbols-outlined text-outline-variant">history</span>
-</div>
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse min-w-[700px]">
-<thead>
-<tr class="bg-surface-container border-b border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-<th class="py-md px-lg">Rx Number</th>
-<th class="py-md px-lg">Date Prescribed</th>
-<th class="py-md px-lg">Doctor</th>
-<th class="py-md px-lg">Diagnosis / Indications</th>
-<th class="py-md px-lg">Status</th>
-<th class="py-md px-lg text-right">Action</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-outline-variant/20 font-body-sm text-body-sm">
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">PRE000003</td>
-<td class="py-md px-lg text-on-surface">Oct 12, 2023</td>
-<td class="py-md px-lg font-medium text-on-surface">Dr. Sarah Wilson</td>
-<td class="py-md px-lg text-on-surface">Hypertension Management Renewal</td>
-<td class="py-md px-lg">
-<span class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">Active Course</span>
-</td>
-<td class="py-md px-lg text-right whitespace-nowrap">
-<a class="text-primary hover:underline font-semibold font-label-sm inline-flex items-center gap-xs" href="#">
-<span class="material-symbols-outlined text-[16px]">visibility</span> View Prescription
-</a>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">PRE000002</td>
-<td class="py-md px-lg text-on-surface">Sep 05, 2023</td>
-<td class="py-md px-lg font-medium text-on-surface">Dr. Anil Gupta</td>
-<td class="py-md px-lg text-on-surface">Hyperlipidemia Control (Atorvastatin 10mg)</td>
-<td class="py-md px-lg">
-<span class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">Active Course</span>
-</td>
-<td class="py-md px-lg text-right whitespace-nowrap">
-<a class="text-primary hover:underline font-semibold font-label-sm inline-flex items-center gap-xs" href="#">
-<span class="material-symbols-outlined text-[16px]">visibility</span> View Prescription
-</a>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">PRE000001</td>
-<td class="py-md px-lg text-on-surface">May 04, 2023</td>
-<td class="py-md px-lg font-medium text-on-surface">Dr. Priya Deshmukh</td>
-<td class="py-md px-lg text-on-surface">Acute Bronchitis • Azithromycin 500mg Course</td>
-<td class="py-md px-lg">
-<span class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-medium bg-outline-variant/30 text-on-surface-variant">Completed</span>
-</td>
-<td class="py-md px-lg text-right whitespace-nowrap">
-<a class="text-primary hover:underline font-semibold font-label-sm inline-flex items-center gap-xs" href="#">
-<span class="material-symbols-outlined text-[16px]">visibility</span> View Prescription
-</a>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<!-- TAB 5: BILLING PANEL -->
-<div class="tab-panel hidden flex-col gap-lg" id="tab-billing">
-<!-- Summary Stat Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
-<div class="flex items-center justify-between text-on-surface-variant">
-<span class="font-label-sm uppercase tracking-wider">Total Invoiced</span>
-<span class="material-symbols-outlined text-primary bg-primary/10 p-sm rounded-lg">receipt_long</span>
-</div>
-<div class="mt-md">
-<div class="text-2xl sm:text-headline-lg font-bold text-on-surface leading-tight">₹12,500</div>
-<p class="text-xs text-on-surface-variant mt-xs">Across 4 medical encounters</p>
-</div>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
-<div class="flex items-center justify-between text-on-surface-variant">
-<span class="font-label-sm uppercase tracking-wider">Total Paid</span>
-<span class="material-symbols-outlined text-secondary bg-secondary/10 p-sm rounded-lg">check_circle</span>
-</div>
-<div class="mt-md">
-<div class="text-2xl sm:text-headline-lg font-bold text-secondary leading-tight">₹10,500</div>
-<p class="text-xs text-on-surface-variant mt-xs">Cleared via Insurance &amp; UPI</p>
-</div>
-</div>
-<div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
-<div class="flex items-center justify-between text-on-surface-variant">
-<span class="font-label-sm uppercase tracking-wider">Outstanding Due</span>
-<span class="material-symbols-outlined text-error bg-error/10 p-sm rounded-lg">pending_actions</span>
-</div>
-<div class="mt-md">
-<div class="text-2xl sm:text-headline-lg font-bold text-error leading-tight">₹2,000</div>
-<p class="text-xs text-on-surface-variant mt-xs">Due by Nov 15, 2023</p>
-</div>
-</div>
-</div>
-<!-- Invoices & Billing Table -->
-<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-outline-variant/20">
-<div class="p-md sm:p-lg border-b border-outline-variant/20 flex items-center justify-between flex-wrap gap-md">
-<div>
-<h3 class="font-title-md text-title-md text-on-surface">Recent Invoices &amp; Payments</h3>
-<p class="text-body-sm text-on-surface-variant">Financial transactions, itemized charges, and payment receipts</p>
-</div>
-<div class="flex gap-sm w-full sm:w-auto">
-<button class="flex-1 sm:flex-initial flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-surface-container text-on-surface font-label-md hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined text-[18px]">download</span> Export Statement
-</button>
-<button class="flex-1 sm:flex-initial flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-primary text-on-primary font-label-md shadow hover:shadow-md transition-shadow">
-<span class="material-symbols-outlined text-[18px]">add_card</span> Record Payment
-</button>
-</div>
-</div>
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse min-w-[700px]">
-<thead>
-<tr class="bg-surface-container border-b border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-<th class="py-md px-lg">Bill ID</th>
-<th class="py-md px-lg">Appointment ID</th>
-<th class="py-md px-lg">Date</th>
-<th class="py-md px-lg">Total Amount</th>
-<th class="py-md px-lg">Paid Amount</th>
-<th class="py-md px-lg">Balance</th>
-<th class="py-md px-lg">Status</th>
-<th class="py-md px-lg text-right">Actions</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-outline-variant/20 font-body-sm text-body-sm">
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">INV-2023-089</td>
-<td class="py-md px-lg font-mono text-on-surface-variant">#APT-2023-1012</td>
-<td class="py-md px-lg text-on-surface">Oct 12, 2023</td>
-<td class="py-md px-lg font-semibold text-on-surface">₹3,500</td>
-<td class="py-md px-lg text-secondary font-medium">₹1,500</td>
-<td class="py-md px-lg font-semibold text-error">₹2,000</td>
-<td class="py-md px-lg">
-<span class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-amber-100 text-amber-800">Partial</span>
-</td>
-<td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
-<button class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Receipt</button>
-<button class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View Bill</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">INV-2023-074</td>
-<td class="py-md px-lg font-mono text-on-surface-variant">#APT-2023-0905</td>
-<td class="py-md px-lg text-on-surface">Sep 05, 2023</td>
-<td class="py-md px-lg font-semibold text-on-surface">₹4,000</td>
-<td class="py-md px-lg text-secondary font-medium">₹4,000</td>
-<td class="py-md px-lg font-semibold text-on-surface-variant">₹0</td>
-<td class="py-md px-lg">
-<span class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">Paid</span>
-</td>
-<td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
-<button class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Receipt</button>
-<button class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View Bill</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">INV-2023-062</td>
-<td class="py-md px-lg font-mono text-on-surface-variant">#APT-2023-0815</td>
-<td class="py-md px-lg text-on-surface">Aug 15, 2023</td>
-<td class="py-md px-lg font-semibold text-on-surface">₹2,800</td>
-<td class="py-md px-lg text-secondary font-medium">₹2,800</td>
-<td class="py-md px-lg font-semibold text-on-surface-variant">₹0</td>
-<td class="py-md px-lg">
-<span class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">Paid</span>
-</td>
-<td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
-<button class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Receipt</button>
-<button class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View Bill</button>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-lg font-mono font-medium text-primary">INV-2023-039</td>
-<td class="py-md px-lg font-mono text-on-surface-variant">#APT-2023-0504</td>
-<td class="py-md px-lg text-on-surface">May 04, 2023</td>
-<td class="py-md px-lg font-semibold text-on-surface">₹2,200</td>
-<td class="py-md px-lg text-secondary font-medium">₹2,200</td>
-<td class="py-md px-lg font-semibold text-on-surface-variant">₹0</td>
-<td class="py-md px-lg">
-<span class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">Paid</span>
-</td>
-<td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
-<button class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Receipt</button>
-<button class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View Bill</button>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
+<main class="flex-1 w-full bg-background">
+    <div class="flex flex-col w-full h-full max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-lg">
+        <!-- Header Section -->
+        <div
+            class="flex flex-col gap-md sm:gap-lg bg-surface-container rounded-2xl p-4 sm:p-6 lg:p-xl shadow-sm mb-lg relative overflow-hidden">
+            <div
+                class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none">
+            </div>
+            <div class="flex items-start justify-between z-10 flex-col lg:flex-row gap-lg">
+                <div
+                    class="flex gap-md sm:gap-xl items-center sm:items-start flex-col sm:flex-row text-center sm:text-left w-full sm:w-auto">
+                    <div class="relative shrink-0">
+                        <img class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover shadow-md border-4 border-surface"
+                            data-alt="Professional headshot of an Indian man in his mid-40s, looking approachable, bright studio lighting, subtle healthcare environment backdrop, soft focus."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYDeyN4R7DN5ifm_twyM6r2c9Sah63X9_ZRYM0nZghIQmp97reTpkM68P2wX7P-OBRnuwqIBgTfUG3rRmbVI8TDTZEb1yf84mJVWXvJ6D85ZF-lvV4VY0eXge5e728mkCW6KQDWXVxBn0-lsF6ImlPG5dOavlZ0Ow4S87hc-vQTj8TmqFg56JIn5Y3Kd448W8YsJOeblW6bs9-KNDOp8Z1obJ6EwhJzzW-HHnvN47yHf4jlZFYgy0w">
+                        <div class="absolute bottom-1 right-1 w-5 h-5 sm:w-6 sm:h-6 bg-secondary-fixed rounded-full border-2 border-surface flex items-center justify-center"
+                            title="Active Patient">
+                            <span
+                                class="material-symbols-outlined text-[12px] sm:text-[14px] text-on-secondary-fixed">check</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-xs sm:gap-sm items-center sm:items-start">
+                        <h1 class="text-2xl sm:text-3xl lg:text-display-lg font-bold text-on-surface m-0 leading-tight">
+                            {{ patient.user.get_full_name|default:patient.user.username }}</h1>
+                        <div
+                            class="flex items-center gap-xs sm:gap-md text-on-surface-variant font-body-sm sm:font-body-lg flex-wrap justify-center sm:justify-start">
+                            <span
+                                class="bg-primary/10 text-primary px-sm py-xs rounded-md font-label-sm text-label-sm uppercase tracking-wider font-semibold">ID:
+                                {{ patient.patient_id }}</span>
+                            <span class="flex items-center gap-xs"><span
+                                    class="material-symbols-outlined text-[18px] sm:text-[20px]">cake</span> {{ patient.age }} yrs
+                                ({{ patient.get_gender_display }})</span>
+                            <span class="flex items-center gap-xs"><span
+                                    class="material-symbols-outlined text-[18px] sm:text-[20px]">water_drop</span>
+                                {{ patient.get_blood_group_display }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-md w-full lg:w-auto z-10 shrink-0">
+                    <a href="{% url 'patients:update' patient.pk %}"
+                        class="flex items-center justify-center gap-sm px-md py-2.5 bg-surface text-primary rounded-lg font-label-md text-label-md shadow-sm hover:shadow-md transition-shadow w-full sm:w-auto">
+                        <span class="material-symbols-outlined text-[20px]">edit</span> Edit Profile
+                    </a>
+                    <a href="{% url "appointments:create" %}"
+                        class="flex items-center justify-center gap-sm px-md py-2.5 bg-primary text-on-primary rounded-lg font-label-md text-label-md shadow-sm hover:shadow-md transition-shadow w-full sm:w-auto">
+                        <span class="material-symbols-outlined text-[20px]">add</span> New Appointment
+                    </a>
+                </div>  
+            </div>
+            <!-- Responsive Navigation Tabs -->
+            <div class="flex gap-md sm:gap-lg border-b border-outline-variant/30 mt-xs sm:mt-md pb-1 z-10 overflow-x-auto whitespace-nowrap scrollbar-none"
+                id="profile-tabs" role="tablist">
+                <button
+                    class="tab-btn text-primary font-semibold border-b-2 border-primary pb-sm relative px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md"
+                    data-tab="overview" onclick="switchTab('overview')">Overview</button>
+                <button
+                    class="tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md"
+                    data-tab="appointments" onclick="switchTab('appointments')">Appointments</button>
+                <button
+                    class="tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md"
+                    data-tab="medical-history" onclick="switchTab('medical-history')">Medical History</button>
+                <button
+                    class="tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md"
+                    data-tab="prescriptions" onclick="switchTab('prescriptions')">Prescriptions</button>
+                <button
+                    class="tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md"
+                    data-tab="billing" onclick="switchTab('billing')">Billing</button>
+            </div>
+        </div>
+        <!-- TAB 1: OVERVIEW PANEL -->
+        <div class="tab-panel flex flex-col" id="tab-overview">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+                <!-- Left Column: Details & Contacts -->
+                <div class="col-span-1 lg:col-span-4 flex flex-col gap-lg order-2 lg:order-1">
+                    <!-- Contact Info Card -->
+                    <div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm">
+                        <h3 class="font-title-md text-title-md text-on-surface mb-md flex items-center gap-sm">
+                            <span class="material-symbols-outlined text-primary">contact_page</span> Contact Information
+                        </h3>
+                        <div class="flex flex-col gap-md">
+                            <div class="flex items-start gap-md">
+                                <div class="p-sm bg-surface-container rounded-lg text-primary shrink-0">
+                                    <span class="material-symbols-outlined">call</span>
+                                </div>
+                                <div>
+                                    <div class="font-label-sm text-label-sm text-on-surface-variant">Phone</div>
+                                    <div class="font-body-md text-body-md text-on-surface">{{ patient.user.phone_number|default:"Not provided" }}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-md">
+                                <div class="p-sm bg-surface-container rounded-lg text-primary shrink-0">
+                                    <span class="material-symbols-outlined">mail</span>
+                                </div>
+                                <div>
+                                    <div class="font-label-sm text-label-sm text-on-surface-variant">Email</div>
+                                    <div class="font-body-md text-body-md text-on-surface break-all">
+                                        {{ patient.user.email|default:"Not provided" }}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-md">
+                                <div class="p-sm bg-surface-container rounded-lg text-primary shrink-0">
+                                    <span class="material-symbols-outlined">home</span>
+                                </div>
+                                <div>
+                                    <div class="font-label-sm text-label-sm text-on-surface-variant">Address</div>
+                                    <div class="font-body-md text-body-md text-on-surface">{{ patient.address }}, <br> {{ patient.city }}, {{ patient.state }} {{ patient.pincode }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Emergency Contact Card -->
+                    <div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border-l-4 border-error">
+                        <h3 class="font-title-md text-title-md text-on-surface mb-md flex items-center gap-sm">
+                            <span class="material-symbols-outlined text-error">emergency</span> Emergency Contact
+                        </h3>
+                        <div class="flex flex-col gap-sm">
+                            <div class="font-body-lg text-body-lg font-semibold text-on-surface">Relative</div>
+                            <div class="flex items-center gap-sm mt-sm">
+                                <span class="material-symbols-outlined text-[18px] text-on-surface-variant">call</span>
+                                <span class="font-body-md text-body-md text-on-surface">{{ patient.emergency_contact|default:"Not provided" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Allergies Card -->
+                    <div class="bg-error-container text-on-error-container rounded-2xl p-md sm:p-lg shadow-sm">
+                        <h3 class="font-title-md text-title-md mb-md flex items-center gap-sm">
+                            <span class="material-symbols-outlined">warning</span> Alerts &amp; Allergies
+                        </h3>
+                        <div class="flex flex-wrap gap-sm">
+                            <div
+                                class="px-md py-sm bg-surface/50 rounded-full font-label-md text-label-md flex items-center gap-sm">
+                                <span class="w-2 h-2 rounded-full bg-error shrink-0"></span>
+                                {{ patient.allergies|default:"No allergies recorded"|linebreaksbr }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Column: Vitals & Recent Activity -->
+                <div class="col-span-1 lg:col-span-8 flex flex-col gap-lg order-1 lg:order-2">
+                    <!-- Vitals Bento Grid -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-md">
+                        <div
+                            class="bg-surface-container-lowest rounded-2xl p-3 sm:p-md shadow-sm flex flex-col justify-between min-h-[120px] sm:aspect-square">
+                            <div class="flex justify-between items-start">
+                                <span
+                                    class="material-symbols-outlined text-primary bg-primary/10 p-2 sm:p-sm rounded-lg text-[20px] sm:text-[24px]">favorite</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">Heart Rate</span>
+                            </div>
+                            <div class="mt-2 sm:mt-0">
+                                <div class="text-xl sm:text-headline-lg font-bold text-on-surface leading-tight">72
+                                    <span class="text-xs sm:text-body-sm text-on-surface-variant font-normal">bpm</span>
+                                </div>
+                                <div
+                                    class="text-label-sm font-label-sm text-secondary flex items-center gap-xs mt-0.5 sm:mt-xs">
+                                    <span class="material-symbols-outlined text-[14px]">arrow_downward</span> Normal
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest rounded-2xl p-3 sm:p-md shadow-sm flex flex-col justify-between min-h-[120px] sm:aspect-square">
+                            <div class="flex justify-between items-start">
+                                <span
+                                    class="material-symbols-outlined text-tertiary bg-tertiary/10 p-2 sm:p-sm rounded-lg text-[20px] sm:text-[24px]">blood_pressure</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">Blood Pressure</span>
+                            </div>
+                            <div class="mt-2 sm:mt-0">
+                                <div class="text-xl sm:text-headline-lg font-bold text-on-surface leading-tight">120/80
+                                </div>
+                                <div class="text-[11px] sm:text-label-sm text-on-surface-variant mt-0.5 sm:mt-xs">
+                                    Last checked: 2h ago
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest rounded-2xl p-3 sm:p-md shadow-sm flex flex-col justify-between min-h-[120px] sm:aspect-square">
+                            <div class="flex justify-between items-start">
+                                <span
+                                    class="material-symbols-outlined text-primary bg-primary/10 p-2 sm:p-sm rounded-lg text-[20px] sm:text-[24px]">device_thermostat</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">Temperature</span>
+                            </div>
+                            <div class="mt-2 sm:mt-0">
+                                <div class="text-xl sm:text-headline-lg font-bold text-on-surface leading-tight">98.6
+                                    <span class="text-xs sm:text-body-sm text-on-surface-variant font-normal">°F</span>
+                                </div>
+                                <div
+                                    class="text-label-sm font-label-sm text-secondary flex items-center gap-xs mt-0.5 sm:mt-xs">
+                                    Normal
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-container-lowest rounded-2xl p-3 sm:p-md shadow-sm flex flex-col justify-between min-h-[120px] sm:aspect-square">
+                            <div class="flex justify-between items-start">
+                                <span
+                                    class="material-symbols-outlined text-primary bg-primary/10 p-2 sm:p-sm rounded-lg text-[20px] sm:text-[24px]">monitor_weight</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">Weight</span>
+                            </div>
+                            <div class="mt-2 sm:mt-0">
+                                <div class="text-xl sm:text-headline-lg font-bold text-on-surface leading-tight">75
+                                    <span class="text-xs sm:text-body-sm text-on-surface-variant font-normal">kg</span>
+                                </div>
+                                <div class="text-[11px] sm:text-label-sm text-on-surface-variant mt-0.5 sm:mt-xs">
+                                    BMI: 24.2
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Recent Appointments & Notes -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                        <div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm flex flex-col">
+                            <div class="flex justify-between items-center mb-md">
+                                <h3 class="font-title-md text-title-md text-on-surface">Recent Appointments</h3>
+                                <button class="text-primary font-label-sm text-label-sm hover:underline"
+                                    onclick="switchTab('appointments')">View All</button>
+                            </div>
+                            <div class="flex flex-col gap-sm flex-1">
+                                <div class="p-md bg-surface-container rounded-xl flex items-center justify-between hover:bg-surface-container-high transition-colors cursor-pointer"
+                                    onclick="switchTab('appointments')">
+                                    <div class="flex gap-md items-center">
+                                        <div
+                                            class="w-12 h-12 bg-primary/10 rounded-lg flex flex-col items-center justify-center text-primary shrink-0">
+                                            <span class="font-label-sm text-label-sm uppercase">Oct</span>
+                                            <span class="font-title-md text-title-md leading-none">12</span>
+                                        </div>
+                                        <div>
+                                            <div class="font-label-md text-label-md text-on-surface">General Checkup
+                                            </div>
+                                            <div class="font-body-sm text-body-sm text-on-surface-variant">Dr. Sarah
+                                                Wilson</div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="bg-secondary/10 text-secondary px-sm py-xs rounded-md font-label-sm text-label-sm font-semibold shrink-0">Completed</span>
+                                </div>
+                                <div class="p-md bg-surface-container rounded-xl flex items-center justify-between hover:bg-surface-container-high transition-colors cursor-pointer"
+                                    onclick="switchTab('appointments')">
+                                    <div class="flex gap-md items-center">
+                                        <div
+                                            class="w-12 h-12 bg-outline-variant/20 rounded-lg flex flex-col items-center justify-center text-on-surface-variant shrink-0">
+                                            <span class="font-label-sm text-label-sm uppercase">Sep</span>
+                                            <span class="font-title-md text-title-md leading-none">05</span>
+                                        </div>
+                                        <div>
+                                            <div class="font-label-md text-label-md text-on-surface">Cardiology Consult
+                                            </div>
+                                            <div class="font-body-sm text-body-sm text-on-surface-variant">Dr. Anil
+                                                Gupta</div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="bg-secondary/10 text-secondary px-sm py-xs rounded-md font-label-sm text-label-sm font-semibold shrink-0">Completed</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm flex flex-col">
+                            <div class="flex justify-between items-center mb-md">
+                                <h3 class="font-title-md text-title-md text-on-surface">Clinical Notes</h3>
+                                <button
+                                    class="text-primary hover:bg-primary/10 p-xs rounded-full transition-colors"><span
+                                        class="material-symbols-outlined text-[20px]">add</span></button>
+                            </div>
+                            <div class="flex-1 bg-surface rounded-xl p-md border border-outline-variant/30">
+                                <div class="flex items-center justify-between mb-sm">
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant">Oct 12, 2023 - Dr.
+                                        Wilson</span>
+                                    <span
+                                        class="material-symbols-outlined text-outline-variant text-[16px]">push_pin</span>
+                                </div>
+                                <p class="font-body-sm text-body-sm text-on-surface line-clamp-4">
+                                    Patient reported mild chest discomfort during exertion over the last two weeks. BP
+                                    normal today. ECG shows no acute changes compared to baseline. Advised stress test
+                                    next week and to continue current medication. Follow up after test results.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- TAB 2: APPOINTMENTS PANEL -->
+        <div class="tab-panel hidden flex-col gap-lg" id="tab-appointments">
+            <div
+                class="flex items-center justify-between bg-surface-container-lowest p-md sm:p-lg rounded-2xl shadow-sm flex-wrap gap-md">
+                <div>
+                    <h2 class="font-title-md text-title-md text-on-surface">Appointments</h2>
+                    <p class="text-body-sm text-on-surface-variant">Scheduled visits, consultations, and completed
+                        sessions for <b>{{ patient.user.get_full_name|default:patient.user.username }} </b> </p>
+                </div>
+                <div class="flex gap-sm w-full sm:w-auto">
+                    <button
+                        class="flex-1 sm:flex-initial flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
+                    </button>
+                    <button
+                        class="flex-1 sm:flex-initial flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow hover:shadow-md transition-shadow">
+                        <span class="material-symbols-outlined text-[18px]">calendar_add_on</span> Schedule Visit
+                    </button>
+                </div>
+            </div>
+            <div
+                class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-outline-variant/20">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                            <tr
+                                class="bg-surface-container border-b border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                                <th class="py-md px-lg">Appt ID</th>
+                                <th class="py-md px-lg">Doctor &amp; Specialty</th>
+                                <th class="py-md px-lg">Date &amp; Time</th>
+                                <th class="py-md px-lg">Reason</th>
+                                <th class="py-md px-lg">Status</th>
+                                <th class="py-md px-lg text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/20 font-body-sm text-body-sm">
+                            {% for appointment in appointments %}
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="py-md px-lg font-mono font-medium text-primary">{{appointment.appointment_id}} </td>
+                                <td class="py-md px-lg">
+                                    <div class="font-semibold text-on-surface">Dr. {{ appointment.doctor.user.get_full_name}}</div>
+                                    <div class="text-on-surface-variant text-[13px]">{{ appointment.doctor.get_specialization_display }} ({{appointment.doctor.address}})</div>
+                                </td>
+                                <td class="py-md px-lg">
+                                    <div class="font-medium text-on-surface">{{ appointment.appointment_date|date:"d M Y" }}</div>
+                                    <div class="text-on-surface-variant text-[13px]">{{ appointment.appointment_time|time:"h:i A" }}</div>
+                                </td>
+                                <td class="py-md px-lg text-on-surface">{{ appointment.reason_for_visit }}</td>
+                                <td class="py-md px-lg">
+                                    <span
+                                        class="inline-flex items-center gap-xs px-sm py-xs rounded-full text-label-sm font-semibold bg-primary/10 text-primary">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span> {{ appointment.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
+                                    
+                                    <button
+                                        class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Reschedule</button>
+                                    <a href="{% url 'appointments:detail' appointment.pk %}"
+                                        class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View
+                                        Details</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="py-md px-lg" colspan="6"> <b>No appointments found for this patient.</b></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- TAB 3: MEDICAL HISTORY PANEL -->
+        <div class="tab-panel hidden flex-col gap-lg" id="tab-medical-history">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+                <!-- Chronic Conditions -->
+                <div
+                    class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-md">
+                            <div class="flex items-center gap-sm">
+                                <div class="p-sm bg-primary/10 rounded-lg text-primary">
+                                    <span class="material-symbols-outlined">clinical_notes</span>
+                                </div>
+                                <h3 class="font-title-md text-title-md text-on-surface">Chronic Conditions</h3>
+                            </div>
+                            <span
+                                class="px-sm py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">2
+                                Active</span>
+                        </div>
+                        <ul class="space-y-sm">
+                            <li class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-semibold text-on-surface">Primary Hypertension (Stage 1)</h4>
+                                    <span
+                                        class="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-medium shrink-0">Monitoring</span>
+                                </div>
+                                <p class="text-on-surface-variant text-body-sm mt-1">Diagnosed in March 2021 by Dr.
+                                    Sarah Wilson. Regulated with daily Amlodipine 5mg.</p>
+                            </li>
+                            <li class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-semibold text-on-surface">Mild Hyperlipidemia</h4>
+                                    <span
+                                        class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-medium shrink-0">Controlled</span>
+                                </div>
+                                <p class="text-on-surface-variant text-body-sm mt-1">Identified in August 2022. Fasting
+                                    LDL maintained via statin regimen and dietary control.</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <button
+                        class="mt-md w-full py-2 bg-surface-container hover:bg-surface-container-high rounded-lg text-primary font-label-md font-semibold transition-colors flex items-center justify-center gap-xs">
+                        <span class="material-symbols-outlined text-[18px]">add</span> Add Condition
+                    </button>
+                </div>
+                <!-- Past Surgeries -->
+                <div
+                    class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-md">
+                            <div class="flex items-center gap-sm">
+                                <div class="p-sm bg-secondary/10 rounded-lg text-secondary">
+                                    <span class="material-symbols-outlined">healing</span>
+                                </div>
+                                <h3 class="font-title-md text-title-md text-on-surface">Past Surgeries &amp; Procedures
+                                </h3>
+                            </div>
+                            <span
+                                class="px-sm py-0.5 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm font-semibold">1
+                                Recorded</span>
+                        </div>
+                        <div class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-semibold text-on-surface">Laparoscopic Appendectomy</h4>
+                                <span class="text-xs text-on-surface-variant font-medium">June 14, 2018</span>
+                            </div>
+                            <p class="text-on-surface-variant text-body-sm mt-1">Apollo Multispeciality Hospital,
+                                Bengaluru. Performed under general anesthesia. Fully recovered with no post-operative
+                                complications.</p>
+                            <div
+                                class="mt-2 text-[13px] text-primary flex items-center gap-xs cursor-pointer hover:underline">
+                                <span class="material-symbols-outlined text-[16px]">attachment</span> Discharge
+                                Summary.pdf
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="mt-md w-full py-2 bg-surface-container hover:bg-surface-container-high rounded-lg text-primary font-label-md font-semibold transition-colors flex items-center justify-center gap-xs">
+                        <span class="material-symbols-outlined text-[18px]">add</span> Record Surgery
+                    </button>
+                </div>
+                <!-- Family Medical History -->
+                <div
+                    class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-md">
+                            <div class="flex items-center gap-sm">
+                                <div class="p-sm bg-tertiary-container/20 rounded-lg text-tertiary">
+                                    <span class="material-symbols-outlined">family_restroom</span>
+                                </div>
+                                <h3 class="font-title-md text-title-md text-on-surface">Family Medical History</h3>
+                            </div>
+                            <span
+                                class="px-sm py-0.5 rounded-full bg-outline-variant/40 text-on-surface-variant font-label-sm text-label-sm font-semibold">Family
+                                Tree</span>
+                        </div>
+                        <ul class="space-y-sm">
+                            <li class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-semibold text-on-surface">Father</span>
+                                    <span class="text-xs px-2 py-0.5 rounded bg-error/15 text-error font-medium">High
+                                        Risk</span>
+                                </div>
+                                <p class="text-on-surface-variant text-body-sm mt-1">Coronary Artery Disease &amp;
+                                    Myocardial Infarction at age 58.</p>
+                            </li>
+                            <li class="p-md rounded-xl bg-surface-container-low border border-outline-variant/30">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-semibold text-on-surface">Mother</span>
+                                    <span
+                                        class="text-xs px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-medium">Moderate</span>
+                                </div>
+                                <p class="text-on-surface-variant text-body-sm mt-1">Type 2 Diabetes Mellitus diagnosed
+                                    at age 62, on oral hypoglycemics.</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <button
+                        class="mt-md w-full py-2 bg-surface-container hover:bg-surface-container-high rounded-lg text-primary font-label-md font-semibold transition-colors flex items-center justify-center gap-xs">
+                        <span class="material-symbols-outlined text-[18px]">add</span> Add Family Record
+                    </button>
+                </div>
+            </div>
+            <!-- Diagnostic Reports Timeline -->
+            <div
+                class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20">
+                <div class="flex items-start sm:items-center justify-between mb-lg flex-col sm:flex-row gap-md">
+                    <div>
+                        <h3 class="font-title-md text-title-md text-on-surface flex items-center gap-sm">
+                            <span class="material-symbols-outlined text-primary">biotech</span> Diagnostic Reports &amp;
+                            Labs Timeline
+                        </h3>
+                        <p class="text-body-sm text-on-surface-variant">Laboratory tests, pathology reports, imaging
+                            scans and diagnostics history</p>
+                    </div>
+                    <button
+                        class="w-full sm:w-auto px-md py-sm bg-primary text-on-primary rounded-lg font-label-md flex items-center justify-center gap-xs shadow hover:shadow-md transition-shadow">
+                        <span class="material-symbols-outlined text-[18px]">upload_file</span> Upload Report
+                    </button>
+                </div>
+                <div class="space-y-md">
+                    <!-- Report Item 1 -->
+                    <div
+                        class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-md bg-surface-container-low hover:bg-surface-container rounded-xl border border-outline-variant/30 transition-colors gap-md">
+                        <div class="flex items-center gap-md">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-[24px]">ecg_heart</span>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-on-surface">12-Lead Electrocardiogram (ECG)</div>
+                                <div class="text-body-sm text-on-surface-variant">Oct 12, 2023 • SHMS Cardiology
+                                    Diagnostic Suite • Dr. Anil Gupta</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-md w-full sm:w-auto justify-between sm:justify-end">
+                            <span
+                                class="px-sm py-1 rounded bg-secondary/10 text-secondary font-label-sm font-semibold">Normal
+                                Sinus</span>
+                            <button
+                                class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm hover:bg-surface-container-high transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">download</span> Download PDF
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Report Item 2 -->
+                    <div
+                        class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-md bg-surface-container-low hover:bg-surface-container rounded-xl border border-outline-variant/30 transition-colors gap-md">
+                        <div class="flex items-center gap-md">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-[24px]">bloodtype</span>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-on-surface">Comprehensive Lipid &amp; Metabolic Panel
+                                    (HbA1c: 5.7%)</div>
+                                <div class="text-body-sm text-on-surface-variant">Aug 15, 2023 • Central Clinical
+                                    Laboratory • Lab Tech: M. Fernandes</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-md w-full sm:w-auto justify-between sm:justify-end">
+                            <span
+                                class="px-sm py-1 rounded bg-blue-100 text-blue-800 font-label-sm font-semibold">Verified
+                                Normal</span>
+                            <button
+                                class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm hover:bg-surface-container-high transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">download</span> Download PDF
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Report Item 3 -->
+                    <div
+                        class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-md bg-surface-container-low hover:bg-surface-container rounded-xl border border-outline-variant/30 transition-colors gap-md">
+                        <div class="flex items-center gap-md">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-[24px]">radiology</span>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-on-surface">Chest X-Ray (PA View)</div>
+                                <div class="text-body-sm text-on-surface-variant">May 19, 2023 • Apex Imaging &amp;
+                                    Scans Bengaluru • Dr. K. Ramanathan</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-md w-full sm:w-auto justify-between sm:justify-end">
+                            <span
+                                class="px-sm py-1 rounded bg-secondary/10 text-secondary font-label-sm font-semibold">Clear
+                                Lung Fields</span>
+                            <button
+                                class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm hover:bg-surface-container-high transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">download</span> Download PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- TAB 4: PRESCRIPTIONS PANEL -->
+        <div class="tab-panel hidden flex-col gap-lg" id="tab-prescriptions">
+            <!-- Active Medications Section -->
+            <div
+                class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20">
+                <div class="flex items-center justify-between mb-lg flex-wrap gap-md">
+                    <div>
+                        <h3 class="font-title-md text-title-md text-on-surface flex items-center gap-sm">
+                            <span class="material-symbols-outlined text-primary">medication</span> Active Medications
+                        </h3>
+                        <p class="text-body-sm text-on-surface-variant">Currently prescribed ongoing pharmaceutical
+                            courses for patient <b>{{patient.user.get_full_name}} </b></p>
+                    </div>
+                    <button
+                        class="w-full sm:w-auto flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow hover:shadow-md transition-shadow">
+                        <span class="material-symbols-outlined text-[18px]">add</span> Write New Prescription
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                    <!-- Medication Card 1 -->
+                    <div
+                        class="p-md sm:p-lg rounded-2xl bg-surface-container-low border border-outline-variant/30 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span
+                                        class="text-xs uppercase font-semibold tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded">Antihypertensive</span>
+                                    <h4 class="font-title-md text-on-surface mt-1">Amlodipine 5 mg</h4>
+                                    <p class="text-body-sm text-on-surface-variant">Oral Tablet • 1 tablet once daily in
+                                        the morning</p>
+                                </div>
+                                <span
+                                    class="px-sm py-xs rounded-full bg-secondary/10 text-secondary text-label-sm font-semibold flex items-center gap-xs shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+                                </span>
+                            </div>
+                            <div
+                                class="mt-md pt-md border-t border-outline-variant/20 grid grid-cols-1 sm:grid-cols-2 gap-sm text-body-sm">
+                                <div>
+                                    <span class="text-on-surface-variant text-xs">Prescribed By:</span>
+                                    <div class="font-medium text-on-surface">Dr. Sarah Wilson</div>
+                                </div>
+                                <div>
+                                    <span class="text-on-surface-variant text-xs">Duration:</span>
+                                    <div class="font-medium text-on-surface">Ongoing (90 days supply)</div>
+                                </div>
+                                <div>
+                                    <span class="text-on-surface-variant text-xs">Refill Status:</span>
+                                    <div class="font-medium text-secondary">2 Refills Remaining</div>
+                                </div>
+                                <div>
+                                    <span class="text-on-surface-variant text-xs">Start Date:</span>
+                                    <div class="font-medium text-on-surface">Oct 12, 2023</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-md flex gap-sm">
+                            <button
+                                class="flex-1 py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm font-semibold hover:bg-surface-container-high transition-colors">Request
+                                Refill</button>
+                            <button
+                                class="px-md py-1.5 rounded-lg bg-surface-container text-on-surface-variant font-label-sm hover:text-on-surface transition-colors">Edit
+                                Dosage</button>
+                        </div>
+                    </div>
+                    <!-- Medication Card 2 -->
+                    <div
+                        class="p-md sm:p-lg rounded-2xl bg-surface-container-low border border-outline-variant/30 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span
+                                        class="text-xs uppercase font-semibold tracking-wider text-tertiary bg-tertiary/10 px-2 py-0.5 rounded">Lipid
+                                        Lowering</span>
+                                    <h4 class="font-title-md text-on-surface mt-1">Atorvastatin 10 mg</h4>
+                                    <p class="text-body-sm text-on-surface-variant">Oral Tablet • 1 tablet once daily at
+                                        bedtime</p>
+                                </div>
+                                <span
+                                    class="px-sm py-xs rounded-full bg-secondary/10 text-secondary text-label-sm font-semibold flex items-center gap-xs shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+                                </span>
+                            </div>
+                            <div
+                                class="mt-md pt-md border-t border-outline-variant/20 grid grid-cols-1 sm:grid-cols-2 gap-sm text-body-sm">
+                                <div>
+                                    <span class="text-on-surface-variant text-xs">Prescribed By:</span>
+                                    <div class="font-medium text-on-surface">Dr. Anil Gupta</div>
+                                </div>
+                                <div>
+                                    <span class="text-on-surface-variant text-xs">Duration:</span>
+                                    <div class="font-medium text-on-surface">Ongoing (60 days supply)</div>
+                                </div>
+                                <div>
+                                    <span class="text-on-surface-variant text-xs">Refill Status:</span>
+                                    <div class="font-medium text-amber-700">1 Refill Remaining</div>
+                                </div>
+                                <div>
+                                    <span class="text-on-surface-variant text-xs">Start Date:</span>
+                                    <div class="font-medium text-on-surface">Sep 05, 2023</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-md flex gap-sm">
+                            <button
+                                class="flex-1 py-1.5 rounded-lg bg-surface text-primary border border-outline-variant/30 font-label-sm font-semibold hover:bg-surface-container-high transition-colors">Request
+                                Refill</button>
+                            <button
+                                class="px-md py-1.5 rounded-lg bg-surface-container text-on-surface-variant font-label-sm hover:text-on-surface transition-colors">Edit
+                                Dosage</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Past Prescriptions History Table -->
+
+            <div
+                class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-outline-variant/20">
+                <div class="p-md sm:p-lg border-b border-outline-variant/20 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-title-md text-title-md text-on-surface">Prescription History</h3>
+                        <p class="text-body-sm text-on-surface-variant">Archived prescription logs, completed courses,
+                            and modifications</p>
+                    </div>
+                    <span class="material-symbols-outlined text-outline-variant">history</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                            <tr
+                                class="bg-surface-container border-b border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                                <th class="py-md px-lg">Rx Number</th>
+                                <th class="py-md px-lg">Date Prescribed</th>
+                                <th class="py-md px-lg">Doctor</th>
+                                <th class="py-md px-lg">Diagnosis / Indications</th>
+                                <th class="py-md px-lg">Status</th>
+                                <th class="py-md px-lg text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/20 font-body-sm text-body-sm">
+                            {% for prescription in prescriptions %}
+
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="py-md px-lg font-mono font-medium text-primary">{{ prescription.prescription_id }}</td>
+                                <td class="py-md px-lg text-on-surface">{{ prescription.created_at|date:"d M Y" }}</td>
+                                <td class="py-md px-lg font-medium text-on-surface">Dr. {{ prescription.appointment.doctor.user.get_full_name }}</td>
+                                <td class="py-md px-lg text-on-surface">{{ prescription.diagnosis|linebreaksbr }}</td>
+                                <td class="py-md px-lg">
+                                    <span
+                                        class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">
+                                        {{ prescription.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="py-md px-lg text-right whitespace-nowrap">
+                                    <a class="text-primary hover:underline font-semibold font-label-sm inline-flex items-center gap-xs"
+                                        href="{% url 'prescriptions:detail' prescription.pk %}">
+                                        <span class="material-symbols-outlined text-[16px]">visibility</span> View
+                                        Prescription
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td colspan="6" class="py-md px-lg font-medium text-on-surface">No prescriptions recorded.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- TAB 5: BILLING PANEL -->
+        <div class="tab-panel hidden flex-col gap-lg" id="tab-billing">
+            <!-- Summary Stat Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
+                <div
+                    class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-on-surface-variant">
+                        <span class="font-label-sm uppercase tracking-wider">Total Invoiced</span>
+                        <span
+                            class="material-symbols-outlined text-primary bg-primary/10 p-sm rounded-lg">receipt_long</span>
+                    </div>
+                    <div class="mt-md">
+                        <div class="text-2xl sm:text-headline-lg font-bold text-on-surface leading-tight">₹{{ total_invoiced|floatformat:2 }}</div>
+                        <p class="text-xs text-on-surface-variant mt-xs">Across 4 medical encounters</p>
+                    </div>
+                </div>
+                <div
+                    class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-on-surface-variant">
+                        <span class="font-label-sm uppercase tracking-wider">Total Paid</span>
+                        <span
+                            class="material-symbols-outlined text-secondary bg-secondary/10 p-sm rounded-lg">check_circle</span>
+                    </div>
+                    <div class="mt-md">
+                        <div class="text-2xl sm:text-headline-lg font-bold text-secondary leading-tight">₹{{ total_paid|floatformat:2 }}</div>
+                        <p class="text-xs text-on-surface-variant mt-xs">Cleared via Insurance &amp; UPI</p>
+                    </div>
+                </div>
+                <div
+                    class="bg-surface-container-lowest rounded-2xl p-md sm:p-lg shadow-sm border border-outline-variant/20 flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-on-surface-variant">
+                        <span class="font-label-sm uppercase tracking-wider">Outstanding Due</span>
+                        <span
+                            class="material-symbols-outlined text-error bg-error/10 p-sm rounded-lg">pending_actions</span>
+                    </div>
+                    <div class="mt-md">
+                        <div class="text-2xl sm:text-headline-lg font-bold text-error leading-tight">₹{{ outstanding_due|floatformat:2 }}</div>
+                        <p class="text-xs text-on-surface-variant mt-xs">Due by Nov 15, 2023</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Invoices & Billing Table -->
+            <div
+                class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden border border-outline-variant/20">
+                <div
+                    class="p-md sm:p-lg border-b border-outline-variant/20 flex items-center justify-between flex-wrap gap-md">
+                    <div>
+                        <h3 class="font-title-md text-title-md text-on-surface">Recent Invoices &amp; Payments</h3>
+                        <p class="text-body-sm text-on-surface-variant">Financial transactions, itemized charges, and
+                            payment receipts</p>
+                    </div>
+                    <div class="flex gap-sm w-full sm:w-auto">
+                        <button
+                            class="flex-1 sm:flex-initial flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-surface-container text-on-surface font-label-md hover:bg-surface-container-high transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">download</span> Export Statement
+                        </button>
+                        <button
+                            class="flex-1 sm:flex-initial flex items-center justify-center gap-xs px-md py-sm rounded-lg bg-primary text-on-primary font-label-md shadow hover:shadow-md transition-shadow">
+                            <span class="material-symbols-outlined text-[18px]">add_card</span> Record Payment
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                            <tr
+                                class="bg-surface-container border-b border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                                <th class="py-md px-lg">Bill ID</th>
+                                <th class="py-md px-lg">Appointment ID</th>
+                                <th class="py-md px-lg">Date</th>
+                                <th class="py-md px-lg">Total Amount</th>
+                                <th class="py-md px-lg">Paid Amount</th>
+                                <th class="py-md px-lg">Balance</th>
+                                <th class="py-md px-lg">Status</th>
+                                <th class="py-md px-lg text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/20 font-body-sm text-body-sm">
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="py-md px-lg font-mono font-medium text-primary">INV-2023-089</td>
+                                <td class="py-md px-lg font-mono text-on-surface-variant">#APT-2023-1012</td>
+                                <td class="py-md px-lg text-on-surface">Oct 12, 2023</td>
+                                <td class="py-md px-lg font-semibold text-on-surface">₹3,500</td>
+                                <td class="py-md px-lg text-secondary font-medium">₹1,500</td>
+                                <td class="py-md px-lg font-semibold text-error">₹2,000</td>
+                                <td class="py-md px-lg">
+                                    <span
+                                        class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-amber-100 text-amber-800">Partial</span>
+                                </td>
+                                <td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
+                                    <button
+                                        class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Receipt</button>
+                                    <button
+                                        class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View
+                                        Bill</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="py-md px-lg font-mono font-medium text-primary">INV-2023-074</td>
+                                <td class="py-md px-lg font-mono text-on-surface-variant">#APT-2023-0905</td>
+                                <td class="py-md px-lg text-on-surface">Sep 05, 2023</td>
+                                <td class="py-md px-lg font-semibold text-on-surface">₹4,000</td>
+                                <td class="py-md px-lg text-secondary font-medium">₹4,000</td>
+                                <td class="py-md px-lg font-semibold text-on-surface-variant">₹0</td>
+                                <td class="py-md px-lg">
+                                    <span
+                                        class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">Paid</span>
+                                </td>
+                                <td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
+                                    <button
+                                        class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Receipt</button>
+                                    <button
+                                        class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View
+                                        Bill</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="py-md px-lg font-mono font-medium text-primary">INV-2023-062</td>
+                                <td class="py-md px-lg font-mono text-on-surface-variant">#APT-2023-0815</td>
+                                <td class="py-md px-lg text-on-surface">Aug 15, 2023</td>
+                                <td class="py-md px-lg font-semibold text-on-surface">₹2,800</td>
+                                <td class="py-md px-lg text-secondary font-medium">₹2,800</td>
+                                <td class="py-md px-lg font-semibold text-on-surface-variant">₹0</td>
+                                <td class="py-md px-lg">
+                                    <span
+                                        class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">Paid</span>
+                                </td>
+                                <td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
+                                    <button
+                                        class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Receipt</button>
+                                    <button
+                                        class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View
+                                        Bill</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                <td class="py-md px-lg font-mono font-medium text-primary">INV-2023-039</td>
+                                <td class="py-md px-lg font-mono text-on-surface-variant">#APT-2023-0504</td>
+                                <td class="py-md px-lg text-on-surface">May 04, 2023</td>
+                                <td class="py-md px-lg font-semibold text-on-surface">₹2,200</td>
+                                <td class="py-md px-lg text-secondary font-medium">₹2,200</td>
+                                <td class="py-md px-lg font-semibold text-on-surface-variant">₹0</td>
+                                <td class="py-md px-lg">
+                                    <span
+                                        class="inline-flex px-sm py-0.5 rounded-full text-label-sm font-semibold bg-secondary/10 text-secondary">Paid</span>
+                                </td>
+                                <td class="py-md px-lg text-right space-x-xs whitespace-nowrap">
+                                    <button
+                                        class="px-sm py-1 rounded bg-surface-container text-on-surface font-label-sm hover:bg-surface-container-high transition-colors">Receipt</button>
+                                    <button
+                                        class="px-sm py-1 rounded bg-primary text-on-primary font-label-sm hover:bg-primary-container transition-colors">View
+                                        Bill</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script>
 
-function switchTab(targetTabId) {
-  // Update Tab buttons
-  const buttons = document.querySelectorAll('.tab-btn');
-  buttons.forEach(btn => {
-    const tab = btn.getAttribute('data-tab');
-    if (tab === targetTabId) {
-      btn.className = "tab-btn text-primary font-semibold border-b-2 border-primary pb-sm relative px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md";
-      btn.setAttribute('aria-selected', 'true');
-    } else {
-      btn.className = "tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md";
-      btn.setAttribute('aria-selected', 'false');
-    }
-  });
+    function switchTab(targetTabId) {
+        // Update Tab buttons
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(btn => {
+            const tab = btn.getAttribute('data-tab');
+            if (tab === targetTabId) {
+                btn.className = "tab-btn text-primary font-semibold border-b-2 border-primary pb-sm relative px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md";
+                btn.setAttribute('aria-selected', 'true');
+            } else {
+                btn.className = "tab-btn text-on-surface-variant hover:text-on-surface pb-sm px-xs transition-colors whitespace-nowrap text-body-sm sm:text-body-md";
+                btn.setAttribute('aria-selected', 'false');
+            }
+        });
 
-  // Update Tab panels
-  const panels = document.querySelectorAll('.tab-panel');
-  panels.forEach(panel => {
-    if (panel.id === 'tab-' + targetTabId) {
-      panel.classList.remove('hidden');
-    } else {
-      panel.classList.add('hidden');
+        // Update Tab panels
+        const panels = document.querySelectorAll('.tab-panel');
+        panels.forEach(panel => {
+            if (panel.id === 'tab-' + targetTabId) {
+                panel.classList.remove('hidden');
+            } else {
+                panel.classList.add('hidden');
+            }
+        });
     }
-  });
-}
 </script>
 
 <h2>Patient Details</h2>
@@ -914,20 +1015,14 @@ function switchTab(targetTabId) {
 
 </table>
 
-<a
-    href="{% url 'patients:update' patient.id %}"
-    class="btn btn-warning">
+<a href="{% url 'patients:update' patient.id %}" class="btn btn-warning">
     Edit Patient
 </a>
-<a
-    href="{% url 'patients:delete' patient.id %}"
-    class="btn btn-danger">
+<a href="{% url 'patients:delete' patient.id %}" class="btn btn-danger">
     Delete Patient
 </a>
 
-<a
-    href="{% url 'patients:list' %}"
-    class="btn btn-secondary">
+<a href="{% url 'patients:list' %}" class="btn btn-secondary">
     Back to Patient List
 </a>
 
@@ -993,9 +1088,7 @@ function switchTab(targetTabId) {
 
                 <td>
 
-                    <a
-                        href="{% url 'appointments:detail' appointment.pk %}"
-                        class="btn btn-sm btn-primary">
+                    <a href="{% url 'appointments:detail' appointment.pk %}" class="btn btn-sm btn-primary">
 
                         View
 

@@ -14,7 +14,8 @@ from .forms import PatientForm, PatientOwnProfileForm
 from .services import PatientService
 from core.decorators import role_required
 from accounts.choices import UserRole
-from prescriptions.models import Prescription
+from prescriptions.models import Prescription, PrescriptionStatus
+from billing.models import Payment
 
 
 @role_required(UserRole.PATIENT)
@@ -330,7 +331,6 @@ def patient_list(request):
     UserRole.RECEPTIONIST,
 )
 def patient_detail(request, pk):
-
     patient = get_object_or_404(
         Patient.objects.select_related("user"),
         pk=pk,
@@ -339,19 +339,70 @@ def patient_detail(request, pk):
     appointments = (
         patient.appointments
         .select_related("doctor__user")
-        .order_by(
-            "-appointment_date",
-            "-appointment_time",
-        )
+        .order_by("-appointment_date", "-appointment_time")
     )
+
+    recent_appointments = appointments[:5]
+
+    prescriptions = (
+        Prescription.objects
+        .filter(appointment__patient=patient)
+        .select_related(
+            "appointment",
+            "appointment__doctor__user",
+        )
+        .prefetch_related("medicines")
+        .order_by("-created_at")
+    )
+
+    active_prescriptions = prescriptions.filter(
+        status=PrescriptionStatus.ACTIVE,
+    )
+
+    bills = (
+        patient.bills
+        .select_related(
+            "appointment",
+            "appointment__doctor__user",
+        )
+        .prefetch_related("payments")
+        .order_by("-bill_date")
+    )
+
+    total_invoiced = (
+        bills.aggregate(total=Sum("total_amount"))["total"]
+        or Decimal("0.00")
+    )
+
+    total_paid = (
+        Payment.objects
+        .filter(billing__patient=patient)
+        .aggregate(total=Sum("amount"))["total"]
+        or Decimal("0.00")
+    )
+
+    outstanding_due = max(
+        total_invoiced - total_paid,
+        Decimal("0.00"),
+    )
+
+    context = {
+        "patient": patient,
+        "appointments": appointments,
+        "recent_appointments": recent_appointments,
+        "prescriptions": prescriptions,
+        "active_prescriptions": active_prescriptions,
+        "bills": bills,
+        "total_invoiced": total_invoiced,
+        "total_paid": total_paid,
+        "outstanding_due": outstanding_due,
+        "bill_count": bills.count(),
+    }
 
     return render(
         request,
         "patients/detail.html",
-        {
-            "patient": patient,
-            "appointments": appointments,
-        },
+        context,
     )
 
 

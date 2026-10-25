@@ -1,0 +1,2 @@
+# patient/detail.html
+1. reschedule button 
