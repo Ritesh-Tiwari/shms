@@ -1,6 +1,7 @@
 from datetime import date, time, timedelta
 from decimal import Decimal
 from django.test import TestCase
+from django.urls import reverse
 from accounts.models import User
 from accounts.choices import UserRole
 from patients.models import Patient
@@ -70,3 +71,25 @@ class AppointmentServiceTests(TestCase):
         appointment = self.create_appointment(status=AppointmentStatus.CANCELLED)
         with self.assertRaises(ValueError):
             AppointmentService.update_status(appointment, AppointmentStatus.COMPLETED)
+
+    def test_appointment_search_works_with_all_status_filter(self):
+        appointment = self.create_appointment()
+        admin = User.objects.create_user(
+            username="apptadmin",
+            email="apptadmin@example.com",
+            password="StrongPassword123!",
+            role=UserRole.ADMIN,
+        )
+        self.client.force_login(admin)
+
+        response = self.client.get(
+            reverse("appointments:list"),
+            {"search": appointment.appointment_id, "status": "all"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["page_obj"].paginator.count, 1)
+        self.assertEqual(
+            response.context["page_obj"].object_list[0],
+            appointment,
+        )

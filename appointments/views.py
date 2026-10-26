@@ -137,6 +137,8 @@ def appointment_list(request):
         "status",
         "",
     ).strip()
+    if status == "all":
+        status = ""
 
     date = request.GET.get(
         "date",
