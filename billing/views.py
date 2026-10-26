@@ -125,7 +125,9 @@ def create_bill(request, appointment_id):
 
 @role_required(
     UserRole.ADMIN,
+    UserRole.RECEPTIONIST,
     UserRole.DOCTOR,
+
 )
 def billing_detail(request, pk):
 

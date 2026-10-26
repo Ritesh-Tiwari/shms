@@ -1,7 +1,8 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.db import transaction, IntegrityError
-from django.db.models import Q, Prefetch, Sum
+from django.db.models import Q, Prefetch, Sum, DecimalField, ExpressionWrapper, F, Value
+from django.db.models.functions import Coalesce
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
@@ -355,9 +356,7 @@ def patient_detail(request, pk):
         .order_by("-created_at")
     )
 
-    active_prescriptions = prescriptions.filter(
-        status=PrescriptionStatus.ACTIVE,
-    )
+    money = DecimalField(max_digits=10, decimal_places=2)
 
     bills = (
         patient.bills
@@ -365,12 +364,24 @@ def patient_detail(request, pk):
             "appointment",
             "appointment__doctor__user",
         )
-        .prefetch_related("payments")
+        .annotate(
+            paid_amount=Coalesce(
+                Sum("payments__amount"),
+                Value(Decimal("0.00"), output_field=money),
+                output_field=money,
+            ),
+        )
+        .annotate(
+            balance_amount=ExpressionWrapper(
+                F("total_amount") - F("paid_amount"),
+                output_field=money,
+            ),
+        )
         .order_by("-bill_date")
     )
 
     total_invoiced = (
-        bills.aggregate(total=Sum("total_amount"))["total"]
+        patient.bills.aggregate(total=Sum("total_amount"))["total"]
         or Decimal("0.00")
     )
 
@@ -391,7 +402,6 @@ def patient_detail(request, pk):
         "appointments": appointments,
         "recent_appointments": recent_appointments,
         "prescriptions": prescriptions,
-        "active_prescriptions": active_prescriptions,
         "bills": bills,
         "total_invoiced": total_invoiced,
         "total_paid": total_paid,
