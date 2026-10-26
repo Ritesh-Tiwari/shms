@@ -1,5 +1,320 @@
 {% extends "base.html" %}
 
+{% block title %}Appointments | SHMS{% endblock %}
+
+{% block content %}
+<div class="mx-auto flex w-full max-w-[1600px] flex-col gap-6 p-4 sm:p-6 lg:p-8">
+
+    {# Page heading #}
+    <section class="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-on-background sm:text-4xl">Appointments</h1>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-on-surface-variant sm:text-base">
+                Keep every visit on schedule. Review bookings, check patient details, and manage appointment status.
+            </p>
+        </div>
+
+        {% if request.user.role == "ADMIN" or request.user.role == "RECEPTIONIST" %}
+        <a href="{% url 'appointments:create' %}"
+           class="group inline-flex items-center justify-center gap-2 self-start rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-900/10 transition hover:-translate-y-0.5 hover:bg-primary-container focus:outline-none focus:ring-4 focus:ring-primary/20">
+            <span class="material-symbols-outlined text-[20px]">add</span>
+            Book appointment
+            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-0.5">arrow_forward</span>
+        </a>
+        {% endif %}
+    </section>
+
+    {# Summary strip: based on the queryset already returned by the backend #}
+    <section class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <a href="{% url 'appointments:list' %}"
+           class="group flex items-center gap-4 rounded-2xl border border-outline-variant/40 bg-surface-container-lowest p-4 shadow-sm transition hover:border-primary/40 hover:shadow-md">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-2xl">event_note</span>
+            </span>
+            <span class="min-w-0">
+                <span class="block text-sm text-on-surface-variant">All appointments</span>
+                <span class="mt-0.5 block text-2xl font-bold text-on-background">{{ page_obj.paginator.count|default:0 }}</span>
+            </span>
+            <span class="material-symbols-outlined ml-auto text-slate-300 transition group-hover:translate-x-1 group-hover:text-primary">chevron_right</span>
+        </a>
+
+        <a href="?status=SCHEDULED{% if search %}&search={{ search|urlencode }}{% endif %}{% if date %}&date={{ date|urlencode }}{% endif %}"
+           class="group flex items-center gap-4 rounded-2xl border border-outline-variant/40 bg-surface-container-lowest p-4 shadow-sm transition hover:border-amber-300 hover:shadow-md">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
+                <span class="material-symbols-outlined text-2xl">pending_actions</span>
+            </span>
+            <span class="min-w-0">
+                <span class="block text-sm text-on-surface-variant">Scheduled</span>
+                <span class="mt-0.5 block text-sm font-semibold text-on-background">View scheduled visits</span>
+            </span>
+            <span class="material-symbols-outlined ml-auto text-slate-300 transition group-hover:translate-x-1 group-hover:text-amber-700">chevron_right</span>
+        </a>
+
+        <a href="?status=COMPLETED{% if search %}&search={{ search|urlencode }}{% endif %}{% if date %}&date={{ date|urlencode }}{% endif %}"
+           class="group flex items-center gap-4 rounded-2xl border border-outline-variant/40 bg-surface-container-lowest p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                <span class="material-symbols-outlined text-2xl">task_alt</span>
+            </span>
+            <span class="min-w-0">
+                <span class="block text-sm text-on-surface-variant">Completed</span>
+                <span class="mt-0.5 block text-sm font-semibold text-on-background">View completed visits</span>
+            </span>
+            <span class="material-symbols-outlined ml-auto text-slate-300 transition group-hover:translate-x-1 group-hover:text-emerald-700">chevron_right</span>
+        </a>
+    </section>
+
+    {# Search and filters use the existing GET parameters in appointment_list #}
+    <section class="overflow-hidden rounded-2xl border border-outline-variant/40 bg-surface-container-lowest shadow-sm">
+        <div
+            class="p-3 sm:p-4  border border-outline-variant/30 shadow-xs space-y-3">
+            <!-- Working Filter Toolbar -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <div class="flex flex-wrap items-center gap-2.5 flex-1 min-w-[280px]">
+                    <div class="relative min-w-[170px]">
+                        <span class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">search</span>
+                        <input type="search" name="search" value="{{ search }}" placeholder="Search appointments..."
+                            class="w-full rounded-xl border border-outline-variant/50 bg-surface px-10 py-2.5 text-sm text-on-surface outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10">
+                      </div>
+                    <!-- Doctor Select Filter -->
+                    <div class="relative min-w-[170px]">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[17px]">medical_services</span>
+                        <select
+                            class="w-full appearance-none bg-surface-container-low hover:bg-surface-container text-xs font-medium text-on-surface rounded-xl pl-9 pr-8 py-2 border border-outline-variant/30 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer"
+                            id="filter-doctor" onchange="applyFilters()">
+                            <option value="all">All Doctors</option>
+                            <option value="Dr. Sarah Wilson">Dr. Sarah Wilson</option>
+                            <option value="Dr. James Chen">Dr. James Chen</option>
+                            <option value="Dr. Emily Reyes">Dr. Emily Reyes</option>
+                        </select>
+                        <span
+                            class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">arrow_drop_down</span>
+                    </div>
+                   
+                    <!-- Status Filter -->
+                    <div class="relative min-w-[140px]">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[17px]">filter_alt</span>
+                        <select
+                            class="w-full appearance-none bg-surface-container-low hover:bg-surface-container text-xs font-medium text-on-surface rounded-xl pl-9 pr-8 py-2 border border-outline-variant/30 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer"
+                            id="filter-status" onchange="applyFilters()">
+                            <option value="all">All Statuses</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Waiting">Waiting</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Discharged">Discharged</option>
+                        </select>
+                        <span
+                            class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">arrow_drop_down</span>
+                    </div>
+                    <!-- Reset Filter Button -->
+                    <button
+                        class="px-2.5 py-2 text-xs font-medium text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-xl transition-colors flex items-center gap-1"
+                        onclick="resetFilters()" title="Reset all filters">
+                        <span class="material-symbols-outlined text-[16px]">restart_alt</span> Reset
+                    </button>
+                </div>
+                <!-- Quick status counter -->
+                <div class="text-xs font-medium text-on-surface-variant">
+                    Showing <span class="font-bold text-on-surface" id="visible-count">12</span> items
+                </div>
+            </div>
+        </div>
+        {% comment %} <div class="flex flex-col gap-4 border-b border-outline-variant/30 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+            <form method="get" action="{% url 'appointments:list' %}" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap">
+                <label class="relative block min-w-0 lg:w-64">
+                    <span class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">search</span>
+                    <input type="search" name="search" value="{{ search }}" placeholder="Search appointments..."
+                           class="w-full rounded-xl border border-outline-variant/50 bg-surface px-10 py-2.5 text-sm text-on-surface outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10">
+                </label>
+                <label class="relative block min-w-0 lg:w-44">
+                    <span class="sr-only">Filter by status</span>
+                    <select name="status" class="w-full appearance-none rounded-xl border border-outline-variant/50 bg-surface px-3 py-2.5 pr-9 text-sm text-on-surface outline-none focus:border-primary focus:ring-4 focus:ring-primary/10">
+                        <option value="">All statuses</option>
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">expand_more</span>
+                </label>
+                <label class="relative block min-w-0">
+                    <span class="sr-only">Filter by appointment date</span>
+                    <input type="date" name="date" value="{{ date }}"
+                           class="w-full rounded-xl border border-outline-variant/50 bg-surface px-3 py-2.5 text-sm text-on-surface outline-none focus:border-primary focus:ring-4 focus:ring-primary/10">
+                </label>
+                <div class="flex gap-2">
+                    <button type="submit" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-container sm:flex-none">
+                        <span class="material-symbols-outlined text-[18px]">tune</span>Apply
+                    </button>
+                    <a href="{% url 'appointments:list' %}" class="inline-flex items-center justify-center rounded-xl border border-outline-variant/50 px-3 py-2.5 text-sm font-medium text-on-surface-variant transition hover:bg-surface-container-low" title="Clear filters">
+                        <span class="material-symbols-outlined text-[19px]">restart_alt</span>
+                    </a>
+                </div>
+            </form>
+        </div> {% endcomment %}
+
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-surface-container-low/60 px-4 py-3 sm:px-5">
+            <p class="text-sm text-on-surface-variant">
+                Showing
+                <span class="font-semibold text-on-surface">{% if page_obj.paginator.count %}{{ page_obj.start_index }}–{{ page_obj.end_index }}{% else %}0{% endif %}</span>
+                of <span class="font-semibold text-on-surface">{{ page_obj.paginator.count }}</span> appointments
+            </p>
+            {% if status or date or search %}
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                <span class="material-symbols-outlined text-[15px]">filter_alt</span> Filters active
+            </span>
+            {% endif %}
+        </div>
+
+        {# Desktop table #}
+        <div class="hidden overflow-x-auto md:block">
+            <table class="w-full min-w-[850px] border-collapse text-left">
+                <thead class="bg-surface-container-low/70">
+                    <tr class="text-[11px] font-bold uppercase tracking-[0.12em] text-on-surface-variant">
+                        <th class="px-5 py-3.5">Patient / Appointment</th>
+                        <th class="px-5 py-3.5">Doctor</th>
+                        <th class="px-5 py-3.5">Date &amp; time</th>
+                        <th class="px-5 py-3.5">Reason for visit</th>
+                        <th class="px-5 py-3.5">Status</th>
+                        <th class="px-5 py-3.5 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/25">
+                    {% for appointment in page_obj %}
+                    <tr class="group transition hover:bg-primary/[0.025]">
+                        <td class="px-5 py-4">
+                            <div class="flex items-center gap-3">
+                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary">
+                                    {{ appointment.patient.user.first_name|default:appointment.patient.user.username|slice:":1"|upper }}{{ appointment.patient.user.last_name|slice:":1"|upper }}
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block font-semibold text-on-background">{{ appointment.patient.user.get_full_name|default:appointment.patient.user.username }}</span>
+                                    <span class="mt-0.5 block text-xs text-on-surface-variant">{{ appointment.appointment_id }} · {{ appointment.patient.patient_id }}</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-5 py-4">
+                            <span class="block text-sm font-medium text-on-surface">Dr. {{ appointment.doctor.user.get_full_name|default:appointment.doctor.user.username }}</span>
+                            <span class="mt-1 block text-xs text-on-surface-variant">{{ appointment.doctor.specialization|default:"Medical practitioner" }}</span>
+                        </td>
+                        <td class="px-5 py-4">
+                            <span class="block whitespace-nowrap text-sm font-semibold text-on-surface">{{ appointment.appointment_date|date:"d M Y" }}</span>
+                            <span class="mt-1 flex items-center gap-1 whitespace-nowrap text-xs text-on-surface-variant">
+                                <span class="material-symbols-outlined text-[15px]">schedule</span>{{ appointment.appointment_time|time:"h:i A" }}
+                            </span>
+                        </td>
+                        <td class="max-w-[220px] px-5 py-4">
+                            <span class="block truncate text-sm text-on-surface" title="{{ appointment.reason_for_visit }}">{{ appointment.reason_for_visit|default:"—" }}</span>
+                        </td>
+                        <td class="px-5 py-4">
+                            {% if appointment.status == "COMPLETED" %}
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>Completed</span>
+                            {% elif appointment.status == "CANCELLED" %}
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-700"><span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>Cancelled</span>
+                            {% elif appointment.status == "CONFIRMED" %}
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-700"><span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>Confirmed</span>
+                            {% else %}
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700"><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>{{ appointment.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-5 py-4 text-right">
+                            <a href="{% url 'appointments:detail' appointment.pk %}" class="inline-flex items-center gap-1 rounded-lg border border-outline-variant/50 px-3 py-2 text-xs font-semibold text-on-surface transition hover:border-primary/40 hover:bg-primary/5 hover:text-primary">
+                                View <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-16 text-center">
+                            <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container text-on-surface-variant">
+                                <span class="material-symbols-outlined text-3xl">event_busy</span>
+                            </span>
+                            <h3 class="mt-4 text-base font-semibold text-on-background">No appointments found</h3>
+                            <p class="mx-auto mt-1 max-w-sm text-sm text-on-surface-variant">Try changing your search or filters. Appointments matching your criteria will appear here.</p>
+                            <a href="{% url 'appointments:list' %}" class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">Clear all filters <span class="material-symbols-outlined text-[17px]">arrow_forward</span></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# Responsive cards for small screens #}
+        <div class="grid grid-cols-1 gap-3 p-3 sm:p-4 md:hidden">
+            {% for appointment in page_obj %}
+            <article class="rounded-xl border border-outline-variant/35 bg-surface p-4">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex min-w-0 items-center gap-3">
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-bold text-primary">
+                            {{ appointment.patient.user.first_name|default:appointment.patient.user.username|slice:":1"|upper }}{{ appointment.patient.user.last_name|slice:":1"|upper }}
+                        </span>
+                        <div class="min-w-0">
+                            <h3 class="truncate font-semibold text-on-background">{{ appointment.patient.user.get_full_name|default:appointment.patient.user.username }}</h3>
+                            <p class="mt-0.5 text-xs text-on-surface-variant">{{ appointment.appointment_id }}</p>
+                        </div>
+                    </div>
+                    {% if appointment.status == "COMPLETED" %}
+                    <span class="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">Completed</span>
+                    {% elif appointment.status == "CANCELLED" %}
+                    <span class="shrink-0 rounded-full bg-rose-50 px-2 py-1 text-[11px] font-semibold text-rose-700">Cancelled</span>
+                    {% elif appointment.status == "CONFIRMED" %}
+                    <span class="shrink-0 rounded-full bg-blue-50 px-2 py-1 text-[11px] font-semibold text-blue-700">Confirmed</span>
+                    {% else %}
+                    <span class="shrink-0 rounded-full bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700">{{ appointment.get_status_display }}</span>
+                    {% endif %}
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-3 rounded-lg bg-surface-container-low p-3">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Date &amp; time</p>
+                        <p class="mt-1 text-sm font-semibold text-on-surface">{{ appointment.appointment_date|date:"d M Y" }}</p>
+                        <p class="mt-0.5 text-xs text-on-surface-variant">{{ appointment.appointment_time|time:"h:i A" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Doctor</p>
+                        <p class="mt-1 line-clamp-2 text-sm font-medium text-on-surface">Dr. {{ appointment.doctor.user.get_full_name|default:appointment.doctor.user.username }}</p>
+                    </div>
+                </div>
+                <p class="mt-3 line-clamp-2 text-sm text-on-surface-variant">{{ appointment.reason_for_visit|default:"No visit reason provided." }}</p>
+                <a href="{% url 'appointments:detail' appointment.pk %}" class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-outline-variant/50 py-2.5 text-sm font-semibold text-primary transition hover:bg-primary/5">
+                    View appointment <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </a>
+            </article>
+            {% empty %}
+            <div class="py-12 text-center">
+                <span class="material-symbols-outlined text-4xl text-slate-300">event_busy</span>
+                <h3 class="mt-3 font-semibold text-on-background">No appointments found</h3>
+                <p class="mt-1 text-sm text-on-surface-variant">Try clearing or adjusting the filters.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        {# Pagination preserves active filters #}
+        {% if page_obj.paginator.num_pages > 1 %}
+        <nav aria-label="Appointment pages" class="flex flex-col gap-3 border-t border-outline-variant/30 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+            <p class="text-xs text-on-surface-variant">Page <span class="font-semibold text-on-surface">{{ page_obj.number }}</span> of <span class="font-semibold text-on-surface">{{ page_obj.paginator.num_pages }}</span></p>
+            <div class="flex items-center gap-2">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&search={{ search|urlencode }}&status={{ status|urlencode }}&date={{ date|urlencode }}" class="inline-flex items-center gap-1 rounded-lg border border-outline-variant/50 px-3 py-2 text-sm font-medium text-on-surface transition hover:bg-surface-container-low"><span class="material-symbols-outlined text-[18px]">chevron_left</span>Previous</a>
+                {% else %}
+                <span class="inline-flex cursor-not-allowed items-center gap-1 rounded-lg border border-outline-variant/30 px-3 py-2 text-sm text-slate-400"><span class="material-symbols-outlined text-[18px]">chevron_left</span>Previous</span>
+                {% endif %}
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&search={{ search|urlencode }}&status={{ status|urlencode }}&date={{ date|urlencode }}" class="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white transition hover:bg-primary-container">Next <span class="material-symbols-outlined text-[18px]">chevron_right</span></a>
+                {% else %}
+                <span class="inline-flex cursor-not-allowed items-center gap-1 rounded-lg bg-slate-100 px-3 py-2 text-sm text-slate-400">Next <span class="material-symbols-outlined text-[18px]">chevron_right</span></span>
+                {% endif %}
+            </div>
+        </nav>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}
+
+
+
+{% comment %} {% extends "base.html" %}
+
 {% block title %}
 Appointments
 {% endblock %}
@@ -391,7 +706,7 @@ Appointments
     </script>
 
 
-{% comment %} old page {% endcomment %}
+old page
 <h3 class="mb-4">
     Appointments
 </h3>
@@ -562,4 +877,4 @@ Appointments
 </a>
 
 {% endif %}
-{% endblock %}
+{% endblock %} {% endcomment %}
