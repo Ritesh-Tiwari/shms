@@ -1,18 +1,20 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.paginator import Paginator
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from decimal import Decimal
 
 from appointments.models import Appointment, AppointmentStatus
 from core.decorators import role_required
 from accounts.choices import UserRole
 from patients.models import Patient
-
+from doctors.models import Doctor
+from billing.models import Billing, Payment
 
 User = get_user_model()
 
@@ -248,18 +250,41 @@ def dashboard(request):
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    total_doctors = Doctor.objects.count()
+
+    total_revenue = (
+        Payment.objects.aggregate(
+            total=Sum("amount")
+        )["total"]
+        or Decimal("0.00")
+    )
+
+    total_billed = (
+        Billing.objects.aggregate(
+            total=Sum("total_amount")
+        )["total"]
+        or Decimal("0.00")
+    )
+
+    pending_confirmations = Appointment.objects.filter(
+        appointment_date=today,
+        status=AppointmentStatus.SCHEDULED,
+    ).count()
 
     context = {
         "total_patients": total_patients,
-        "total_doctors": 20,
+        "total_doctors": total_doctors,
         "total_appointments": today_appointments,
-        "total_revenue": 20000,
+        "total_revenue": total_revenue,
+        "total_billed": total_billed,
+        "pending_confirmations": pending_confirmations,
         "page_obj": page_obj,
         "search": search,
         "status": status,
         "date": date,
         "status_choices": AppointmentStatus.choices,
     }
+
 
     return render(
         request,

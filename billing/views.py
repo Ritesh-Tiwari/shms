@@ -50,10 +50,9 @@ def create_bill(request, appointment_id):
 
     # Only the assigned doctor can create the bill.
     if (
-        request.user != appointment.doctor.user
-        and not request.user.is_superuser
+        request.user.role != UserRole.ADMIN
+        and request.user != appointment.doctor.user
     ):
-
         messages.error(
             request,
             "You do not have permission "
@@ -187,8 +186,8 @@ def create_payment(request, billing_id):
 
     # Only the assigned doctor or admin can record payment.
     if (
-        request.user != billing.appointment.doctor.user
-        and not request.user.is_superuser
+        request.user.role != UserRole.ADMIN
+        and request.user != billing.appointment.doctor.user
     ):
 
         messages.error(

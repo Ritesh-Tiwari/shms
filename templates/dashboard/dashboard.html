@@ -64,7 +64,7 @@ Dashboard
                     </div>
                 </div>
                 <div class="mt-md flex items-center gap-xs text-on-surface-variant relative z-10">
-                    <span class="font-label-md text-label-md">8 pending confirmation</span>
+                    <span class="font-label-md text-label-md">{{ pending_confirmations }} pending confirmation</span>
                 </div>
             </div>
             <div
@@ -95,8 +95,8 @@ Dashboard
                 <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
                     <div class="p-lg flex justify-between items-center bg-surface-container-lowest relative z-10">
                         <h3 class="font-title-md text-title-md text-on-surface">Today's Appointments</h3>
-                        <button class="text-primary font-label-md text-label-md hover:underline">View
-                            All</button>
+                        <a href="{% url 'appointments:list' %}" class="text-primary font-label-md text-label-md hover:underline">View
+                            All</a>
                     </div>
                     <div class="overflow-x-auto flex-1">
                         <table class="w-full text-left border-collapse min-w-[600px]">

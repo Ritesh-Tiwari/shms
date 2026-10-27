@@ -3,6 +3,9 @@ from django.db.models.aggregates import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
 
 from accounts.choices import UserRole
 from appointments.models import Appointment, AppointmentStatus
@@ -327,3 +330,117 @@ def my_prescription_detail(request, pk):
             "no_of_medicines": prescription.no_of_medicines,
         },
     )
+
+@role_required(
+    UserRole.ADMIN,
+    UserRole.DOCTOR,
+    UserRole.PATIENT,
+)
+def prescription_pdf(request, pk):
+    prescription = get_object_or_404(
+        Prescription.objects.select_related(
+            "appointment__patient__user",
+            "appointment__doctor__user",
+        ).prefetch_related("medicines"),
+        pk=pk,
+    )
+
+    appointment = prescription.appointment
+
+    # Patients can download only their own prescriptions.
+    if (
+        request.user.role == UserRole.PATIENT
+        and appointment.patient.user_id != request.user.id
+    ):
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied
+
+    # Doctors can download only prescriptions for their appointments.
+    if (
+        request.user.role == UserRole.DOCTOR
+        and appointment.doctor.user_id != request.user.id
+    ):
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied
+
+    response = HttpResponse(
+        content_type="application/pdf"
+    )
+
+    response["Content-Disposition"] = (
+        f'attachment; filename="{prescription.prescription_id}.pdf"'
+    )
+
+    pdf = canvas.Canvas(
+        response,
+        pagesize=A4,
+    )
+
+    width, height = A4
+    y = height - 50
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(50, y, "Smart Health Management System")
+    y -= 35
+
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(50, y, "Prescription")
+    y -= 30
+
+    pdf.setFont("Helvetica", 10)
+
+    patient = appointment.patient
+    doctor = appointment.doctor
+
+    details = [
+        f"Prescription ID: {prescription.prescription_id}",
+        f"Patient: {patient.user.get_full_name()}",
+        f"Patient ID: {patient.patient_id}",
+        f"Doctor: Dr. {doctor.user.get_full_name()}",
+        f"Appointment ID: {appointment.appointment_id}",
+        f"Date: {prescription.created_at:%d-%m-%Y}",
+        f"Status: {prescription.get_status_display()}",
+        f"Diagnosis: {prescription.diagnosis}",
+        f"Remarks: {prescription.remarks or 'None'}",
+    ]
+
+    for line in details:
+        if y < 80:
+            pdf.showPage()
+            pdf.setFont("Helvetica", 10)
+            y = height - 50
+
+        pdf.drawString(50, y, line[:110])
+        y -= 20
+
+    y -= 10
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Medicines")
+    y -= 25
+
+    pdf.setFont("Helvetica", 10)
+
+    for medicine in prescription.medicines.all():
+        lines = [
+            f"Medicine: {medicine.medicine_name}",
+            f"Dosage: {medicine.dosage}",
+            f"Frequency: {medicine.frequency}",
+            f"Duration: {medicine.duration}",
+            f"Instructions: {medicine.instructions or 'None'}",
+        ]
+
+        for line in lines:
+            if y < 60:
+                pdf.showPage()
+                pdf.setFont("Helvetica", 10)
+                y = height - 50
+
+            pdf.drawString(50, y, line[:110])
+            y -= 17
+
+        y -= 8
+
+    pdf.save()
+
+    return response

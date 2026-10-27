@@ -42,5 +42,10 @@ urlpatterns = [
         views.update_prescription,
         name="update",
     ),
+    path(
+        "<int:pk>/pdf/",
+        views.prescription_pdf,
+        name="pdf",
+    ),
     
 ]

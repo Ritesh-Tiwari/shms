@@ -16,21 +16,27 @@ Prescription Details
                     <div class="flex items-center gap-2">
                         <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
                             Prescription {{ prescription.prescription_id }}</h1>
-                            {% if prescription.is_active %}
-                            <span
-                            class="px-2.5 py-0.5 rounded-full bg-secondary-container/30 text-secondary font-label-sm text-label-sm font-bold">Active</span>
-                            {% endif %}
+                        {% if prescription.status == "ACTIVE" %}
+                            <span class="px-2.5 py-0.5 rounded-full bg-secondary-container/30 text-secondary font-label-sm text-label-sm font-bold">Active</span>
+                        {% elif prescription.status == "COMPLETED" %}
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-label-sm text-label-sm font-bold">Completed</span>
+                        {% endif %}
                     </div>
                     <p class="font-body-sm text-body-sm text-on-surface-variant">Issued by Dr. {{ prescription.appointment.doctor.user.get_full_name }} on
                         {{ prescription.created_at|date:"d M Y" }}</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2.5 no-print"><button onclick="window.print()"
+            <div class="flex items-center gap-2.5 no-print">
+                <button onclick="window.print()"
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-lowest border border-slate-200/80 hover:bg-surface-container-low text-on-surface font-label-md text-label-md transition-colors"><span
-                        class="material-symbols-outlined text-[18px]">print</span><span>Print</span></button><button onclick="generatePDF()"
+                        class="material-symbols-outlined text-[18px]">print</span><span>Print</span>
+                </button>
+                <a href="{% url 'prescriptions:pdf' prescription.pk %}"
                     class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container shadow-sm font-label-md text-label-md transition-all"><span
-                        class="material-symbols-outlined text-[18px]">download</span><span>Download
-                        PDF</span></button></div>
+                    class="material-symbols-outlined text-[18px]">download</span><span>Download
+                    PDF</span>
+                </a>
+            </div>
         </div>
         <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-slate-100 p-5 sm:p-6">
             <div class="flex items-center gap-2 pb-4 mb-5 border-b border-surface-container"><span
