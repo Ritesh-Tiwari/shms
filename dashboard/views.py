@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.paginator import Paginator
 from django.utils import timezone
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum,Count
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,6 +15,8 @@ from accounts.choices import UserRole
 from patients.models import Patient
 from doctors.models import Doctor
 from billing.models import Billing, Payment
+from security_audit.models import AuditLog
+from security_audit.services import log_security_event
 
 User = get_user_model()
 
@@ -165,6 +167,16 @@ def toggle_account_status(request, pk):
 
     account.is_active = not account.is_active
     account.save(update_fields=["is_active"])
+    log_security_event(
+        request,
+        action=(
+            "ACCOUNT_ACTIVATED"
+            if account.is_active
+            else "ACCOUNT_DEACTIVATED"
+        ),
+        outcome=AuditLog.Outcome.SUCCESS,
+        target_user=account,
+    )
 
     status = "activated" if account.is_active else "deactivated"
 
@@ -271,6 +283,66 @@ def dashboard(request):
         status=AppointmentStatus.SCHEDULED,
     ).count()
 
+     # --------------------------------------------------
+    # Appointment Status Chart: database-driven values
+    # --------------------------------------------------
+
+    # Independent of the appointment table's search/date/status filters.
+    status_counts = {
+        item["status"]: item["total"]
+        for item in Appointment.objects.values("status").annotate(
+            total=Count("id")
+        )
+    }
+
+    completed_appointments = status_counts.get(
+        AppointmentStatus.COMPLETED, 0
+    )
+
+    cancelled_appointments = status_counts.get(
+        AppointmentStatus.CANCELLED, 0
+    )
+
+    # Scheduled and Confirmed appointments are grouped as Waiting.
+    waiting_appointments = (
+        status_counts.get(AppointmentStatus.SCHEDULED, 0)
+        + status_counts.get(AppointmentStatus.CONFIRMED, 0)
+    )
+
+    total_status_appointments = (
+        completed_appointments
+        + waiting_appointments
+        + cancelled_appointments
+    )
+
+    def percentage(count, total):
+        return round((count * 100 / total), 1) if total else 0
+
+    completed_percentage = percentage(
+        completed_appointments,
+        total_status_appointments,
+    )
+
+    waiting_percentage = percentage(
+        waiting_appointments,
+        total_status_appointments,
+    )
+
+    cancelled_percentage = percentage(
+        cancelled_appointments,
+        total_status_appointments,
+    )
+
+    # SVG dash offsets position each segment after the previous one.
+    completed_remainder = 100 - completed_percentage
+    waiting_remainder = 100 - waiting_percentage
+    cancelled_remainder = 100 - cancelled_percentage
+
+    waiting_offset = -completed_percentage
+    cancelled_offset = -(
+        completed_percentage + waiting_percentage
+    )
+
     context = {
         "total_patients": total_patients,
         "total_doctors": total_doctors,
@@ -283,6 +355,20 @@ def dashboard(request):
         "status": status,
         "date": date,
         "status_choices": AppointmentStatus.choices,
+
+        # Appointment Status chart values
+        "total_status_appointments": total_status_appointments,
+        "completed_appointments": completed_appointments,
+        "waiting_appointments": waiting_appointments,
+        "cancelled_appointments": cancelled_appointments,
+        "completed_percentage": completed_percentage,
+        "waiting_percentage": waiting_percentage,
+        "cancelled_percentage": cancelled_percentage,
+        "completed_remainder": completed_remainder,
+        "waiting_remainder": waiting_remainder,
+        "cancelled_remainder": cancelled_remainder,
+        "waiting_offset": waiting_offset,
+        "cancelled_offset": cancelled_offset,
     }
 
 

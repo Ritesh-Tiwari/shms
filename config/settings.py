@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'prescriptions',
     'billing',
     'receptionist',
+    "security_audit",
 
 ]
 

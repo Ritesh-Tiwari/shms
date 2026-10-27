@@ -119,66 +119,81 @@ def my_appointments(request):
             'all_count': all_count,
         },
     )
-
 @role_required(
     UserRole.ADMIN,
     UserRole.DOCTOR,
     UserRole.RECEPTIONIST,
 )
 def appointment_list(request):
-    doctor_id = request.GET.get('doctor')
 
-    search = request.GET.get(
-        "search",
-        "",
-    ).strip()
+    # Read existing filters
+    search = request.GET.get("search", "").strip()
+    status = request.GET.get("status", "").strip()
+    selected_date = request.GET.get("date", "").strip()
+    doctor_id = request.GET.get("doctor", "").strip()
 
-    status = request.GET.get(
-        "status",
-        "",
-    ).strip()
     if status == "all":
         status = ""
 
-    date = request.GET.get(
-        "date",
-        "",
-    ).strip()
+    # Available doctors for the filter dropdown
+    doctors = (
+        Doctor.objects
+        .select_related("user")
+        .order_by("doctor_id")
+    )
 
+    # Base appointment queryset
     appointments = Appointment.objects.select_related(
         "patient__user",
         "doctor__user",
     )
 
-    # Doctor → only their own appointments
+    # Doctors can access only their own appointments.
+    # They cannot use the doctor filter to view another doctor's records.
     if request.user.role == UserRole.DOCTOR:
+
         appointments = appointments.filter(
             doctor__user=request.user,
         )
 
-    # Search
+        doctor_id = ""
+
+        # Do not show the doctor filter to doctors.
+        doctors = Doctor.objects.none()
+
+    else:
+
+        # Apply doctor filter only for ADMIN and RECEPTIONIST.
+        if doctor_id:
+
+            if (
+                doctor_id.isdigit()
+                and doctors.filter(pk=doctor_id).exists()
+            ):
+                appointments = appointments.filter(
+                    doctor_id=int(doctor_id),
+                )
+            else:
+                # Ignore invalid doctor IDs.
+                doctor_id = ""
+
+    # Search filter
     if search:
 
         appointments = appointments.filter(
-
             Q(appointment_id__icontains=search)
-
             | Q(
                 patient__user__first_name__icontains=search
             )
-
             | Q(
                 patient__user__last_name__icontains=search
             )
-
             | Q(
                 doctor__user__first_name__icontains=search
             )
-
             | Q(
                 doctor__user__last_name__icontains=search
             )
-
         )
 
     # Status filter
@@ -188,21 +203,20 @@ def appointment_list(request):
             status=status,
         )
 
-    # Date filter
-    if date:
+    # Appointment date filter
+    if selected_date:
 
         appointments = appointments.filter(
-            appointment_date=date,
+            appointment_date=selected_date,
         )
 
+    # Pagination
     paginator = Paginator(
         appointments,
         10,
     )
 
-    page_number = request.GET.get(
-        "page",
-    )
+    page_number = request.GET.get("page")
 
     page_obj = paginator.get_page(
         page_number,
@@ -215,12 +229,12 @@ def appointment_list(request):
             "page_obj": page_obj,
             "search": search,
             "status": status,
-            "date": date,
-            "doctor_id":doctor_id,
+            "date": selected_date,
+            "doctor_id": doctor_id,
+            "doctors": doctors,
             "status_choices": AppointmentStatus.choices,
         },
     )
-
 
 @role_required(
     UserRole.ADMIN,

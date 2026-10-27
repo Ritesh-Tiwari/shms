@@ -75,7 +75,8 @@
                     </div>
                     <!-- Role Select -->
                     <div class="lg:col-span-3 relative">
-                        <select name="role"
+                        <select onchange="this.form.submit()"
+                            name="role"
                             class="w-full appearance-none bg-surface-container-low rounded-lg py-2 pl-md pr-10 text-body-sm font-body-sm text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
                             <option value="">All roles</option>
                             {% for value, label in role_choices %}
@@ -90,7 +91,7 @@
                     </div>
                     <!-- Status Select -->
                     <div class="lg:col-span-2 relative">
-                        <select name="status"
+                        <select name="status" onchange="this.form.submit()"
                             class="w-full appearance-none bg-surface-container-low rounded-lg py-2 pl-md pr-10 text-body-sm font-body-sm text-on-surface outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
                             <option value="">All statuses</option>
                             <option value="active"
@@ -281,13 +282,24 @@
                             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                         </span>
                         
-                        {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}"
-                            class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-colors">
-                            <span class="">Next</span>
-                            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </a>
-                        {% endif %}
+                        <div class="flex items-center gap-xs">
+                            <!-- Previous Button -->
+                            {% if page_obj.has_previous %}
+                            <a href="?q={{ query|urlencode }}&amp;role={{ selected_role|urlencode }}&amp;status={{ selected_status|urlencode }}&amp;page={{ page_obj.previous_page_number }}"    class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+                                <span>Previous</span>
+                            </a>
+                            {% endif %}
+
+                            <!-- Next Button -->
+                            {% if page_obj.has_next %}
+                            <a href="?q={{ query|urlencode }}&amp;role={{ selected_role|urlencode }}&amp;status={{ selected_status|urlencode }}&amp;page={{ page_obj.next_page_number }}"
+                                class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-colors">
+                                <span>Next</span>
+                                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 {% endif %}

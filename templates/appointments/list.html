@@ -75,6 +75,44 @@
                         <input type="search" name="search" value="{{ search }}" placeholder="Search appointments..."
                             class="w-full appearance-none bg-surface-container-low hover:bg-surface-container text-xs font-medium text-on-surface rounded-xl pl-9 pr-8 py-2 border border-outline-variant/30 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer">
                     </div>
+                    <!-- Doctor Filter -->
+                    {% if doctors %}
+                    <div class="relative min-w-[170px]">
+
+                        <label for="filter-doctor" class="sr-only">
+                            Filter by doctor
+                        </label>
+
+                        <select
+                            name="doctor"
+                            id="filter-doctor"
+                            class="w-full appearance-none bg-surface-container-low hover:bg-surface-container text-xs font-medium text-on-surface rounded-xl px-3 py-2 pr-8 border border-outline-variant/30 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer"
+                            onchange="this.form.submit()"
+                        >
+
+                            <option value="">All Doctors</option>
+
+                            {% for doctor in doctors %}
+
+                                <option
+                                    value="{{ doctor.pk }}"
+                                    {% if doctor_id == doctor.pk|stringformat:"s" %}selected{% endif %}
+                                >
+                                    {{ doctor.user.get_full_name|default:doctor.user.username }}
+                                    ({{ doctor.doctor_id }})
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        <span
+                            class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">
+                            arrow_drop_down
+                        </span>
+
+                    </div>
+                    {% endif %}
                     
                     <!-- Status Filter -->
                     <div class="relative min-w-[140px]">
@@ -150,7 +188,7 @@
 
         <div class="flex flex-wrap items-center justify-between gap-3 bg-surface-container-low/60 px-4 py-3 sm:px-5">
             
-            {% if status or date or search %}
+            {% if status or date or search or doctor_id %}
             <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                 <span class="material-symbols-outlined text-[15px]">filter_alt</span> Filters active
             </span>
@@ -295,7 +333,7 @@
                 <div class="flex items-center gap-xs">
                     <!-- Previous Button -->
                     {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}"
+                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}{% if request.GET.doctor %}&doctor={{ request.GET.doctor }}{% endif %}"
                         class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-colors">
                         <span class="material-symbols-outlined text-[16px]">arrow_back</span>
                         <span>Previous</span>
@@ -304,7 +342,7 @@
 
                     <!-- Next Button -->
                     {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}"
+                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}{% if request.GET.doctor %}&doctor={{ request.GET.doctor }}{% endif %}"
                         class="flex items-center gap-xs px-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-colors">
                         <span>Next</span>
                         <span class="material-symbols-outlined text-[16px]">arrow_forward</span>

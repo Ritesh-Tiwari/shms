@@ -171,7 +171,7 @@ Dashboard
                             </circle>
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                            <span class="font-headline-lg text-headline-lg text-on-surface">24</span>
+                            <span class="font-headline-lg text-headline-lg text-on-surface">{{ total_status_appointments|default:0 }}</span>
                             <span class="font-label-sm text-label-sm text-on-surface-variant">Total</span>
                         </div>
                     </div>
@@ -179,17 +179,17 @@ Dashboard
                         <div class="flex items-center gap-xs">
                             <div class="w-3 h-3 rounded-full bg-secondary"></div><span
                                 class="font-label-sm text-label-sm text-on-surface-variant">Completed
-                                (45%)</span>
+                                ({{ completed_percentage|default:0 }}%) </span>
                         </div>
                         <div class="flex items-center gap-xs">
                             <div class="w-3 h-3 rounded-full bg-primary"></div><span
                                 class="font-label-sm text-label-sm text-on-surface-variant">Waiting
-                                (30%)</span>
+                                ({{ waiting_percentage|default:0 }}%)</span>
                         </div>
                         <div class="flex items-center gap-xs">
                             <div class="w-3 h-3 rounded-full bg-tertiary"></div><span
                                 class="font-label-sm text-label-sm text-on-surface-variant">Canceled
-                                (15%)</span>
+                                ({{ cancelled_percentage|default:0 }}%)</span>
                         </div>
                     </div>
                 </div>
