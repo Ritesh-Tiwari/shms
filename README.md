@@ -100,6 +100,23 @@ DEBUG=True
 # For PostgreSQL, set DATABASE_URL to your database connection URL.
 ```
 
+Password-reset emails are printed to the console in development. In production,
+configure an SMTP provider using environment variables (never commit credentials):
+
+```dotenv
+EMAIL_HOST=smtp.example.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=your-smtp-username
+EMAIL_HOST_PASSWORD=your-smtp-password
+EMAIL_USE_TLS=True
+EMAIL_USE_SSL=False
+DEFAULT_FROM_EMAIL=SHMS Support <noreply@example.com>
+```
+
+With `DEBUG=False`, SHMS uses Django's SMTP email backend by default. You can
+override it with `EMAIL_BACKEND` if your deployment uses another Django email
+backend.
+
 Apply migrations and start the development server:
 
 ```powershell

@@ -354,13 +354,17 @@ I checked the Django app, its URL routes and templates, the separate `UI` mockup
 ### High priority
 
 1. **Vercel deployment is likely blocked.**  
-   `vercel.json` specifies Python 3.9, while the project uses Django 6 and documents Python 3.12+. It also references `build_files.sh`, which is missing from the project. Align the runtime and either add the build script or remove that build entry.
+   `vercel.json` specifies Python 3.9, while the project uses Django 6 and documents Python 3.12+. It also references `build_files.sh`, which is missing from the
+    project. Align the runtime and either add the build script or remove that build entry.
 
 2. **The documented fresh local setup does not match the database settings.**  
-   The `README` says SQLite is the local default and that `DATABASE_URL` is optional. But `settings.py` configures PostgreSQL and requires `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, and `DB_PORT`; the documented `DATABASE_URL` is not used there. A fresh setup following the README can fail before migrations. Make the settings and instructions agree.
+   The `README` says SQLite is the local default and that `DATABASE_URL` is optional. But `settings.py` configures PostgreSQL and requires `DB_NAME`, `DB_USER`,
+    `DB_PASSWORD`, `DB_HOST`, and `DB_PORT`; the documented `DATABASE_URL` is not used there. A fresh setup following the README can fail before migrations. Make
+     the settings and instructions agree.
 
 3. **Production can fall back to a known development secret key.**  
-   `settings.py` supplies a fixed insecure fallback if `SECRET_KEY` is absent. Require a real environment-provided key for deployment rather than silently using that fallback.
+   `settings.py` supplies a fixed insecure fallback if `SECRET_KEY` is absent. Require a real environment-provided key for deployment rather than silently using 
+   that fallback.
 
 4. **A local notes file contains plaintext credentials.**  
    `notes.txt` contains credentials, which I have not repeated here. Keep it out of submissions and shared copies; rotate any credentials that are still valid.
@@ -368,7 +372,9 @@ I checked the Django app, its URL routes and templates, the separate `UI` mockup
 ### UI and feature gaps
 
 5. **Several links visible in the live app do nothing.**  
-   The mobile navigation’s Home, Visits, Rx, Billing, and Profile links all point to `#` in `bottom_nav.html`, and that navigation is included by `base.html`. The doctor’s Prescriptions link and the admin Reports & Analytics link are also placeholders in `navbar.html` and `navbar.html`. The login page’s Forgot password, Privacy Policy, and Terms links are placeholders too in `login.html`.
+   The mobile navigation’s Home, Visits, Rx, Billing, and Profile links all point to `#` in `bottom_nav.html`, and that navigation is included by `base.html`.
+    The doctor’s Prescriptions link and the admin Reports & Analytics link are also placeholders in `navbar.html` and `navbar.html`. The login page’s Forgot password,
+     Privacy Policy, and Terms links are placeholders too in `login.html`.
 
 6. **Some screens in `UI` are mockups, not wired app pages.**  
    The separate `UI folder` contains standalone HTML designs, but the Django app serves templates from `shms/templates` through its URL configuration. Treat items such as analytics, settings, and standalone medical-history screens in those mockups as unimplemented unless you connect them to Django views and routes. The payment gateway is also not implemented; the README describes payment recording as internal rather than an online gateway.
