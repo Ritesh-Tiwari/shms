@@ -1,6 +1,7 @@
 from datetime import date, time, timedelta
 from decimal import Decimal
 from django.test import TestCase
+from django.urls import reverse
 from accounts.models import User
 from accounts.choices import UserRole
 from patients.models import Patient
@@ -69,3 +70,99 @@ class PrescriptionModelTests(TestCase):
         Prescription.objects.create(appointment=self.appointment, diagnosis="First")
         with self.assertRaises(Exception):
             Prescription.objects.create(appointment=self.appointment, diagnosis="Duplicate")
+
+
+class PrescriptionPdfAccessTests(TestCase):
+    def setUp(self):
+        patient_user = User.objects.create_user(
+            username="rx-access-patient",
+            email="rx-access-patient@example.com",
+            password="test-password-123",
+            role=UserRole.PATIENT,
+        )
+        patient = Patient.objects.create(
+            user=patient_user,
+            date_of_birth=date(1990, 1, 1),
+            gender=GenderChoices.MALE,
+            blood_group=BloodGroupChoices.O_POSITIVE,
+            emergency_contact="9876543210",
+            address="Test Road",
+            city="Kolkata",
+            state="West Bengal",
+            pincode="700001",
+        )
+        doctor_user = User.objects.create_user(
+            username="rx-access-doctor",
+            email="rx-access-doctor@example.com",
+            password="test-password-123",
+            role=UserRole.DOCTOR,
+        )
+        doctor = Doctor.objects.create(
+            user=doctor_user,
+            specialization=SpecializationChoices.GENERAL_PHYSICIAN,
+            qualification="MBBS",
+            experience=4,
+            consultation_fee=Decimal("500.00"),
+            address="Clinic Road",
+        )
+        appointment = Appointment.objects.create(
+            patient=patient,
+            doctor=doctor,
+            appointment_date=date.today() - timedelta(days=1),
+            appointment_time=time(10, 0),
+            reason_for_visit="Check-up",
+            status=AppointmentStatus.COMPLETED,
+        )
+        self.prescription = Prescription.objects.create(
+            appointment=appointment,
+            diagnosis="Seasonal allergies",
+        )
+        self.receptionist = User.objects.create_user(
+            username="rx-access-receptionist",
+            email="rx-access-receptionist@example.com",
+            password="test-password-123",
+            role=UserRole.RECEPTIONIST,
+        )
+
+    def test_receptionist_can_view_and_download_prescription_pdf(self):
+        self.client.force_login(self.receptionist)
+
+        detail_response = self.client.get(
+            reverse("prescriptions:detail", args=[self.prescription.pk])
+        )
+        self.assertEqual(detail_response.status_code, 200)
+        self.assertContains(detail_response, "Download PDF")
+
+        pdf_response = self.client.get(
+            reverse("prescriptions:pdf", args=[self.prescription.pk])
+        )
+        self.assertEqual(pdf_response.status_code, 200)
+        self.assertEqual(pdf_response["Content-Type"], "application/pdf")
+        self.assertTrue(pdf_response.content.startswith(b"%PDF"))
+
+    def test_patient_and_doctor_can_download_only_their_prescriptions(self):
+        appointment = self.prescription.appointment
+        other_patient = User.objects.create_user(
+            username="rx-other-patient",
+            email="rx-other-patient@example.com",
+            password="testpass123",
+            role=UserRole.PATIENT,
+        )
+        other_doctor = User.objects.create_user(
+            username="rx-other-doctor",
+            email="rx-other-doctor@example.com",
+            password="testpass123",
+            role=UserRole.DOCTOR,
+        )
+        pdf_url = reverse("prescriptions:pdf", args=[self.prescription.pk])
+
+        for user, expected_status in (
+            (appointment.patient.user, 200),
+            (other_patient, 403),
+            (appointment.doctor.user, 200),
+            (other_doctor, 403),
+        ):
+            with self.subTest(user=user.username):
+                self.client.force_login(user)
+                response = self.client.get(pdf_url)
+                self.assertEqual(response.status_code, expected_status)

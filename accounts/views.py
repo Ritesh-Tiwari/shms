@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
+from security_audit.models import AuditLog
+from security_audit.services import log_security_event
+
 
 def login_view(request):
 
@@ -26,6 +29,12 @@ def login_view(request):
                 request,
                 user,
             )
+            log_security_event(
+                request,
+                action="LOGIN",
+                outcome=AuditLog.Outcome.SUCCESS,
+                target_user=user,
+            )
 
             messages.success(
                 request,
@@ -33,6 +42,13 @@ def login_view(request):
             )
 
             return redirect("dashboard:dashboard")
+
+        log_security_event(
+            request,
+            action="LOGIN_FAILURE",
+            outcome=AuditLog.Outcome.FAILURE,
+            target_identifier=request.POST.get("username", ""),
+        )
 
         messages.error(
             request,
@@ -46,6 +62,14 @@ def login_view(request):
 
 @require_POST
 def logout_view(request):
+
+    if request.user.is_authenticated:
+        log_security_event(
+            request,
+            action="LOGOUT",
+            outcome=AuditLog.Outcome.SUCCESS,
+            target_user=request.user,
+        )
 
     logout(request)
 

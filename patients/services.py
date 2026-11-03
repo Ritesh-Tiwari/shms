@@ -1,6 +1,7 @@
 from django.db import transaction
 
 from accounts.models import User
+from core.notification_services import notify_patient_registered
 from .models import Patient
 
 
@@ -8,7 +9,7 @@ class PatientService:
 
     @staticmethod
     @transaction.atomic
-    def create_patient(*, user_data, patient_data,):
+    def create_patient(*, user_data, patient_data, actor=None):
         """
         Create a User and Patient in a single transaction.
         """
@@ -26,6 +27,7 @@ class PatientService:
             user=user,
             **patient_data,
         )
+        notify_patient_registered(patient, actor=actor)
 
         return patient
 

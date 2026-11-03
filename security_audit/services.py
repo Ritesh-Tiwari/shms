@@ -42,7 +42,7 @@ def log_security_event(
                 if target_user is not None
                 else ""
             )
-        ),
+        )[:254],
         ip_address=ip_address,
         user_agent=user_agent,
         details=details or {},

@@ -11,7 +11,7 @@
         <div class="flex flex-col gap-xs">
             <nav class="flex items-center gap-xs text-body-sm font-body-sm text-on-surface-variant"><a
                     class="hover:text-primary transition-colors flex items-center gap-xs"
-                    href="#"><span>Billing &amp; Payments</span></a><span>/</span><a
+                    href="{% url 'billing:detail' billing.pk %}"><span>Billing &amp; Payments</span></a><span>/</span><a
                     class="hover:text-primary transition-colors" href="{% url 'billing:detail' billing.pk %}">Bill Details 
                     ({{ billing.bill_id }})</a><span>/</span><span class="text-on-surface font-label-md">Add
                     Payment</span></nav>

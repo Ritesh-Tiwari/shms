@@ -93,3 +93,74 @@ class AppointmentServiceTests(TestCase):
             response.context["page_obj"].object_list[0],
             appointment,
         )
+
+    def test_appointment_detail_actions_and_update_access_match_roles(self):
+        appointment = self.create_appointment()
+        admin = User.objects.create_user(
+            username="apptdetailadmin",
+            email="apptdetailadmin@example.com",
+            password="StrongPassword123!",
+            role=UserRole.ADMIN,
+        )
+        receptionist = User.objects.create_user(
+            username="apptdetailreceptionist",
+            email="apptdetailreceptionist@example.com",
+            password="StrongPassword123!",
+            role=UserRole.RECEPTIONIST,
+        )
+        detail_url = reverse("appointments:detail", args=[appointment.pk])
+        update_url = reverse("appointments:update", args=[appointment.pk])
+
+        for role, user in (
+            (UserRole.ADMIN, admin),
+            (UserRole.DOCTOR, self.doctor.user),
+            (UserRole.RECEPTIONIST, receptionist),
+        ):
+            with self.subTest(role=role):
+                self.client.force_login(user)
+                response = self.client.get(detail_url)
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(
+                    update_url in response.content.decode(),
+                    role in (UserRole.ADMIN, UserRole.RECEPTIONIST),
+                )
+                if role == UserRole.DOCTOR:
+                    self.assertIn(
+                        reverse(
+                            "doctors:patient-summary",
+                            args=[self.patient.pk],
+                        ),
+                        response.content.decode(),
+                    )
+                    self.assertIn(
+                        reverse("doctors:dashboard"),
+                        response.content.decode(),
+                    )
+                else:
+                    self.assertIn(
+                        reverse("patients:detail", args=[self.patient.pk]),
+                        response.content.decode(),
+                    )
+                    self.assertIn(
+                        reverse(
+                            "doctors:detail",
+                            args=[self.doctor.pk],
+                        ),
+                        response.content.decode(),
+                    )
+                self.assertEqual(
+                    self.client.get(update_url).status_code,
+                    200 if role in (UserRole.ADMIN, UserRole.RECEPTIONIST) else 403,
+                )
+
+        self.client.force_login(self.patient.user)
+        self.assertEqual(self.client.get(detail_url).status_code, 403)
+        self.assertEqual(
+            self.client.get(
+                reverse(
+                    "appointments:my-appointment-detail",
+                    args=[appointment.pk],
+                )
+            ).status_code,
+            200,
+        )

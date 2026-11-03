@@ -108,7 +108,8 @@
                                             class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
                                         <input name="username"
                                             class="w-full h-[48px] bg-surface-container rounded-lg pl-11 pr-md font-body-md text-body-md text-on-surface border-none focus:ring-2 focus:ring-primary/40 focus:bg-surface transition-all outline-none"
-                                            id="email" placeholder="admin@shms.med" required="" type="email">
+                                            id="email" placeholder="admin@shms.med" required="" type="email"
+                                            autocomplete="username">
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-xs">
@@ -134,7 +135,7 @@
                                     <label class="flex items-center gap-2 cursor-pointer group">
                                         <input
                                             class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/40 bg-surface-container"
-                                            type="checkbox">
+                                            id="remember-me" type="checkbox">
                                         <span
                                             class="font-label-md text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors">Remember
                                             me</span>
@@ -151,16 +152,13 @@
                             <!-- Footer -->
                             <div class="mt-xl text-center flex flex-col gap-sm w-full">
                                 <p class="font-body-sm text-body-sm text-on-surface-variant">
-                                    New to SHMS? <a class="text-primary font-medium hover:underline" href="#">Contact
-                                        your administrator</a> for access.
+                                    New to SHMS? For access, contact your administrator.
                                 </p>
                                 <div
                                     class="flex items-center justify-center gap-md mt-lg pt-lg border-t border-outline-variant/30 w-full">
-                                    <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors"
-                                        href="#">Privacy Policy</a>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant">Privacy Policy</span>
                                     <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                    <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors"
-                                        href="#">Terms of Service</a>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant">Terms of Service</span>
                                 </div>
                             </div>
                         </div>
@@ -170,6 +168,30 @@
         </main>
     </div>
 
+    <script>
+        (() => {
+            const emailInput = document.getElementById('email');
+            const rememberCheckbox = document.getElementById('remember-me');
+            const loginForm = emailInput.form;
+            const rememberedEmailKey = 'shms.rememberedEmail';
+
+            // Restore the saved email and checkbox state when this login page opens.
+            const rememberedEmail = localStorage.getItem(rememberedEmailKey);
+            if (rememberedEmail) {
+                emailInput.value = rememberedEmail;
+                rememberCheckbox.checked = true;
+            }
+
+            // Save only the email address; the password and authentication remain server-managed.
+            loginForm.addEventListener('submit', () => {
+                if (rememberCheckbox.checked) {
+                    localStorage.setItem(rememberedEmailKey, emailInput.value.trim());
+                } else {
+                    localStorage.removeItem(rememberedEmailKey);
+                }
+            });
+        })();
+    </script>
 </body>
 
 </html>

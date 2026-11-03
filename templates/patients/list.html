@@ -224,10 +224,10 @@ Patients
                         {% if page_obj.number == num %}
 
                             <!-- Active page -->
-                            <button
+                            <span aria-current="page"
                                 class="w-8 h-8 rounded bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center">
                                 {{ num }}
-                            </button>
+                            </span>
 
                         {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
 

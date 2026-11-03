@@ -499,9 +499,11 @@ def patient_clinical_summary(request, pk):
     )
 
     patient = get_object_or_404(
-        Patient.objects.select_related("user"),
+        Patient.objects
+        .filter(appointments__doctor=doctor)
+        .select_related("user")
+        .distinct(),
         pk=pk,
-        appointments__doctor=doctor,
     )
 
     appointments = (

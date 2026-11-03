@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.paginator import Paginator
 from django.utils import timezone
-from django.db.models import Q, Sum,Count
+from django.db.models import Q, Sum, Count
+from django.http import Http404
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
@@ -150,20 +151,25 @@ def account_list(request):
 @require_POST
 def toggle_account_status(request, pk):
     # Only Patient, Doctor and Receptionist accounts are managed here.
-    account = get_object_or_404(
-        User,
-        pk=pk,
-        role__in=MANAGED_ROLES,
-    )
+    account = get_object_or_404(User, pk=pk)
 
     # Prevent an administrator from disabling their own login
     # through this endpoint.
     if account.pk == request.user.pk:
+        log_security_event(
+            request,
+            action="ACCOUNT_STATUS_CHANGE",
+            outcome=AuditLog.Outcome.DENIED,
+            target_user=account,
+        )
         messages.error(
             request,
             "You cannot deactivate your own account here.",
         )
         return redirect("dashboard:accounts")
+
+    if account.role not in MANAGED_ROLES:
+        raise Http404
 
     account.is_active = not account.is_active
     account.save(update_fields=["is_active"])

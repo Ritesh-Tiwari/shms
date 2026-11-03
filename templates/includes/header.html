@@ -8,27 +8,90 @@
             <span class="material-symbols-outlined text-[22px]">menu</span>
         </button>
         <!-- Search bar -->
-        <div class="relative w-full max-w-xl hidden sm:block">
+        <form action="{% url 'core:search' %}" class="relative w-full max-w-xl hidden sm:block" method="get" role="search">
+            <label class="sr-only" for="header-search">Search SHMS</label>
             <span
                 class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px] pointer-events-none">search</span>
             <input
                 class="w-full pl-9 pr-4 py-2 bg-surface-container-low/70 border border-slate-200/60 rounded-lg text-sm text-on-surface placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                placeholder="Search appointments, medications, bills..." type="text" />
-        </div>
+                id="header-search" name="q" value="{{ request.GET.q|default:'' }}"
+                maxlength="100" placeholder="Search patients, appointments, bills..." type="search" required />
+            <input type="hidden" name="next"
+                value="{% if request.resolver_match.view_name == 'core:search' %}{{ return_url }}{% else %}{{ request.get_full_path }}{% endif %}">
+        </form>
     </div>
+    <form action="{% url 'core:search' %}" class="hidden absolute left-0 right-0 top-full bg-surface-container-lowest p-3 shadow-md sm:hidden"
+        id="mobile-search-form" method="get" role="search">
+        <label class="sr-only" for="mobile-header-search">Search SHMS</label>
+        <div class="relative">
+            <span
+                class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px] pointer-events-none">search</span>
+            <input
+                class="w-full pl-9 pr-4 py-2 bg-surface-container-low/70 border border-slate-200/60 rounded-lg text-sm text-on-surface placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                id="mobile-header-search" name="q" value="{{ request.GET.q|default:'' }}"
+                maxlength="100" placeholder="Search patients, appointments, bills..." type="search" required />
+            <input type="hidden" name="next"
+                value="{% if request.resolver_match.view_name == 'core:search' %}{{ return_url }}{% else %}{{ request.get_full_path }}{% endif %}">
+        </div>
+    </form>
     <!-- Header Right Utilities -->
     <div class="flex items-center gap-2 sm:gap-4">
         <!-- Quick mobile search icon -->
         <button aria-label="Search"
-            class="sm:hidden p-2 rounded-lg text-slate-500 hover:bg-surface-container-low transition-colors">
+            aria-controls="mobile-search-form" aria-expanded="false"
+            class="sm:hidden p-2 rounded-lg text-slate-500 hover:bg-surface-container-low transition-colors"
+            onclick="const form = document.getElementById('mobile-search-form'); const expanded = this.getAttribute('aria-expanded') === 'true'; form.classList.toggle('hidden', expanded); this.setAttribute('aria-expanded', String(!expanded)); if (!expanded) form.querySelector('input').focus();">
             <span class="material-symbols-outlined text-[20px]">search</span>
         </button>
-        <!-- Notification button -->
-        <button aria-label="Notifications"
-            class="relative p-2 rounded-lg text-slate-600 hover:bg-surface-container-low hover:text-on-surface transition-colors">
-            <span class="material-symbols-outlined text-[20px]">notifications</span>
-            <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary ring-2 ring-white"></span>
-        </button>
+        <!-- Notifications -->
+        <div class="relative">
+            <button aria-label="Notifications{% if unread_notification_count %}, {{ unread_notification_count }} unread{% endif %}"
+                aria-controls="notification-panel" aria-expanded="false"
+                data-notification-ids="{{ recent_activity_ids|join:',' }}"
+                id="notification-button"
+                class="relative p-2 rounded-lg text-slate-600 hover:bg-surface-container-low hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-[20px]">notifications</span>
+                {% if unread_notification_count %}
+                <span aria-label="{{ unread_notification_count }} unread notifications" id="notification-count"
+                    class="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-primary text-white text-[10px] font-semibold flex items-center justify-center ring-2 ring-white">
+                    {{ unread_notification_count }}
+                </span>
+                {% endif %}
+            </button>
+            <form action="{% url 'core:notifications-mark-read' %}" class="hidden" id="notification-read-form" method="post">
+                {% csrf_token %}
+                {% for notification_id in recent_activity_ids %}
+                <input name="notification_ids" type="hidden" value="{{ notification_id }}">
+                {% endfor %}
+            </form>
+            <section aria-labelledby="notification-heading" aria-hidden="true" id="notification-panel"
+                class="hidden absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-xl border border-slate-200 shadow-xl z-50">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                    <h2 class="text-sm font-semibold text-slate-900" id="notification-heading">Notifications</h2>
+                    <span aria-live="polite" class="text-xs text-slate-500" id="notification-status">
+                        {% if unread_notification_count %}{{ unread_notification_count }} unread{% else %}All caught up{% endif %}
+                    </span>
+                </div>
+                <ul aria-label="Notifications" class="max-h-80 overflow-y-auto divide-y divide-slate-100">
+                    {% for notification in notifications %}
+                    <li class="{% if not notification.read_at %}bg-blue-50/60{% endif %}" data-notification-id="{{ notification.pk }}">
+                        <form action="{% url 'core:notification-open' notification.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors" type="submit">
+                                <span aria-hidden="true" class="material-symbols-outlined text-[18px] mt-0.5 text-primary">notifications</span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm text-slate-700">{{ notification.message }}</span>
+                                    <span class="mt-1 block text-xs text-slate-400">{{ notification.time }}</span>
+                                </span>
+                            </button>
+                        </form>
+                    </li>
+                    {% empty %}
+                    <li class="px-4 py-6 text-center text-sm text-slate-500">No notifications yet.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
         <div class="h-6 w-px bg-slate-200"></div>
         <!-- User profile summary -->
         <div class="flex items-center gap-2.5 pl-1">
@@ -47,6 +110,104 @@
         </div>
     </div>
 </header>
+
+<script>
+    // Native required validation blocks empty input; trimming also rejects whitespace-only searches.
+    const enableSearchValidation = () => {
+        document.querySelectorAll('form[role="search"]').forEach((form) => {
+            if (form.dataset.searchValidationBound) return;
+            form.dataset.searchValidationBound = 'true';
+            form.addEventListener('submit', (event) => {
+                const input = form.querySelector('input[name="q"]');
+                if (!input.value.trim()) {
+                    event.preventDefault();
+                    input.setCustomValidity('Enter a search term.');
+                    input.reportValidity();
+                    input.addEventListener('input', () => input.setCustomValidity(''), { once: true });
+                }
+            });
+        });
+    };
+    const enableNotificationMenu = () => {
+        const button = document.getElementById('notification-button');
+        const panel = document.getElementById('notification-panel');
+        let count = document.getElementById('notification-count');
+        const status = document.getElementById('notification-status');
+        const readForm = document.getElementById('notification-read-form');
+        if (!button || !panel) return;
+
+        const notificationIds = button.dataset.notificationIds
+            ? button.dataset.notificationIds.split(',')
+            : [];
+        const updateUnreadCount = (unreadCount) => {
+            if (count) {
+                if (unreadCount) {
+                    count.textContent = String(unreadCount);
+                    count.setAttribute('aria-label', `${unreadCount} unread notifications`);
+                } else {
+                    count.remove();
+                    count = null;
+                }
+            }
+            button.setAttribute(
+                'aria-label',
+                unreadCount ? `Notifications, ${unreadCount} unread` : 'Notifications'
+            );
+            status.textContent = unreadCount
+                ? `${unreadCount} unread`
+                : 'All caught up';
+        };
+        const markAsRead = async () => {
+            if (!notificationIds.length || !readForm) return;
+            try {
+                const response = await fetch(readForm.action, {
+                    method: 'POST',
+                    body: new FormData(readForm),
+                    credentials: 'same-origin',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (!response.ok) {
+                    throw new Error(`Notification read request failed: ${response.status}`);
+                }
+                const result = await response.json();
+                updateUnreadCount(result.unread_count);
+                notificationIds.forEach((id) => {
+                    const item = panel.querySelector(`[data-notification-id="${id}"]`);
+                    if (item) item.classList.remove('bg-blue-50/60');
+                });
+            } catch (error) {
+                status.textContent = 'Could not update notification status.';
+                console.error(error);
+            }
+        };
+        const setOpen = (open) => {
+            panel.classList.toggle('hidden', !open);
+            panel.setAttribute('aria-hidden', String(!open));
+            button.setAttribute('aria-expanded', String(open));
+            if (open) markAsRead();
+        };
+
+        button.addEventListener('click', () => {
+            setOpen(button.getAttribute('aria-expanded') !== 'true');
+        });
+        document.addEventListener('click', (event) => {
+            if (!button.contains(event.target) && !panel.contains(event.target)) setOpen(false);
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+                setOpen(false);
+                button.focus();
+            }
+        });
+    };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', enableSearchValidation);
+        document.addEventListener('DOMContentLoaded', enableNotificationMenu);
+    } else {
+        enableSearchValidation();
+        enableNotificationMenu();
+    }
+</script>
 
 <!-- <header
     class="fixed top-0 left-72 right-0 h-16 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 z-40 flex items-center px-lg justify-between">

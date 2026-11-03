@@ -10,6 +10,7 @@ from reportlab.pdfgen import canvas
 from accounts.choices import UserRole
 from appointments.models import Appointment, AppointmentStatus
 from core.decorators import role_required
+from core.notification_services import notify_prescription_saved
 
 from .forms import (
     PrescriptionForm,
@@ -92,6 +93,8 @@ def create_prescription(request, appointment_id):
                     formset.instance = prescription
                     formset.save()
 
+                notify_prescription_saved(prescription, actor=request.user)
+
                 messages.success(
                     request,
                     "Prescription created successfully.",
@@ -128,6 +131,7 @@ def create_prescription(request, appointment_id):
 @role_required(
     UserRole.ADMIN,
     UserRole.DOCTOR,
+    UserRole.RECEPTIONIST,
 )
 def prescription_detail(request, pk):
     # 1. Base QuerySet
@@ -202,10 +206,18 @@ def update_prescription(request, pk):
         )
 
         if form.is_valid() and formset.is_valid():
+            has_changes = form.has_changed() or formset.has_changed()
             with transaction.atomic():
                 prescription = form.save()
                 formset.instance = prescription
                 formset.save()
+
+            if has_changes:
+                notify_prescription_saved(
+                    prescription,
+                    actor=request.user,
+                    updated=True,
+                )
 
             messages.success(
                 request,
@@ -335,6 +347,7 @@ def my_prescription_detail(request, pk):
     UserRole.ADMIN,
     UserRole.DOCTOR,
     UserRole.PATIENT,
+    UserRole.RECEPTIONIST,
 )
 def prescription_pdf(request, pk):
     prescription = get_object_or_404(

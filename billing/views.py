@@ -6,6 +6,10 @@ from reportlab.pdfgen import canvas
 
 from appointments.models import Appointment, AppointmentStatus
 from core.decorators import role_required
+from core.notification_services import (
+    notify_bill_created,
+    notify_payment_created,
+)
 from accounts.choices import UserRole
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -97,6 +101,7 @@ def create_bill(request, appointment_id):
             )
 
             billing.save()
+            notify_bill_created(billing, actor=request.user)
 
             messages.success(
                 request,
@@ -126,7 +131,6 @@ def create_bill(request, appointment_id):
     UserRole.ADMIN,
     UserRole.RECEPTIONIST,
     UserRole.DOCTOR,
-
 )
 def billing_detail(request, pk):
 
@@ -254,6 +258,7 @@ def create_payment(request, billing_id):
 
                 payment.billing = billing
                 payment.save()
+                notify_payment_created(payment, actor=request.user)
 
                 # Recalculate payment status.
                 new_paid_amount = (
@@ -362,6 +367,110 @@ def payment_receipt(request, payment_id):
             "remaining_amount": remaining_amount,
         },
     )
+
+
+@role_required(
+    UserRole.ADMIN,
+    UserRole.DOCTOR,
+    UserRole.PATIENT,
+    UserRole.RECEPTIONIST,
+)
+def billing_pdf(request, pk):
+    billings = Billing.objects.select_related(
+        "appointment__doctor__user",
+        "patient__user",
+    ).prefetch_related("payments")
+
+    if request.user.role == UserRole.PATIENT:
+        billings = billings.filter(patient__user=request.user)
+    elif request.user.role == UserRole.DOCTOR:
+        billings = billings.filter(appointment__doctor__user=request.user)
+
+    billing = get_object_or_404(billings, pk=pk)
+    payments = list(billing.payments.all())
+    paid_amount = sum((payment.amount for payment in payments), start=0)
+    remaining_amount = billing.total_amount - paid_amount
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = (
+        f'attachment; filename="invoice_{billing.bill_id}.pdf"'
+    )
+
+    pdf = canvas.Canvas(response, pagesize=A4)
+    width, height = A4
+    y = height - 50
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawCentredString(width / 2, y, "SHMS")
+    y -= 25
+    pdf.setFont("Helvetica", 10)
+    pdf.drawCentredString(width / 2, y, "Smart Health Management System")
+    y -= 45
+
+    pdf.setFont("Helvetica-Bold", 15)
+    pdf.drawString(50, y, "Invoice")
+    y -= 30
+
+    invoice_data = [
+        ("Bill ID", billing.bill_id),
+        ("Appointment", billing.appointment.appointment_id),
+        ("Patient ID", billing.patient.patient_id),
+        ("Patient Name", billing.patient.user.get_full_name()),
+        ("Doctor ID", billing.appointment.doctor.doctor_id),
+        ("Doctor Name", billing.appointment.doctor.user.get_full_name()),
+        ("Bill Date", billing.bill_date.strftime("%d %b %Y, %I:%M %p")),
+        ("Payment Status", billing.get_payment_status_display()),
+        ("Amount", f"Rs. {billing.amount}"),
+        ("Tax", f"{billing.get_tax_type_display()} - Rs. {billing.tax_amount}"),
+        ("Total", f"Rs. {billing.total_amount}"),
+        ("Total Paid", f"Rs. {paid_amount}"),
+        ("Remaining Due", f"Rs. {remaining_amount}"),
+    ]
+
+    for label, value in invoice_data:
+        if y < 70:
+            pdf.showPage()
+            y = height - 50
+        pdf.setFont("Helvetica-Bold", 10)
+        pdf.drawString(60, y, f"{label}:")
+        pdf.setFont("Helvetica", 10)
+        pdf.drawString(220, y, str(value)[:100])
+        y -= 22
+
+    if payments:
+        y -= 12
+        if y < 70:
+            pdf.showPage()
+            y = height - 50
+        pdf.setFont("Helvetica-Bold", 12)
+        pdf.drawString(60, y, "Payments")
+        y -= 24
+        pdf.setFont("Helvetica-Bold", 9)
+        pdf.drawString(60, y, "Payment ID")
+        pdf.drawString(160, y, "Date")
+        pdf.drawString(285, y, "Method")
+        pdf.drawString(390, y, "Amount")
+        y -= 18
+
+        for payment in payments:
+            if y < 55:
+                pdf.showPage()
+                y = height - 50
+                pdf.setFont("Helvetica-Bold", 9)
+                pdf.drawString(60, y, "Payment ID")
+                pdf.drawString(160, y, "Date")
+                pdf.drawString(285, y, "Method")
+                pdf.drawString(390, y, "Amount")
+                y -= 18
+            pdf.setFont("Helvetica", 9)
+            pdf.drawString(60, y, payment.payment_id)
+            pdf.drawString(160, y, payment.payment_date.strftime("%d %b %Y"))
+            pdf.drawString(285, y, payment.get_payment_method_display())
+            pdf.drawString(390, y, f"Rs. {payment.amount}")
+            y -= 18
+
+    pdf.save()
+    return response
 
 
 @role_required(

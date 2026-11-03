@@ -20,7 +20,11 @@ from patients import views as patient_views
 
 
 urlpatterns = [
-  
+    path(
+        "",
+        include("core.urls"),
+    ),
+
     path(
         "",
         include("dashboard.urls"),

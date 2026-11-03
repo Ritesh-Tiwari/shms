@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="flex flex-col w-full">
-<div class="px-margin-desktop py-lg max-w-7xl mx-auto w-full space-y-lg">
+<div class="px-margin-mobile md:px-margin-desktop py-lg max-w-7xl mx-auto w-full space-y-lg">
     <!-- Top Context & Actions Navigation -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-md">
         <div class="space-y-xs">
@@ -17,7 +17,7 @@
                 <span
                     class="font-label-sm text-label-sm px-xs py-0.5 rounded bg-surface-container-high text-on-surface-variant ml-1 font-mono">{{billing.appointment.appointment_id}}</span>
             </a>
-            <div class="flex items-center gap-md pt-1">
+            <div class="flex flex-wrap items-center gap-md pt-1">
                 <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
                     Bill Details <br> 
                 </h1>
@@ -28,19 +28,19 @@
                 </span>
             </div>
         </div>
-        {% comment %} <div class="flex items-center gap-sm flex-wrap">
+        <div class="flex items-center gap-sm flex-wrap">
             <button
                 class="inline-flex items-center gap-xs px-md py-2.5 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all shadow-sm font-label-md text-label-md"
                 onclick="window.print()">
                 <span class="material-symbols-outlined text-[20px]">print</span>
                 <span class="">Print Bill</span>
             </button>
-            <button
+            <a href="{% url 'billing:pdf' billing.pk %}"
                 class="inline-flex items-center gap-xs px-md py-2.5 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all shadow-sm font-label-md text-label-md">
                 <span class="material-symbols-outlined text-[20px]">download</span>
-                <span class="">Download PDF</span>
-            </button>
-        </div> {% endcomment %}
+                <span class="">Download Invoice PDF</span>
+            </a>
+        </div>
     </div>
     <!-- Notice / High Impact Alert Banner -->
 
@@ -149,16 +149,15 @@
                 </div>
             </div>
            
-                <div class="pt-md mt-md">
-                    <a 
-    
-                        class="block w-full py-2.5 px-md bg-primary-container text-on-primary font-label-md text-label-md rounded-lg font-medium hover:bg-primary transition shadow text-center cursor-pointer"
-                        href="{% url 'billing:payment_create' billing.pk %}"
-                        >
-                        Collect Payment
-                    </a>
-                    
-                </div>
+                {% if request.user.role != "RECEPTIONIST" %}
+                    <div class="pt-md mt-md">
+                        <a
+                            class="block w-full py-2.5 px-md bg-primary-container text-on-primary font-label-md text-label-md rounded-lg font-medium hover:bg-primary transition shadow text-center cursor-pointer"
+                            href="{% url 'billing:payment_create' billing.pk %}">
+                            Collect Payment
+                        </a>
+                    </div>
+                {% endif %}
             
         </div>
         {% endif %}
@@ -167,7 +166,7 @@
     {% if billing.get_payment_status_display != "Paid" %}
     <!-- 2. Itemized Amount Details Breakdown (Card) -->
     <div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm">
-        <div class="flex items-center justify-between mb-md pb-sm border-b border-outline-variant/20">
+        <div class="flex flex-wrap items-center justify-between gap-sm mb-md pb-sm border-b border-outline-variant/20">
             <div>
                 <h2 class="font-title-md text-title-md text-on-surface">
                     Amount Details
@@ -230,11 +229,11 @@
     {% endif %}
     <!-- 4. Payment History Card -->
     <div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm">
-        <div class="flex items-center justify-between pb-md mb-md border-b border-outline-variant/20">
+        <div class="flex flex-wrap items-center justify-between gap-sm pb-md mb-md border-b border-outline-variant/20">
             <h2 class="font-title-md text-title-md text-on-surface">
                 Payment History
             </h2>
-             {% if remaining_amount > 0 %}
+             {% if remaining_amount > 0 and request.user.role != "RECEPTIONIST" %}
                 <a
                     class="inline-flex items-center gap-xs px-md py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition font-label-md text-label-md font-medium"
                     href="{% url 'billing:payment_create' billing.pk %}">
@@ -285,10 +284,19 @@
                                 <td class="py-4 px-md text-right font-mono font-bold text-on-surface">₹{{ payment.amount }}
                                 </td>
                                 <td class="py-4 px-md text-center">
-                                    <a
-                                        href="{% url 'billing:payment_receipt' payment.pk %}"
-                                        class="btn btn-sm btn-outline-primary"
-                                    > View Receipt </a>
+                                    {% if request.user.role == "RECEPTIONIST" %}
+                                        <a
+                                            href="{% url 'billing:payment_receipt_pdf' payment.pk %}"
+                                            class="btn btn-sm btn-outline-primary">
+                                            Download Receipt
+                                        </a>
+                                    {% else %}
+                                        <a
+                                            href="{% url 'billing:payment_receipt' payment.pk %}"
+                                            class="btn btn-sm btn-outline-primary">
+                                            View Receipt
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                          {% endfor %}

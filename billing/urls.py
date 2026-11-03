@@ -52,6 +52,11 @@ urlpatterns = [
         views.billing_detail,
         name="detail",
     ),
+    path(
+        "<int:pk>/pdf/",
+        views.billing_pdf,
+        name="pdf",
+    ),
 
     path(
         "<int:billing_id>/payment/create/",

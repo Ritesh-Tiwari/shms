@@ -13,6 +13,7 @@ doctors
                 <h1 class="text-display-lg font-display-lg text-on-surface mb-xs">Doctors</h1>
                 <p class="text-body-lg font-body-lg text-on-surface-variant">View and manage clinical staff.</p>
             </div>
+            {% if user.role == "ADMIN" %}
             <a
                 class="bg-primary hover:bg-primary/90 text-on-primary px-lg py-3 rounded-full text-label-md font-label-md flex items-center gap-sm transition-all shadow-md hover:shadow-lg whitespace-nowrap self-start sm:self-auto group relative overflow-hidden"
                 href="{% url 'doctors:register' %}">
@@ -21,6 +22,7 @@ doctors
                 <span class="material-symbols-outlined text-[20px] relative z-10">add</span>
                 <span class="relative z-10">Add New Doctor</span>
             </a>
+            {% endif %}
         </div>
         <form  method="get"class="bg-surface-container rounded-2xl p-md flex flex-col md:flex-row gap-md shadow-sm">
             <div class="flex-1 relative group">
@@ -129,13 +131,6 @@ doctors
                                         title="View Profile">
                                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                                     </a>
-                                    <a href="{% url 'doctors:schedule'%}"
-                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
-                                        title="View Schedule">
-                                        <span
-                                            class="material-symbols-outlined text-[20px]">calendar_month</span>
-                                    </a>
-                                    
                                     {% if user.role == 'ADMIN' %}
                                     <a href="{% url 'doctors:update' doctor.pk %}"
                                         class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
@@ -144,17 +139,13 @@ doctors
                                             class="material-symbols-outlined text-[20px]">edit</span>
                                     </a>
                                     
-                                    <button
-                                        class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors"
-                                        title="More Actions">
-                                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                                    </button>
                                     {% endif %}
                                 </div>
-                                <button
-                                    class="p-2 text-on-surface-variant sm:hidden group-hover:hidden transition-opacity">
-                                    <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                                </button>
+                                <a href="{% url 'doctors:detail' doctor.pk %}"
+                                    class="p-2 text-on-surface-variant sm:hidden group-hover:hidden transition-opacity"
+                                    title="View Profile" aria-label="View Profile">
+                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                </a>
                             </td>
                         </tr>
                         {% empty %}
@@ -195,8 +186,8 @@ doctors
                         {% if page_obj.number == num %}
 
                             <!-- Active page -->
-                            <button
-                                class="w-8 h-8 rounded-md bg-primary text-on-primary text-label-sm font-label-sm flex items-center justify-center shadow-sm"> {{ num }}</button>
+                            <span aria-current="page"
+                                class="w-8 h-8 rounded-md bg-primary text-on-primary text-label-sm font-label-sm flex items-center justify-center shadow-sm">{{ num }}</span>
                    
                         {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %} 
                             <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
@@ -214,8 +205,8 @@ doctors
                         </a>
                     
                     {% else %}
-                        <button
-                        class="p-1 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                        <button type="button" disabled aria-label="No next page"
+                        class="p-1 rounded-md text-on-surface-variant/50 cursor-not-allowed">
                         <span class="material-symbols-outlined text-[20px]">chevron_right</span>
                     </button>
                      {% endif %}

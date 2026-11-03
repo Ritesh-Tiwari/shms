@@ -10,7 +10,7 @@ Dashboard
         <!-- Header Section -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md">
             <div class="space-y-sm">
-                <h1 class="font-display-lg text-display-lg text-on-surface">Good morning, Dr. {{ user.last_name|default:user.username }}</h1>
+                <h1 class="font-display-lg text-display-lg text-on-surface">Good morning, {{ user.last_name|default:user.username }}</h1>
                 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Here's what's
                     happening in your clinic today.</p>
             </div>
@@ -92,13 +92,13 @@ Dashboard
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
             <!-- Left Column: Appointments Table (Takes up 2 cols on lg) -->
             <div class="lg:col-span-2 space-y-lg">
-                <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
+                <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col h-full min-w-0">
                     <div class="p-lg flex justify-between items-center bg-surface-container-lowest relative z-10">
                         <h3 class="font-title-md text-title-md text-on-surface">Today's Appointments</h3>
                         <a href="{% url 'appointments:list' %}" class="text-primary font-label-md text-label-md hover:underline">View
                             All</a>
                     </div>
-                    <div class="overflow-x-auto flex-1">
+                    <div class="overflow-x-auto flex-1 min-w-0">
                         <table class="w-full text-left border-collapse min-w-[600px]">
                             <thead>
                                 <tr class="bg-surface-container/50">
@@ -122,7 +122,13 @@ Dashboard
                             <tbody class="font-body-md text-body-md">
                                 {% for appointment in page_obj %}
                                 <tr
-                                    class="hover:bg-surface-container/30 transition-colors group cursor-pointer border-b border-surface-container last:border-0">
+                                    class="hover:bg-surface-container/30 transition-colors group cursor-pointer border-b border-surface-container last:border-0"
+                                    data-href="{% url 'appointments:detail' appointment.pk %}"
+                                    onclick="window.location.href = this.dataset.href"
+                                    onkeydown="if (event.key === 'Enter') window.location.href = this.dataset.href"
+                                    tabindex="0"
+                                    role="link"
+                                    aria-label="View appointment for {{ appointment.patient.user.get_full_name }}">
                                     <td class="px-md py-sm whitespace-nowrap text-on-surface-variant"> {{ appointment.appointment_time|time:"h:i A" }}
                                     </td>
                                     <td class="px-md py-sm font-label-md text-label-md text-on-surface">
@@ -198,53 +204,21 @@ Dashboard
                     <div class="flex justify-between items-center mb-md">
                         <h3 class="font-title-md text-title-md text-on-surface">Recent Activities</h3>
                     </div>
-                    <div class="space-y-md flex-1 overflow-y-auto">
-                        <div class="flex gap-sm">
-                            <div class="flex flex-col items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-[16px]">person_add</span>
-                                </div>
-                                <div class="w-px h-full bg-surface-container my-1"></div>
-                            </div>
-                            <div class="pb-md">
-                                <p class="font-body-sm text-body-sm text-on-surface">New patient <span
-                                        class="font-label-md text-label-md">Vikram Malhotra</span>
-                                    registered.</p>
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">10 mins ago
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex gap-sm">
-                            <div class="flex flex-col items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-[16px]">payments</span>
-                                </div>
-                                <div class="w-px h-full bg-surface-container my-1"></div>
-                            </div>
-                            <div class="pb-md">
-                                <p class="font-body-sm text-body-sm text-on-surface">Payment of <span
-                                        class="font-label-md text-label-md">₹1,500</span> received from
-                                    Aarav Patel.</p>
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">45 mins ago
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex gap-sm">
-                            <div class="flex flex-col items-center">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-secondary/20 text-secondary flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-[16px]">check_circle</span>
-                                </div>
-                            </div>
-                            <div>
-                                <p class="font-body-sm text-body-sm text-on-surface">Dr. Mehta completed
-                                    consultation with Priya Singh.</p>
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">1 hour ago
-                                </p>
-                            </div>
-                        </div>
+                    <div class="min-h-0 max-h-80 flex-1 space-y-md overflow-y-auto">
+                        {% for activity in recent_activities %}
+                        <form action="{% url 'core:notification-open' activity.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="flex w-full gap-sm rounded-lg p-2 text-left hover:bg-surface-container-low transition-colors" type="submit">
+                                <span class="material-symbols-outlined mt-1 text-primary">notifications</span>
+                                <span class="min-w-0">
+                                    <span class="block font-body-sm text-body-sm text-on-surface">{{ activity.message }}</span>
+                                    <span class="mt-1 block font-label-sm text-label-sm text-on-surface-variant">{{ activity.time }}</span>
+                                </span>
+                            </button>
+                        </form>
+                        {% empty %}
+                        <p class="text-sm text-on-surface-variant">No recent activities.</p>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

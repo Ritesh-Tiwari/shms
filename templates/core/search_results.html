@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Search | SHMS{% endblock %}
+
+{% block content %}
+<div class="flex w-full flex-col">
+    <section class="mx-auto w-full max-w-7xl space-y-lg px-4 py-6 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-md sm:flex-row sm:items-end sm:justify-between">
+            <div class="space-y-xs">
+                <h1 class="font-headline-lg text-headline-lg text-on-surface">Search</h1>
+                {% if query %}
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                    Results for <span class="font-medium text-on-surface">“{{ query }}”</span>
+                </p>
+                {% else %}
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                    Search the records available to your account.
+                </p>
+                {% endif %}
+            </div>
+            <a class="inline-flex items-center gap-sm self-start rounded-lg bg-surface-container-lowest px-md py-sm font-label-md text-label-md text-primary shadow-sm transition hover:bg-surface-container-low sm:self-auto"
+                href="{{ return_url }}">
+                <span aria-hidden="true" class="material-symbols-outlined text-[20px]">restart_alt</span>
+                Reset
+            </a>
+        </div>
+
+        {% if query %}
+        <div class="flex items-center justify-between">
+            <h2 class="font-title-md text-title-md text-on-surface">Matching records</h2>
+            <span class="rounded-full bg-primary/10 px-sm py-1 font-label-sm text-label-sm text-primary">
+                {{ results|length }} result{{ results|length|pluralize }}
+            </span>
+        </div>
+        {% endif %}
+
+        {% if not query %}
+        <div class="rounded-xl bg-surface-container-lowest p-xl text-center shadow-sm">
+            <span aria-hidden="true" class="material-symbols-outlined mb-sm text-4xl text-primary">manage_search</span>
+            <h2 class="font-title-md text-title-md text-on-surface">Start a search</h2>
+            <p class="mt-xs font-body-sm text-body-sm text-on-surface-variant">
+                Use the search bar in the header to find records.
+            </p>
+        </div>
+        {% elif results %}
+        <div class="grid grid-cols-1 gap-md lg:grid-cols-2">
+            {% for result in results %}
+            <a class="group flex items-center justify-between gap-md rounded-xl bg-surface-container-lowest p-lg shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                href="{{ result.url }}">
+                <div class="flex min-w-0 items-center gap-md">
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        {% if result.category == "Patient" %}
+                        <span aria-hidden="true" class="material-symbols-outlined">person</span>
+                        {% elif result.category == "Doctor" %}
+                        <span aria-hidden="true" class="material-symbols-outlined">medical_services</span>
+                        {% elif result.category == "Appointment" %}
+                        <span aria-hidden="true" class="material-symbols-outlined">calendar_month</span>
+                        {% elif result.category == "Bill" %}
+                        <span aria-hidden="true" class="material-symbols-outlined">receipt_long</span>
+                        {% else %}
+                        <span aria-hidden="true" class="material-symbols-outlined">prescriptions</span>
+                        {% endif %}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="truncate font-label-md text-label-md text-on-surface">{{ result.title }}</p>
+                        <p class="mt-xs truncate font-body-sm text-body-sm text-on-surface-variant">{{ result.subtitle }}</p>
+                    </div>
+                </div>
+                <div class="flex shrink-0 items-center gap-sm">
+                    <span class="rounded-md bg-surface-container-high px-sm py-1 font-label-sm text-label-sm text-primary">
+                        {{ result.category }}
+                    </span>
+                    <span aria-hidden="true"
+                        class="material-symbols-outlined text-on-surface-variant transition group-hover:translate-x-1 group-hover:text-primary">chevron_right</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% elif query %}
+        <div class="rounded-xl bg-surface-container-lowest p-xl text-center shadow-sm">
+            <span aria-hidden="true" class="material-symbols-outlined mb-sm text-4xl text-on-surface-variant">search_off</span>
+            <h2 class="font-title-md text-title-md text-on-surface">No matching records</h2>
+            <p class="mt-xs font-body-sm text-body-sm text-on-surface-variant">
+                Try another name, record ID, or keyword.
+            </p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

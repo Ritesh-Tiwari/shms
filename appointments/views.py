@@ -10,6 +10,7 @@ from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_GET
 
 from core.decorators import role_required
+from core.notification_services import notify_appointment_event
 from accounts.choices import UserRole
 from .models import Appointment, AppointmentStatus
 from .forms import AppointmentForm, AppointmentUpdateForm, PatientAppointmentForm
@@ -35,8 +36,13 @@ def create_appointment(request):
 
             try:
 
-                AppointmentService.create_appointment(
+                appointment = AppointmentService.create_appointment(
                     appointment_data=form.cleaned_data,
+                )
+                notify_appointment_event(
+                    appointment,
+                    actor=request.user,
+                    event="booked",
                 )
 
                 messages.success(
@@ -333,6 +339,12 @@ def update_appointment(request, pk):
                     appointment=appointment,
                     appointment_data=form.cleaned_data,
                 )
+                if form.changed_data:
+                    notify_appointment_event(
+                        appointment,
+                        actor=request.user,
+                        event="rescheduled",
+                    )
 
                 messages.success(
                     request,
@@ -399,6 +411,12 @@ def my_reschedule_appointment(request, pk):
                     appointment=appointment,
                     appointment_data=form.cleaned_data,
                 )
+                if form.changed_data:
+                    notify_appointment_event(
+                        appointment,
+                        actor=request.user,
+                        event="rescheduled",
+                    )
 
                 messages.success(
                     request,
@@ -463,6 +481,11 @@ def cancel_appointment(request, pk):
 
             AppointmentService.cancel_appointment(
                 appointment=appointment,
+            )
+            notify_appointment_event(
+                appointment,
+                actor=request.user,
+                event="cancelled",
             )
 
             messages.success(
@@ -532,12 +555,23 @@ def update_appointment_status(request, pk):
 
     new_status = request.POST.get("status")
 
+    previous_status = appointment.status
     try:
 
         AppointmentService.update_status(
             appointment=appointment,
             new_status=new_status,
         )
+        if appointment.status != previous_status:
+            notify_appointment_event(
+                appointment,
+                actor=request.user,
+                event=(
+                    "cancelled"
+                    if appointment.status == AppointmentStatus.CANCELLED
+                    else "status"
+                ),
+            )
 
         messages.success(
             request,
@@ -589,7 +623,7 @@ def book_appointment(request):
 
             try:
 
-                AppointmentService.create_appointment(
+                appointment = AppointmentService.create_appointment(
                     appointment_data={
                         "patient": patient,
                         "doctor": form.cleaned_data["doctor"],
@@ -603,6 +637,11 @@ def book_appointment(request):
                             "reason_for_visit"
                         ],
                     },
+                )
+                notify_appointment_event(
+                    appointment,
+                    actor=request.user,
+                    event="booked",
                 )
 
                 messages.success(
@@ -666,6 +705,11 @@ def my_cancel_appointment(request, pk):
 
             AppointmentService.cancel_appointment(
                 appointment=appointment,
+            )
+            notify_appointment_event(
+                appointment,
+                actor=request.user,
+                event="cancelled",
             )
 
             messages.success(

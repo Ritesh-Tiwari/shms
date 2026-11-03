@@ -10,6 +10,8 @@ SHMS is a Django web application for managing patients, doctors, appointments, p
 - Login and logout views; role-based routing sends signed-in users to the dashboard for their role.
 - Administrative account directory with search, role and active-status filters, pagination, and account activation/deactivation.
 - Protected views restrict access to the roles that need each workflow.
+- Admin-only security audit log records successful and failed logins, logouts, role-based access denials, and account-status changes. Admins can search and filter the paginated log; events are read-only.
+- Admin reporting workflow provides patient registration, appointment summary, recurring doctor schedule, prescription, billing/revenue, and payment status reports. Reports support applicable date-range filters, pagination, and CSV export.
 
 ### Patient records
 
@@ -50,7 +52,7 @@ SHMS is a Django web application for managing patients, doctors, appointments, p
 
 | Role | Main workflows |
 | --- | --- |
-| `ADMIN` | Dashboard, account management, patient and doctor management, appointments, prescription review, and billing access |
+| `ADMIN` | Dashboard, account management and audit log, patient and doctor management, appointments, prescription review, and billing access |
 | `DOCTOR` | Doctor dashboard, own appointments, patient clinical summaries, schedules, prescriptions, and permitted billing workflows |
 | `RECEPTIONIST` | Reception dashboard, patient and doctor lookup/management, appointment management, and patient check-in |
 | `PATIENT` | Own profile, appointment booking and history, prescriptions, bills, and payment receipts |
@@ -86,7 +88,7 @@ manage.py        Django management entry point
 Use Python 3.12 or newer and run the following from the project directory:
 
 ```powershell
-py -3.12 -m venv .venv
+py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
@@ -121,8 +123,13 @@ Apply migrations and start the development server:
 
 ```powershell
 python manage.py migrate
+python manage.py shell -c "exec(open('demo-data.py', encoding='utf-8').read())"
 python manage.py runserver
 ```
+
+The demo seed creates sample records across the application models. Newly
+created demo accounts use the password `Demo@12345`. Prescription entries are
+illustrative placeholders, not medical advice or real prescriptions.
 
 Open `http://127.0.0.1:8000/`. Create an administrator account with `python manage.py createsuperuser`; administrator-created accounts are used for the other staff and patient roles.
 
@@ -156,6 +163,7 @@ python manage.py collectstatic
 - `SECRET_KEY`, `DEBUG`, and `DATABASE_URL` are read from the environment (or a local `.env` file). Always set a private `SECRET_KEY`; do not use Django's insecure development fallback in production.
 - With `DEBUG=False`, the settings enable HTTPS redirection and secure cookies. Use HTTPS in deployment; set `DEBUG=True` only for local development.
 - `VERCEL_URL` can extend the configured allowed hosts and CSRF trusted origins.
+- On Vercel, configure `DATABASE_URL` with the PostgreSQL connection URL from Neon (or configure all five `DB_*` variables). Apply migrations against that same database by running `python manage.py migrate` from the project directory with its production database environment available. This creates tables including `security_audit_auditlog`; migrations are not run automatically by the Vercel request handler.
 - [`vercel.json`](./vercel.json) currently declares a Python 3.9 runtime, while the dependency list uses Django 6.0.8. Align the deployment runtime with the Python version supported by the installed Django release before deploying.
 
 ## Data and privacy

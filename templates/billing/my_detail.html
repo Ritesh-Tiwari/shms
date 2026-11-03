@@ -4,7 +4,7 @@
 
 {% block content %}
 <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-24 lg:pb-12 space-y-6">
-    <div class="flex flex-col w-full space-y-6">
+    <div class="flex min-w-0 flex-col w-full space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="space-y-2">
                 <a class="inline-flex items-center gap-1.5 text-primary hover:text-on-primary-fixed-variant transition-colors font-label-md"
@@ -21,7 +21,12 @@
                 </div>
                 <p class="font-body-sm text-on-surface-variant">{{ billing.bill_id|default:"Bill ID unavailable" }}</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{% url 'billing:pdf' billing.pk %}"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    Download Invoice PDF
+                </a>
                 <button type="button" onclick="window.print()"
                     class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors shadow-sm">
                     <span class="material-symbols-outlined text-[18px]">print</span>
@@ -89,7 +94,7 @@
         </section>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <section class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
+            <section class="lg:col-span-5 min-w-0 bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
                 <div class="flex items-center gap-2.5 pb-4 mb-4 border-b border-outline-variant/20">
                     <span class="material-symbols-outlined text-primary text-[22px]">account_balance_wallet</span>
                     <h2 class="font-title-md text-on-surface font-semibold">Payment Summary</h2>
@@ -131,12 +136,12 @@
                 </dl>
             </section>
 
-            <section class="lg:col-span-7 bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
+            <section class="lg:col-span-7 min-w-0 bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
                 <div class="flex items-center gap-2.5 pb-4 mb-4 border-b border-outline-variant/20">
                     <span class="material-symbols-outlined text-primary text-[22px]">receipt_long</span>
                     <h2 class="font-title-md text-on-surface font-semibold">Invoice Breakdown</h2>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto min-w-0">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="bg-surface-container-low font-label-sm text-on-surface-variant uppercase tracking-wider">
@@ -172,7 +177,7 @@
             </section>
         </div>
 
-        <section class="bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
+        <section class="min-w-0 bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
             <div class="flex items-center gap-2.5 pb-4 mb-4">
                 <span class="material-symbols-outlined text-primary text-[22px]">payments</span>
                 <div>
@@ -181,7 +186,7 @@
                 </div>
             </div>
             {% if billing.payments.all %}
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto min-w-0">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-surface-container-low font-label-sm text-on-surface-variant uppercase tracking-wider">

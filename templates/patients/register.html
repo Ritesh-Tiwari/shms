@@ -231,9 +231,8 @@ Register Patient
                 <button
                     class="w-full px-lg py-3 rounded-full bg-primary text-on-primary text-label-md font-label-md shadow-md"
                     type="submit">Register Patient</button>
-                <button
-                    class="w-full px-lg py-3 rounded-full text-label-md font-label-md text-on-surface-variant bg-surface-container"
-                    type="button">Cancel</button>
+                <a href="{% url 'patients:list' %}"
+                    class="w-full px-lg py-3 rounded-full text-label-md font-label-md text-on-surface-variant bg-surface-container text-center">Cancel</a>
             </div>
         </form>
     </div>

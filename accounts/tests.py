@@ -1,5 +1,9 @@
+from datetime import datetime, timedelta
+from unittest.mock import patch
 from urllib.parse import urlsplit
 
+from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.test import TestCase
 from django.test import override_settings
@@ -19,6 +23,19 @@ class UserModelTests(TestCase):
         self.assertEqual(user.email, "patient-test@example.com")
         self.assertTrue(user.check_password("StrongPassword123!"))
         self.assertNotEqual(user.password, "StrongPassword123!")
+
+    def test_create_superuser_defaults_to_admin_role(self):
+        user = User.objects.create_superuser(
+            username="adminuser",
+            email="adminuser@example.com",
+            password="StrongPassword123!",
+        )
+        self.assertEqual(user.role, UserRole.ADMIN)
+        self.assertTrue(user.is_staff)
+        self.assertTrue(user.is_superuser)
+        self.client.force_login(user)
+        response = self.client.get(reverse("dashboard:dashboard"))
+        self.assertEqual(response.status_code, 200)
 
     def test_email_must_be_unique(self):
         User.objects.create_user(
@@ -136,3 +153,24 @@ class PasswordResetTests(TestCase):
             reverse("accounts:password_reset_done"),
         )
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_reset_link_is_valid_for_configured_24_hour_window(self):
+        self.assertEqual(settings.PASSWORD_RESET_TIMEOUT, 86400)
+        generated_at = datetime.now()
+
+        with patch.object(default_token_generator, "_now", return_value=generated_at):
+            token = default_token_generator.make_token(self.user)
+
+        with patch.object(
+            default_token_generator,
+            "_now",
+            return_value=generated_at + timedelta(hours=23),
+        ):
+            self.assertTrue(default_token_generator.check_token(self.user, token))
+
+        with patch.object(
+            default_token_generator,
+            "_now",
+            return_value=generated_at + timedelta(hours=25),
+        ):
+            self.assertFalse(default_token_generator.check_token(self.user, token))

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'security_audit',
     'core',    
     'dashboard',
     'accounts',
@@ -56,7 +57,7 @@ INSTALLED_APPS = [
     'prescriptions',
     'billing',
     'receptionist',
-    "security_audit",
+    
 
 ]
 
@@ -82,6 +83,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.recent_activities',
             ],
         },
     },
@@ -89,27 +91,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
-    }
-}
+
 # Production me Vercel URL, Local par SQLite
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-#         conn_max_age=600
-#     )
-# }
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -149,8 +141,9 @@ DEFAULT_FROM_EMAIL = config(
     "DEFAULT_FROM_EMAIL",
     default="SHMS Support <noreply@shms.local>",
 )
-# Password-reset links expire after one hour.
-PASSWORD_RESET_TIMEOUT = 3600
+# Give users a full day to use the reset email; deployments can override this
+# with PASSWORD_RESET_TIMEOUT without changing the reset flow.
+PASSWORD_RESET_TIMEOUT = config("PASSWORD_RESET_TIMEOUT", cast=int, default=86400)
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/

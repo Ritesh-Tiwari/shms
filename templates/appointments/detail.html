@@ -28,10 +28,12 @@
                     class="px-md py-2 rounded-lg bg-error-container text-on-error-container text-label-md font-label-md hover:bg-error hover:text-on-error shadow-sm transition-all flex items-center gap-sm">
                     <span class="material-symbols-outlined text-[18px]">cancel</span>Cancel
                 </a>
+                {% if request.user.role != "DOCTOR" %}
                 <a href="{% url 'appointments:update' appointment.pk %}"
                     class="px-md py-2 rounded-lg bg-surface-container-highest text-on-surface text-label-md font-label-md hover:bg-surface-dim shadow-sm transition-all flex items-center gap-sm">
                     <span class="material-symbols-outlined text-[18px]">update</span>Reschedule
                 </a>
+                {% endif %}
             {% endif %}
             
             {% if appointment.status == "SCHEDULED" %}
@@ -65,15 +67,15 @@
                     <div class="flex flex-col gap-xs"><span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Created On</span><span class="text-body-md">{{ appointment.created_at|date:"d M Y, h:i A" }}</span></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
-                    <a href="{% url 'patients:detail' appointment.patient.pk %}" class="bg-surface p-md rounded-xl flex items-center gap-md hover:shadow-sm transition-shadow group">
-                        <span class="w-11 h-11 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center material-symbols-outlined">person</span>
-                        <span class="flex flex-col"><span class="text-label-sm text-on-surface-variant">Patient</span><span class="text-body-md text-primary font-semibold">{{ appointment.patient.patient_id }} · {{ appointment.patient.user.get_full_name }}</span></span>
-                        <span class="material-symbols-outlined ml-auto text-on-surface-variant group-hover:text-primary">arrow_forward_ios</span>
+                    <a href="{% if request.user.role == 'DOCTOR' %}{% url 'doctors:patient-summary' appointment.patient.pk %}{% else %}{% url 'patients:detail' appointment.patient.pk %}{% endif %}" class="bg-surface p-md rounded-xl flex min-w-0 items-center gap-md hover:shadow-sm transition-shadow group">
+                        <span class="w-11 h-11 shrink-0 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center material-symbols-outlined">person</span>
+                        <span class="flex min-w-0 flex-col"><span class="text-label-sm text-on-surface-variant">Patient</span><span class="break-words text-body-md text-primary font-semibold">{{ appointment.patient.patient_id }} · {{ appointment.patient.user.get_full_name }}</span></span>
+                        <span aria-hidden="true" class="material-symbols-outlined ml-auto w-5 shrink-0 overflow-hidden text-on-surface-variant group-hover:text-primary">arrow_forward_ios</span>
                     </a>
-                    <a href="{% url 'doctors:detail' appointment.doctor.pk %}" class="bg-surface p-md rounded-xl flex items-center gap-md hover:shadow-sm transition-shadow group">
-                        <span class="w-11 h-11 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center material-symbols-outlined">medical_services</span>
-                        <span class="flex flex-col"><span class="text-label-sm text-on-surface-variant">Attending Doctor</span><span class="text-body-md text-primary font-semibold">{{ appointment.doctor.doctor_id }} · Dr. {{ appointment.doctor.user.get_full_name }}</span></span>
-                        <span class="material-symbols-outlined ml-auto text-on-surface-variant group-hover:text-primary">arrow_forward_ios</span>
+                    <a href="{% if request.user.role == 'DOCTOR' %}{% url 'doctors:dashboard' %}{% else %}{% url 'doctors:detail' appointment.doctor.pk %}{% endif %}" class="bg-surface p-md rounded-xl flex min-w-0 items-center gap-md hover:shadow-sm transition-shadow group">
+                        <span class="w-11 h-11 shrink-0 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center material-symbols-outlined">medical_services</span>
+                        <span class="flex min-w-0 flex-col"><span class="text-label-sm text-on-surface-variant">Attending Doctor</span><span class="break-words text-body-md text-primary font-semibold">{{ appointment.doctor.doctor_id }} · Dr. {{ appointment.doctor.user.get_full_name }}</span></span>
+                        <span aria-hidden="true" class="material-symbols-outlined ml-auto w-5 shrink-0 overflow-hidden text-on-surface-variant group-hover:text-primary">arrow_forward_ios</span>
                     </a>
                 </div>
             </section>

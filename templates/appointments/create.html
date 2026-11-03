@@ -25,12 +25,12 @@ Create Appointment
                 <span class="font-title-md text-title-md text-primary" id="current-date-display">Oct 24,
                     2023</span>
             </div>
-            <button
+            <a
                 class="flex items-center justify-center gap-sm bg-surface-container-high hover:bg-surface-dim text-on-surface font-label-md text-label-md px-md py-sm rounded-lg transition-colors shadow-sm"
-                type="button">
+                href="#id_appointment_date">
                 <span class="material-symbols-outlined text-[20px]">calendar_month</span>
                 View Calendar
-            </button>
+            </a>
         </div>
     </div>
     <!-- Main Content Layout -->
@@ -331,10 +331,6 @@ Create Appointment
                 <div
                     class="p-lg border-b border-outline-variant/20 flex items-center justify-between bg-surface-container-lowest rounded-t-xl z-10">
                     <h3 class="font-title-md text-title-md text-on-surface">Doctor Availability</h3>
-                    <button
-                        class="p-xs hover:bg-surface-container rounded-full text-on-surface-variant transition-colors">
-                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                    </button>
                 </div>
                 <div class="p-lg flex flex-col gap-md relative">
                     <!-- Subtle background map/pattern to add texture to the sidebar -->
@@ -342,7 +338,7 @@ Create Appointment
                         style="background-image: radial-gradient(#0b1c30 1px, transparent 1px); background-size: 16px 16px;">
                     </div>
                     <div
-                        class="flex items-center justify-between p-sm rounded-lg hover:bg-surface-container transition-colors cursor-pointer group">
+                        class="flex items-center justify-between p-sm rounded-lg hover:bg-surface-container transition-colors group">
                         <div class="flex items-center gap-sm">
                             <div
                                 class="w-8 h-8 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-label-md">
@@ -360,7 +356,7 @@ Create Appointment
                             slots</span>
                     </div>
                     <div
-                        class="flex items-center justify-between p-sm rounded-lg hover:bg-surface-container transition-colors cursor-pointer group">
+                        class="flex items-center justify-between p-sm rounded-lg hover:bg-surface-container transition-colors group">
                         <div class="flex items-center gap-sm">
                             <div
                                 class="w-8 h-8 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-label-md">
@@ -398,7 +394,7 @@ Create Appointment
                 </div>
                 <div class="p-md text-center bg-surface-container-low rounded-b-xl mt-auto">
                     <a class="font-label-md text-label-md text-primary hover:text-primary-fixed-variant transition-colors inline-flex items-center gap-xs"
-                        href="#">
+                        href="{% url 'doctors:list' %}">
                         View full roster <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </a>
                 </div>

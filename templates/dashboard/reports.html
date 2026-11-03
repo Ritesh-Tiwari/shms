@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Reports | SHMS{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-background">
+    <div class="mx-auto flex w-full max-w-7xl flex-col gap-lg px-md py-lg md:px-xl">
+        <header class="flex flex-col gap-sm">
+            <h1 class="font-headline-lg text-headline-lg text-on-surface">Reports</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                Review operational reports and export filtered results as CSV.
+            </p>
+            {% if selected_report == "doctor_schedules" %}
+            <p class="font-body-sm text-body-sm text-on-surface-variant">
+                Doctor schedules repeat weekly, so date filters do not apply to this report.
+            </p>
+            {% endif %}
+        </header>
+
+        <form method="get" class="grid grid-cols-1 items-end gap-md rounded-xl bg-surface-container-lowest p-lg shadow-sm md:grid-cols-4">
+            <div>
+                <label for="{{ form.report.id_for_label }}" class="mb-xs block font-label-md text-label-md text-on-surface">Report</label>
+                {{ form.report }}
+                {% for error in form.report.errors %}<p class="mt-xs text-sm text-error">{{ error }}</p>{% endfor %}
+            </div>
+            <div>
+                <label for="{{ form.start_date.id_for_label }}" class="mb-xs block font-label-md text-label-md text-on-surface">From</label>
+                {{ form.start_date }}
+                {% for error in form.start_date.errors %}<p class="mt-xs text-sm text-error">{{ error }}</p>{% endfor %}
+            </div>
+            <div>
+                <label for="{{ form.end_date.id_for_label }}" class="mb-xs block font-label-md text-label-md text-on-surface">To</label>
+                {{ form.end_date }}
+                {% for error in form.end_date.errors %}<p class="mt-xs text-sm text-error">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="flex flex-wrap gap-sm">
+                <button type="submit" class="rounded-lg bg-primary px-md py-sm font-label-md text-label-md text-on-primary">Generate</button>
+                {% if selected_report %}
+                <a href="{% url 'dashboard:report-download' %}?report={{ selected_report }}&start_date={{ form.start_date.value|default:'' }}&end_date={{ form.end_date.value|default:'' }}"
+                    class="rounded-lg bg-surface-container px-md py-sm font-label-md text-label-md text-on-surface">Download CSV</a>
+                {% endif %}
+            </div>
+
+            {% for error in form.non_field_errors %}
+            <p class="text-sm text-error md:col-span-4">{{ error }}</p>
+            {% endfor %}
+        </form>
+
+        {% if report_title %}
+        <section class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
+            <div class="flex flex-col gap-xs border-b border-outline-variant/30 p-lg sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h2 class="font-title-md text-title-md text-on-surface">{{ report_title }}</h2>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">
+                        {{ page_obj.paginator.count }} record{{ page_obj.paginator.count|pluralize }}
+                    </p>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-max border-collapse text-left">
+                    <thead class="bg-surface-container-low">
+                        <tr>
+                            {% for column in columns %}
+                            <th class="whitespace-nowrap px-md py-sm font-label-sm text-label-sm text-on-surface-variant">{{ column }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                        <tr class="border-t border-outline-variant/20">
+                            {% for cell in row %}
+                            <td class="max-w-sm whitespace-pre-wrap px-md py-sm font-body-sm text-body-sm text-on-surface">{{ cell|default:"—" }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td class="px-md py-lg text-center font-body-sm text-body-sm text-on-surface-variant" colspan="{{ columns|length }}">No records found for this report and date range.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Report pages" class="flex items-center justify-between border-t border-outline-variant/30 p-md">
+                {% if page_obj.has_previous %}
+                <a class="font-label-md text-label-md text-primary hover:underline" href="?report={{ selected_report }}&start_date={{ form.start_date.value|default:'' }}&end_date={{ form.end_date.value|default:'' }}&page={{ page_obj.previous_page_number }}">Previous</a>
+                {% else %}<span></span>{% endif %}
+                <span class="font-body-sm text-body-sm text-on-surface-variant">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                <a class="font-label-md text-label-md text-primary hover:underline" href="?report={{ selected_report }}&start_date={{ form.start_date.value|default:'' }}&end_date={{ form.end_date.value|default:'' }}&page={{ page_obj.next_page_number }}">Next</a>
+                {% else %}<span></span>{% endif %}
+            </nav>
+            {% endif %}
+        </section>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

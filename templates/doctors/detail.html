@@ -68,19 +68,18 @@ Doctor Details
                                 Edit Profile
                             </a>
                             
-                            <a href="{% url "doctors:schedule" %}"
+                            <button type="button" onclick="viewDoctorSchedule()"
                                 class="bg-primary text-on-primary hover:bg-primary/90 px-md py-sm rounded-lg font-label-md shadow-md transition-all flex items-center gap-sm">
                                 <span class="material-symbols-outlined text-[18px]">calendar_month</span>
                                 View Schedule
-                            </a>                            
+                            </button>
                             <!-- Danger Zone Dropdown / Icon Button -->
-                            <div class="relative group">
-                                <button type="button" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors">
-                                <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                                
-                                <!-- Dropdown Menu -->
-                                <div class="hidden group-hover:block absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-10">
+                            <details class="relative">
+                                <summary class="list-none cursor-pointer p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors">
+                                    <span aria-hidden="true" class="material-symbols-outlined">more_vert</span>
+                                    <span class="sr-only">More doctor actions</span>
+                                </summary>
+                                <div class="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-10">
                                 <form method="post" action="{% url 'doctors:toggle-active' doctor.pk %}">
                                     {% csrf_token %}
                                     {% if doctor.user.is_active %}
@@ -96,7 +95,7 @@ Doctor Details
                                     {% endif %}
                                 </form>
                                 </div>
-                            </div>
+                            </details>
                             {% endif %}
                         </div>
                     </div>
@@ -224,11 +223,11 @@ Doctor Details
                                             </p>
                                         {% endfor %}
                                     </div>
-                                    <div class="pt-2 flex items-center justify-between"><a
-                                            href="#schedule-details"
+                                    <div class="pt-2 flex items-center justify-between">                                    <button type="button"
+                                        onclick="viewDoctorSchedule()"
                                             class="w-full py-2.5 px-4 text-xs font-semibold text-primary hover:bg-primary/5 rounded-lg border border-primary/30 flex items-center justify-center gap-1.5 transition-colors"><span
                                                 class="">View Full Schedule</span><span
-                                                class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+                                            class="material-symbols-outlined text-[16px]">arrow_forward</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -514,10 +513,10 @@ Doctor Details
                                     {% endfor %}                                    
                                  
                                 </div>
-                                <div class="pt-xs flex justify-center"><a href="{% url "doctors:schedule" %}"
+                                <div class="pt-xs flex justify-center"><button type="button" onclick="viewDoctorSchedule()"
                                         class="w-full sm:w-auto px-lg py-2.5 text-label-md font-semibold text-primary hover:bg-primary/5 rounded-lg border border-primary/30 flex items-center justify-center gap-2 transition-colors"><span
-                                            class="">View Full Monthly Roster &amp; Special Slots</span><span
-                                            class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+                                            class="">View Schedule Details</span><span
+                                            class="material-symbols-outlined text-[18px]">arrow_forward</span></button>
                                 </div>
                             </div>
                         </div>
@@ -593,6 +592,14 @@ Doctor Details
                     pane.classList.add('hidden');
                     pane.classList.remove('grid', 'flex');
                 }
+            });
+        }
+
+        function viewDoctorSchedule() {
+            switchDoctorTab('availability');
+            document.getElementById('tab-pane-availability').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
         }
 

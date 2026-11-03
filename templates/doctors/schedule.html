@@ -32,7 +32,7 @@
             <div class="flex flex-wrap items-center gap-2.5 flex-1">
                 <div class="relative flex-1 sm:max-w-xs min-w-[200px]"><span
                         class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px] pointer-events-none">search</span><input
-                        type="text" placeholder="Filter by time or day..."
+                        id="schedule-search" type="text" placeholder="Filter by time or day..."
                         class="w-full pl-9 pr-3 py-2 bg-slate-50/70 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                 </div>
                 <div class="relative min-w-[130px]"><label class="sr-only" for="day-filter">Filter by day</label><select
@@ -61,7 +61,7 @@
             </div>
             <div class="flex items-center justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100"><button
                     type="button"
-                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors"><span
+                    id="schedule-reset" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors"><span
                         class="material-symbols-outlined text-[16px]">restart_alt</span><span class="">Reset
                         Filters</span></button></div>
         </div>
@@ -81,7 +81,9 @@
                     <tbody class="text-sm">
                         {% for schedule in schedules %}
                         <!-- Row 1 -->
-                        <tr class="hover:bg-surface-container-low/50 transition-colors">
+                        <tr class="hover:bg-surface-container-low/50 transition-colors"
+                            data-day="{{ schedule.get_weekday_display|lower }}"
+                            data-status="{% if schedule.is_active %}active{% else %}inactive{% endif %}">
                             <td class="py-4 px-6 font-medium text-on-surface whitespace-nowrap">
                                {{ schedule.get_weekday_display }}
                             </td>
@@ -121,7 +123,11 @@
                             </td>
                         </tr>
                         {% endfor %}
-                        
+                        <tr id="no-matching-schedules" class="hidden">
+                            <td colspan="5" class="p-5 text-center">
+                                No schedules match these filters.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -129,5 +135,45 @@
     </div>
 </main>
 
+<script>
+    const scheduleSearch = document.getElementById("schedule-search");
+    const scheduleDayFilter = document.getElementById("day-filter");
+    const scheduleStatusFilter = document.getElementById("status-filter");
+    const scheduleRows = document.querySelectorAll("tbody tr[data-day]");
+    const noMatchingSchedules = document.getElementById("no-matching-schedules");
+
+    function filterSchedules() {
+        const search = scheduleSearch.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        scheduleRows.forEach((row) => {
+            const matchesSearch = row.textContent.toLowerCase().includes(search);
+            const matchesDay = scheduleDayFilter.value === "all" ||
+                row.dataset.day === scheduleDayFilter.value;
+            const matchesStatus = scheduleStatusFilter.value === "all" ||
+                row.dataset.status === scheduleStatusFilter.value;
+            const isVisible = matchesSearch && matchesDay && matchesStatus;
+
+            row.classList.toggle("hidden", !isVisible);
+            if (isVisible) visibleCount += 1;
+        });
+
+        noMatchingSchedules.classList.toggle(
+            "hidden",
+            visibleCount > 0 || scheduleRows.length === 0
+        );
+    }
+
+    scheduleSearch.addEventListener("input", filterSchedules);
+    scheduleDayFilter.addEventListener("change", filterSchedules);
+    scheduleStatusFilter.addEventListener("change", filterSchedules);
+    document.getElementById("schedule-reset").addEventListener("click", () => {
+        scheduleSearch.value = "";
+        scheduleDayFilter.value = "all";
+        scheduleStatusFilter.value = "all";
+        filterSchedules();
+        scheduleSearch.focus();
+    });
+</script>
 
 {% endblock %}

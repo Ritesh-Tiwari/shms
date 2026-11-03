@@ -33,11 +33,18 @@
                 </a>
 
 
-                <a  href="{% url 'prescriptions:update' prescription.pk %}"          
-                    class="inline-flex items-center gap-1.5 px-md py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md shadow-sm hover:opacity-95 transition-all">
-                    <span class="material-symbols-outlined text-[18px]">edit</span>
-                    Edit Prescription
+                <a href="{% url 'prescriptions:pdf' prescription.pk %}"
+                    class="inline-flex items-center gap-1.5 px-md py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm hover:opacity-95 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    Download PDF
                 </a>
+                {% if user.role == "DOCTOR" %}
+                    <a href="{% url 'prescriptions:update' prescription.pk %}"
+                        class="inline-flex items-center gap-1.5 px-md py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md shadow-sm hover:opacity-95 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                        Edit Prescription
+                    </a>
+                {% endif %}
             </div>
         </div>
         <!-- Main Card Body -->

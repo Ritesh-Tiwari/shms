@@ -206,7 +206,7 @@ Receptionists | SHMS
                     </div>
                     {% endfor %}
                     
-                    <div class="bg-surface-container-lowest rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between receptionist-mobile-card">
+                    <div hidden aria-hidden="true" class="hidden bg-surface-container-lowest rounded-xl border border-slate-200/80 shadow-sm p-5 flex-col justify-between receptionist-mobile-card">
                         <div class="space-y-4">
                             <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
                                 <div class="flex items-center gap-3 min-w-0">
@@ -254,7 +254,7 @@ Receptionists | SHMS
                         </div>
                     </div>
 
-                    <div class="bg-surface-container-lowest rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between receptionist-mobile-card"
+                    <div hidden aria-hidden="true" class="hidden bg-surface-container-lowest rounded-xl border border-slate-200/80 shadow-sm p-5 flex-col justify-between receptionist-mobile-card"
                         data-card-id="REC000007" data-search="amit kumar rec000007 amit.recp@example.com 9876543211">
                         <div class="space-y-4">
                             <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
@@ -332,10 +332,8 @@ Receptionists | SHMS
 
                         {% if page_obj.number == num %}
 
-                            <button
-                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm font-semibold"
-                                type="button">{{ num }} 
-                            </button>    
+                            <span aria-current="page"
+                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm font-semibold">{{ num }}</span>
                         {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}    
                             <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
                                 class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm font-semibold"

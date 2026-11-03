@@ -228,6 +228,7 @@ def register_patient(request):
                     PatientService.create_patient(
                         user_data=user_form.cleaned_data,
                         patient_data=patient_form.cleaned_data,
+                        actor=request.user,
                     )
 
             except IntegrityError:
