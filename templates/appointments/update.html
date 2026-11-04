@@ -281,7 +281,18 @@
                         >
                         New Date &amp; Time
                       </h2>
-                      <form class="space-y-lg" method="post">
+                      <form
+                        class="space-y-lg"
+                        method="post"
+                        id="appointment-form"
+                        data-availability-form
+                        data-dates-url="{% url 'appointments:available-dates' %}"
+                        data-times-url="{% url 'appointments:available-times' %}"
+                        data-doctor-id="{{ appointment.doctor_id }}"
+                        data-exclude-appointment-id="{{ appointment.pk }}"
+                        data-selected-date="{{ form.appointment_date.value|default:appointment.appointment_date|date:'Y-m-d' }}"
+                        data-selected-time="{{ form.appointment_time.value|default:appointment.appointment_time|time:'H:i' }}"
+                      >
                         {% csrf_token %}
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-lg">
                           <!-- Date Picker -->
@@ -301,12 +312,22 @@
                                 class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
                                 >calendar_month</span
                               >
-                              <input name="{{ form.appointment_date.html_name }}"
+                              <select
                                 class="w-full bg-surface-container-low text-on-surface rounded-lg py-2 pl-10 pr-md focus:ring-2 focus:ring-primary/50 focus:bg-surface-container-lowest transition-all outline-none"
-                                type="date"
+                                id="{{ form.appointment_date.id_for_label }}"
+                                name="{{ form.appointment_date.html_name }}"
                                 required
-                              />
+                                disabled
+                              >
+                                <option value="">Loading available dates...</option>
+                              </select>
                             </div>
+                            <div
+                              id="availability-message"
+                              class="text-sm text-on-surface-variant"
+                              role="status"
+                              aria-live="polite"
+                            ></div>
                           </div>
                           <!-- Time Picker -->
                           <div class="space-y-sm relative">
@@ -326,11 +347,15 @@
                                 class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
                                 >schedule</span
                               >
-                              <input
+                              <select
                                 class="w-full bg-surface-container-low text-on-surface rounded-lg py-2 pl-10 pr-md focus:ring-2 focus:ring-primary/50 focus:bg-surface-container-lowest transition-all outline-none"
-                               name="{{ form.appointment_time.html_name }}" type="time"
-                                       required
-                              />
+                                id="{{ form.appointment_time.id_for_label }}"
+                                name="{{ form.appointment_time.html_name }}"
+                                required
+                                disabled
+                              >
+                                <option value="">Select a date first</option>
+                              </select>
                             </div>
                           </div>
                         </div>
@@ -482,6 +507,7 @@
                 });
             });
         </script>
+        {% include "appointments/_availability_script.html" %}
 
         {% comment %} old page  {% endcomment %}
 <!-- <h3 class="mb-4">Reschedule Appointment</h3>

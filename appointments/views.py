@@ -743,6 +743,9 @@ def my_cancel_appointment(request, pk):
 def available_dates_api(request):
 
     doctor_id = request.GET.get("doctor_id")
+    exclude_appointment_id = request.GET.get(
+        "exclude_appointment_id"
+    )
 
     if not doctor_id:
         return JsonResponse(
@@ -758,7 +761,10 @@ def available_dates_api(request):
         pk=doctor_id,
     )
 
-    available_dates = get_available_dates(doctor)
+    available_dates = get_available_dates(
+        doctor,
+        exclude_appointment_id=exclude_appointment_id,
+    )
 
     return JsonResponse(
         {

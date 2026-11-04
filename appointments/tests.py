@@ -6,7 +6,7 @@ from accounts.models import User
 from accounts.choices import UserRole
 from patients.models import Patient
 from patients.choices import GenderChoices, BloodGroupChoices
-from doctors.models import Doctor
+from doctors.models import Doctor, DoctorSchedule
 from doctors.choices import SpecializationChoices
 from .models import Appointment, AppointmentStatus
 from .services import AppointmentService
@@ -163,4 +163,84 @@ class AppointmentServiceTests(TestCase):
                 )
             ).status_code,
             200,
+        )
+
+    def test_update_page_loads_available_slots_including_current_appointment(self):
+        appointment_date = date.today() + timedelta(days=2)
+        appointment = self.create_appointment(
+            appointment_date=appointment_date,
+            appointment_time=time(10, 0),
+        )
+        DoctorSchedule.objects.create(
+            doctor=self.doctor,
+            weekday=appointment_date.weekday(),
+            start_time=time(10, 0),
+            end_time=time(10, 30),
+        )
+        admin = User.objects.create_user(
+            username="apptavailabilityadmin",
+            email="apptavailabilityadmin@example.com",
+            role=UserRole.ADMIN,
+        )
+        self.client.force_login(admin)
+
+        update_response = self.client.get(
+            reverse("appointments:update", args=[appointment.pk])
+        )
+        self.assertContains(update_response, "data-availability-form")
+        self.assertContains(
+            update_response,
+            f'data-doctor-id="{self.doctor.pk}"',
+        )
+        self.assertContains(
+            update_response,
+            f'data-exclude-appointment-id="{appointment.pk}"',
+        )
+        self.assertContains(
+            update_response,
+            f'data-selected-date="{appointment_date.isoformat()}"',
+        )
+        self.assertContains(
+            update_response,
+            'data-selected-time="10:00"',
+        )
+
+        dates_response = self.client.get(
+            reverse("appointments:available-dates"),
+            {
+                "doctor_id": self.doctor.pk,
+                "exclude_appointment_id": appointment.pk,
+            },
+        )
+        self.assertEqual(dates_response.status_code, 200)
+        self.assertIn(
+            appointment_date.isoformat(),
+            [item["value"] for item in dates_response.json()["dates"]],
+        )
+
+        times_response = self.client.get(
+            reverse("appointments:available-times"),
+            {
+                "doctor_id": self.doctor.pk,
+                "date": appointment_date.isoformat(),
+                "exclude_appointment_id": appointment.pk,
+            },
+        )
+        self.assertEqual(times_response.status_code, 200)
+        self.assertEqual(
+            [item["value"] for item in times_response.json()["times"]],
+            ["10:00"],
+        )
+
+        update_response = self.client.post(
+            reverse("appointments:update", args=[appointment.pk]),
+            {
+                "appointment_date": appointment_date.isoformat(),
+                "appointment_time": "10:00",
+                "reason_for_visit": appointment.reason_for_visit,
+            },
+        )
+        self.assertRedirects(
+            update_response,
+            reverse("appointments:detail", args=[appointment.pk]),
         )

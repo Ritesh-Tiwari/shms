@@ -180,7 +180,10 @@ def get_available_slots(
     ]
 
 
-def get_available_dates(doctor):
+def get_available_dates(
+    doctor,
+    exclude_appointment_id=None,
+):
     """
     Return dates within the booking window that have at least
     one available slot.
@@ -201,6 +204,7 @@ def get_available_dates(doctor):
         slots = get_available_slots(
             doctor,
             current_date,
+            exclude_appointment_id=exclude_appointment_id,
         )
 
         if slots:
