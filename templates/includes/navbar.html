@@ -33,55 +33,27 @@
                         <!-- ================= ADMIN ================= -->
 
                         {% if user.role == "ADMIN" %}
-                        <a href="{% url 'dashboard:accounts' %}"
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg
-                                    text-on-surface-variant hover:bg-surface-container-low
-                                    font-medium text-sm transition-all
-                                    {% if request.resolver_match.url_name == 'accounts' %}
-                                        bg-primary-container text-white
-                                    {% endif %}">
-                                <span class="material-symbols-outlined text-[20px]">
-                                    manage_accounts
-                                </span>
-                                <span>Account Management</span>
-                            </a>
-
-                        <a {% if request.resolver_match.url_name == 'security-audit' %}aria-current="page"{% endif %}
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'security-audit' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
-                            href="{% url 'dashboard:security-audit' %}">
-                            <span class="material-symbols-outlined text-[20px]">policy</span>
-                            <span>Security Audit Log</span>
-                        </a>
-
-                        <a {% if request.resolver_match.url_name == 'reports' or request.resolver_match.url_name == 'report-download' %}aria-current="page"{% endif %}
-                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'reports' or request.resolver_match.url_name == 'report-download' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
-                            href="{% url 'dashboard:reports' %}">
-                            <span class="material-symbols-outlined text-[20px]">bar_chart</span>
-                            <span>Reports</span>
-                        </a>
-
-                        <a {% if request.resolver_match.namespace == 'doctors' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'doctors' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
-                            href="{% url 'doctors:list' %}">
-                            <span class="material-symbols-outlined text-[20px]">medical_services</span>
-                            <span>Doctors</span>   
-                        </a>
+                        <a {% if request.resolver_match.namespace == 'appointments' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'appointments' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
+                            href="{% url 'appointments:list' %}">
+                            <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+                            <span>Appointments</span>
+                        </a> 
                         <a {% if request.resolver_match.namespace == 'patients' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'patients' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'patients:list' %}">
                             <span class="material-symbols-outlined text-[20px]">person</span>
                             <span>Patients</span>
                         </a>
-
+                        <a {% if request.resolver_match.namespace == 'doctors' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'doctors' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
+                            href="{% url 'doctors:list' %}">
+                            <span class="material-symbols-outlined text-[20px]">medical_services</span>
+                            <span>Doctors</span>   
+                        </a>
                         <a {% if request.resolver_match.namespace == 'receptionist' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'receptionist' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
                             href="{% url 'receptionist:list' %}">
                             <span class="material-symbols-outlined text-[20px]">person</span>
                             <span>Receptionists</span>
                         </a>
-
-                        <a {% if request.resolver_match.namespace == 'appointments' %}aria-current="page"{% endif %} class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.namespace == 'appointments' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
-                            href="{% url 'appointments:list' %}">
-                            <span class="material-symbols-outlined text-[20px]">calendar_month</span>
-                            <span>Appointments</span>
-                        </a>                    
+                                    
                         {% endif %}
 
                         <!-- ================= DOCTOR ================= -->
@@ -179,7 +151,45 @@
                         {% endif %}
 
                     </nav>
+
+
                 </div>
+
+                {% if user.role == 'ADMIN' %}
+                <div>
+                    <p class="px-3 mb-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">MANAGEMENT</p>
+                    <nav class="space-y-1"> 
+                        
+                        <a {% if request.resolver_match.url_name == 'reports' or request.resolver_match.url_name == 'report-download' %}aria-current="page"{% endif %}
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'reports' or request.resolver_match.url_name == 'report-download' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
+                            href="{% url 'dashboard:reports' %}">
+                            <span class="material-symbols-outlined text-[20px]">bar_chart</span>
+                            <span>Reports</span>
+                        </a>                          
+                        <a href="{% url 'dashboard:accounts' %}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg
+                                    text-on-surface-variant hover:bg-surface-container-low
+                                    font-medium text-sm transition-all
+                                    {% if request.resolver_match.url_name == 'accounts' %}
+                                        bg-primary-container text-white
+                                    {% endif %}">
+                                <span class="material-symbols-outlined text-[20px]">
+                                    manage_accounts
+                                </span>
+                                <span>Account Management</span>
+                            </a>
+
+                        <a {% if request.resolver_match.url_name == 'security-audit' %}aria-current="page"{% endif %}
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'security-audit' %}bg-primary-container text-white font-medium shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium{% endif %} text-sm transition-all"
+                            href="{% url 'dashboard:security-audit' %}">
+                            <span class="material-symbols-outlined text-[20px]">policy</span>
+                            <span>Security Audit Log</span>
+                        </a>
+
+                    </nav>                    
+                </div>
+                {% endif %}
+
             </div>
             <!-- Bottom User / Logout Section -->
             <div class="p-4 border-t border-slate-100">
