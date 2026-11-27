@@ -311,11 +311,20 @@ def report_list(request):
             form.cleaned_data["end_date"],
         )
         page_obj = Paginator(queryset, 50).get_page(request.GET.get("page"))
+        if report_key == "payment_status":
+            rows = [
+                row
+                for billing in page_obj.object_list
+                for row in row_builder(billing)
+            ]
+        else:
+            rows = [row_builder(item) for item in page_obj.object_list]
+
         context.update(
             {
                 "report_title": title,
                 "columns": columns,
-                "rows": [row_builder(item) for item in page_obj.object_list],
+                "rows": rows,
                 "page_obj": page_obj,
                 "selected_report": report_key,
             }

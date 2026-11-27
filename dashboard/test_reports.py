@@ -209,6 +209,32 @@ class ReportingWorkflowTests(TestCase):
         self.assertEqual(unpaid_rows[0][payment_id_index], "")
         self.assertEqual(unpaid_rows[0][outstanding_index], "590.00")
 
+    def test_payment_status_report_renders_each_payment_as_a_table_row(self):
+        Payment.objects.create(
+            billing=self.billing,
+            amount=Decimal("100.00"),
+            payment_method=PaymentMethod.CASH,
+            payment_type=PaymentType.PARTIAL,
+        )
+
+        response = self.client.get(
+            reverse("dashboard:reports"),
+            {"report": "payment_status"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["page_obj"].paginator.count, 1)
+        self.assertEqual(len(response.context["rows"]), 2)
+        self.assertTrue(
+            all(
+                len(row) == len(response.context["columns"])
+                for row in response.context["rows"]
+            )
+        )
+        self.assertContains(response, "REPORT-TXN-001")
+        self.assertContains(response, "Payment Status Report")
+        self.assertContains(response, "bill")
+
     def test_date_range_filters_reports_and_preserves_filter_in_download(self):
         response = self.client.get(
             reverse("dashboard:reports"),

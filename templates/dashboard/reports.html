@@ -52,7 +52,8 @@
                 <div>
                     <h2 class="font-title-md text-title-md text-on-surface">{{ report_title }}</h2>
                     <p class="font-body-sm text-body-sm text-on-surface-variant">
-                        {{ page_obj.paginator.count }} record{{ page_obj.paginator.count|pluralize }}
+                        {{ page_obj.paginator.count }}
+                        {% if selected_report == "payment_status" %}bill{{ page_obj.paginator.count|pluralize }}{% else %}record{{ page_obj.paginator.count|pluralize }}{% endif %}
                     </p>
                 </div>
             </div>
